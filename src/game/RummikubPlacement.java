@@ -1,5 +1,20 @@
 package game;
 
 public enum RummikubPlacement {
-	ON_SHELF, ON_TABLE, ON_STACK
+	ON_SHELF("onshelf"),
+	ON_TABLE("ontable"),
+	ON_STACK("onstack");
+	
+	private final String repr;
+	
+	private RummikubPlacement(String repr)
+	{
+		this.repr = repr;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return this.repr;
+	}
 }

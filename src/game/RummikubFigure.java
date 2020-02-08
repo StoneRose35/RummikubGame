@@ -84,21 +84,7 @@ public class RummikubFigure {
 	
 	public String getAspRepresentation() 
 	{
-		String encoding = "";
-		switch (this.placement)
-		{
-		    case ON_SHELF:
-		    	encoding += "onshelf(";
-		        break;
-		    case ON_TABLE:
-		    	encoding += "ontable(";
-		    	break;
-		    default:
-		    	return "";	    
-		}
-		encoding += this.number + "," + this.color.getColorcode() + "," + this.instance + ").";
-		
-		return encoding;
+		return this.placement + "(" + this.number + "," + this.color.getColorcode() + "," + this.instance + ").";	
 	}
 	
 	@Override

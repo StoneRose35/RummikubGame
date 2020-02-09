@@ -69,6 +69,7 @@ class AspSolverTest {
 		Assert.assertTrue(gs != null);
 		Assert.assertTrue(gs.getTableFigures().size() > 0);
 		Assert.assertTrue(gs.getShelfFigures().size() > 0);
+		Assert.assertTrue(gs.getSumLaid() == 4);
 	}
 	
 	@Test

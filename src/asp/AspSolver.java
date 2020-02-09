@@ -65,11 +65,13 @@ public class AspSolver {
 			{
 		        result.addFigure(fig);
 			}
-			else if (strval.startsWith("sum_on_table"))
+			else 
 			{
-				strval = strval.replace("sum_on_table(","");
-				strval = strval.replace(")","");
-				result.setSumLaid(Integer.parseInt(strval));
+				AspPredicate pred = AspHelper.parsePredicate(strval);
+				if (pred.getName().equals("sum_on_table"))
+				{
+					result.setSumLaid(pred.atomsAsIntegers().get(0));
+				}
 			}
 		});
 		return result;

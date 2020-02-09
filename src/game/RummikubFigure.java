@@ -1,5 +1,8 @@
 package game;
+import java.util.List;
 import java.util.regex.*;
+import asp.AspHelper;
+import asp.AspPredicate;
 
 public class RummikubFigure {
 	private int number;
@@ -27,19 +30,18 @@ public class RummikubFigure {
 	
 	private RummikubFigure(String aspRepresentation) throws RummikubException
 	{
-
-		Pattern p = Pattern.compile("(onshelf|ontable|remaining)\\(([0-9]{1,2}),([0-9]),([0-9])\\)\\.?");//. represents single character  
-		Matcher m = p.matcher(aspRepresentation);  
-		if (!m.matches())
+ 
+		AspPredicate pred = AspHelper.parsePredicate(aspRepresentation);
+		if (pred==null)
 		{
 			throw new RummikubException(String.format("Could not Instantiate Figure from %s ", aspRepresentation));
 		}
 		
-		if (m.group(1).equals("onshelf") || m.group(1).equals("remaining"))
+		if (pred.getName().equals("onshelf") || pred.getName().equals("remaining"))
 		{
 			this.placement = RummikubPlacement.ON_SHELF;
 		}
-		else if (m.group(1).equals("ontable"))
+		else if (pred.getName().equals("ontable"))
 		{
 			this.placement = RummikubPlacement.ON_TABLE;
 		}
@@ -47,10 +49,17 @@ public class RummikubFigure {
 		{
 			throw new RummikubException(String.format("Could not decode placement from %s ", aspRepresentation));
 		}
-		
-		this.setNumber(Integer.parseInt(m.group(2)));
-		this.setInstance(Integer.parseInt(m.group(4)));
-		this.setColor(RummikubColorFactory.getByCode(Integer.parseInt(m.group(3))));
+		List<Integer> atoms = pred.atomsAsIntegers();
+		if (atoms != null && atoms.size()==3)
+		{
+		    this.setNumber(atoms.get(0));
+		    this.setInstance(atoms.get(2));
+		    this.setColor(RummikubColorFactory.getByCode(atoms.get(1)));
+		}
+		else
+		{
+			throw new RummikubException(String.format("Could not decode figure representation from %s ", aspRepresentation));
+		}
 		
 	}
 	

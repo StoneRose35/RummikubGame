@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class RummikubCollection {
+public class RummikubCollection implements IRummikubFigureBag{
 	private List<RummikubFigure> figures;
 	
 	public RummikubCollection() {
@@ -54,6 +54,10 @@ public class RummikubCollection {
 	public boolean isValid()
 	{
 		return this.figures.size()>2;
+	}
+	
+	public Iterator<RummikubFigure> iterator() {
+        return this.figures.iterator();
 	}
 	
 }

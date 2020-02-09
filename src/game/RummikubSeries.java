@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class RummikubSeries {
+public class RummikubSeries implements IRummikubFigureBag{
 	private List<RummikubFigure> figures;
 	
 	public RummikubSeries() {
@@ -72,5 +72,9 @@ public class RummikubSeries {
 			sum_calc /= 2;
 			return sum_calc == sum;
 		}
+	}
+
+	public Iterator<RummikubFigure> iterator() {
+         return this.figures.iterator();
 	}
 }

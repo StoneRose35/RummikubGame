@@ -4,7 +4,6 @@ import game.*;
 import org.json.JSONArray; 
 import org.json.JSONObject; 
 
-import java.util.*;
 import java.io.*;
 
 public class AspSolver {
@@ -53,10 +52,10 @@ public class AspSolver {
 	public GameState jsonToGamestate(String jsoncontent) throws RummikubException
 	{
 		JSONObject jobj = new JSONObject(jsoncontent);
-		JSONObject witness = ((JSONObject)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
-				.get("Witnesses")).get(0));
+		JSONArray witnesses = ((JSONArray)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
+				.get("Witnesses")));
+		JSONObject witness = (JSONObject)witnesses.get(witnesses.length()-1);
 		JSONArray values = ((JSONArray)witness.get("Value"));
-		JSONArray costs = (JSONArray)witness.get("Costs");
 		GameState result = new GameState();
 		values.forEach(val -> {
 			String strval = (String)val;

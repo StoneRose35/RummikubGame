@@ -12,17 +12,30 @@ public class RummikubFigure {
 		
 	}
 	
-	public RummikubFigure(String aspRepresentation) throws RummikubException
+	public static RummikubFigure getRummikubFigure(String aspRepresentation)
+	{
+		RummikubFigure fig = null;
+		try {
+			fig = new RummikubFigure(aspRepresentation);
+		}
+		catch (RummikubException e)
+		{ 
+		}
+		return fig;
+		
+	}
+	
+	private RummikubFigure(String aspRepresentation) throws RummikubException
 	{
 
-		Pattern p = Pattern.compile("(onshelf|ontable)\\(([0-9]{1,2}),([0-9]),([0-9])\\)\\.");//. represents single character  
+		Pattern p = Pattern.compile("(onshelf|ontable|remaining)\\(([0-9]{1,2}),([0-9]),([0-9])\\)\\.?");//. represents single character  
 		Matcher m = p.matcher(aspRepresentation);  
 		if (!m.matches())
 		{
 			throw new RummikubException(String.format("Could not Instantiate Figure from %s ", aspRepresentation));
 		}
 		
-		if (m.group(1).equals("onshelf"))
+		if (m.group(1).equals("onshelf") || m.group(1).equals("remaining"))
 		{
 			this.placement = RummikubPlacement.ON_SHELF;
 		}

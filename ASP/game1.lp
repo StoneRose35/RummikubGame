@@ -6,6 +6,6 @@ ontable(3,3,1).
 ontable(3,1,1).
 ontable(3,4,1).
 
-
+onshelf(7,3,1).
 onshelf(4,2,1).
 onshelf(1).

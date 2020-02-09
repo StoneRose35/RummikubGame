@@ -10,6 +10,8 @@ public class GameState {
 	 */
 	private List<RummikubFigure> onshelf;
 	private List<RummikubFigure> ontable;
+	private String aspRepresentation;
+	private int sumLaid;
 	
 	public GameState() 
 	{
@@ -25,4 +27,44 @@ public class GameState {
 		}
 		this.onshelf.add(figure);
 	}
+	
+	public void addFigure(RummikubFigure fig)
+	{
+		if (fig.getPlacement()==RummikubPlacement.ON_TABLE)
+		{
+		    this.ontable.add(fig);
+		}
+		else if (fig.getPlacement()==RummikubPlacement.ON_SHELF)
+		{
+			this.onshelf.add(fig);
+		}
+	}
+	
+	public String toAspRepresentation()
+	{
+		this.aspRepresentation = "";
+		this.onshelf.forEach(fig -> {
+			this.aspRepresentation += fig.getAspRepresentation() + "\n";
+		});
+		return this.aspRepresentation;
+	}
+	
+	public List<RummikubFigure> getTableFigures()
+	{
+		return this.ontable;
+	}
+	
+	public List<RummikubFigure> getShelfFigures()
+	{
+		return this.onshelf;
+	}
+
+	public int getSumLaid() {
+		return sumLaid;
+	}
+
+	public void setSumLaid(int sumLaid) {
+		this.sumLaid = sumLaid;
+	}
+	
 }

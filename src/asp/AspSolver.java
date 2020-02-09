@@ -1,15 +1,77 @@
 package asp;
 
 import game.*;
+import org.json.JSONArray; 
+import org.json.JSONObject; 
+
+import java.util.*;
+import java.io.*;
 
 public class AspSolver {
 	
+
 	public AspSolver()
 	{
 	}
 	
 	public GameState solve_round(GameState state_old)
 	{
+		Runtime rt=Runtime.getRuntime();
+		File clingoinput=new File("game.lp");
+		FileWriter fw;
+        String jsoncontent = "";
+		try {
+			fw = new FileWriter(clingoinput);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(state_old.toAspRepresentation());
+			bw.close();
+			fw.close();
+			Process proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ");
+			InputStream is = proc.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine())!=null)
+			{
+				System.out.println(line);
+				jsoncontent += line;
+			}
+			br.close();
+			isr.close();
+			is.close();
+			
+			return this.jsonToGamestate(jsoncontent);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (RummikubException e) {
+			e.printStackTrace();
+		}
+
 		return null;
+	}
+	
+	public GameState jsonToGamestate(String jsoncontent) throws RummikubException
+	{
+		JSONObject jobj = new JSONObject(jsoncontent);
+		JSONObject witness = ((JSONObject)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
+				.get("Witnesses")).get(0));
+		JSONArray values = ((JSONArray)witness.get("Value"));
+		JSONArray costs = (JSONArray)witness.get("Costs");
+		GameState result = new GameState();
+		values.forEach(val -> {
+			String strval = (String)val;
+			RummikubFigure fig = RummikubFigure.getRummikubFigure(strval);
+			if (fig != null)
+			{
+		        result.addFigure(fig);
+			}
+			else if (strval.startsWith("sum_on_table"))
+			{
+				strval = strval.replace("sum_on_table(","");
+				strval = strval.replace(")","");
+				result.setSumLaid(Integer.parseInt(strval));
+			}
+		});
+		return result;
 	}
 }

@@ -9,11 +9,26 @@ class RummikubFigureTest {
 
 	@Test
 	void testRummikubFigureString() throws RummikubException {
-		RummikubFigure rf = new RummikubFigure("onshelf(1,2,1).");
+		RummikubFigure rf = RummikubFigure.getRummikubFigure("onshelf(1,2,1).");
 		Assert.assertNotNull(rf);
 		Assert.assertEquals(1,rf.getNumber());
 		Assert.assertEquals(RummikubColor.RED, rf.getColor());
 		Assert.assertEquals(RummikubPlacement.ON_SHELF, rf.getPlacement());
+	}
+	
+	@Test
+	void testRummikubFigureStringWoDot() throws RummikubException {
+		RummikubFigure rf = RummikubFigure.getRummikubFigure("onshelf(1,2,1)");
+		Assert.assertNotNull(rf);
+		Assert.assertEquals(1,rf.getNumber());
+		Assert.assertEquals(RummikubColor.RED, rf.getColor());
+		Assert.assertEquals(RummikubPlacement.ON_SHELF, rf.getPlacement());
+	}
+	
+	@Test
+	void testRummikubFigureWrong() throws RummikubException {
+		RummikubFigure rf = RummikubFigure.getRummikubFigure("test(4,5,2)");
+		Assert.assertNull(rf);
 	}
 
 	@Test

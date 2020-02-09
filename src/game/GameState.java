@@ -46,6 +46,9 @@ public class GameState {
 		this.onshelf.forEach(fig -> {
 			this.aspRepresentation += fig.getAspRepresentation() + "\n";
 		});
+		this.ontable.forEach(fig -> {
+			this.aspRepresentation += fig.getAspRepresentation() + "\n";
+		});
 		return this.aspRepresentation;
 	}
 	

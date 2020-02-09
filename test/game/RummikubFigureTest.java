@@ -1,4 +1,7 @@
 package game;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import game.RummikubFigure;
@@ -63,6 +66,37 @@ class RummikubFigureTest {
 		
 		Assert.assertFalse(rf.equals(rf2));
 		Assert.assertTrue(rf2.equals(rf3));
+	}
+	
+	@Test
+	void sortingTest()
+	{
+		RummikubFigure rf = RummikubFigure.getRummikubFigure("ontable(1,1,1).");
+		RummikubFigure rf1 = RummikubFigure.getRummikubFigure("ontable(4,1,1).");
+		RummikubFigure rf2 = RummikubFigure.getRummikubFigure("ontable(12,1,1).");
+		RummikubFigure rf5 = RummikubFigure.getRummikubFigure("ontable(4,2,1).");
+		RummikubFigure rf3 = RummikubFigure.getRummikubFigure("ontable(10,1,1).");
+		RummikubFigure rf4 = RummikubFigure.getRummikubFigure("ontable(1,2,1).");
+		RummikubFigure rf6 = RummikubFigure.getRummikubFigure("ontable(4,3,2).");
+		List<RummikubFigure> lrf= new ArrayList<RummikubFigure>();
+		lrf.add(rf);
+		lrf.add(rf1);
+		lrf.add(rf2);
+		lrf.add(rf5);
+		lrf.add(rf3);
+		lrf.add(rf4);
+		lrf.add(rf6);
+		System.out.println("Unsorted List");
+		lrf.forEach(el -> {
+			System.out.println(el);
+		});
+		lrf.sort(null);
+		System.out.println("Sorted List");
+		lrf.forEach(el -> {
+			System.out.println(el);
+		});
+		Assert.assertTrue(lrf.get(3).getColor()==RummikubColor.BLACK);
+		Assert.assertTrue(lrf.get(3).getNumber()==12);
 	}
 
 }

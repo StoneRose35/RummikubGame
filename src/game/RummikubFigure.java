@@ -1,14 +1,13 @@
 package game;
 import java.util.List;
-import java.util.regex.*;
 import asp.AspHelper;
 import asp.AspPredicate;
 
-public class RummikubFigure {
-	private int number;
-	private RummikubColor color;
-	private int instance;
-	private RummikubPlacement placement;
+public class RummikubFigure implements Comparable<RummikubFigure> {
+	private int number = 0;
+	private RummikubColor color=null;
+	private int instance=0;
+	private RummikubPlacement placement=null;
 	
 	public RummikubFigure()
 	{
@@ -56,6 +55,14 @@ public class RummikubFigure {
 		    this.setInstance(atoms.get(2));
 		    this.setColor(RummikubColorFactory.getByCode(atoms.get(1)));
 		}
+		else if (atoms != null && atoms.size()==1 && this.placement == RummikubPlacement.ON_SHELF) // special case of Joker on shelf, only the instance is defined
+		{
+			this.setInstance(atoms.get(0)+2);
+		}
+		else if (atoms != null && atoms.size()==1 && this.placement == RummikubPlacement.ON_TABLE) // Joker on table
+		{
+			throw new RummikubException("Joker on table is created only using the exact representation");
+		}
 		else
 		{
 			throw new RummikubException(String.format("Could not decode figure representation from %s ", aspRepresentation));
@@ -99,14 +106,21 @@ public class RummikubFigure {
 	public void setInstance(int instance) throws RummikubException {
 		if (instance <1 || instance > 4)
 		{
-			throw new RummikubException("Instance should be 1 or 2 for regular figures or 3, 4 for jokers");
+			throw new RummikubException("Instance should be 1 or 2 for normal figures or 3 to 4 for jokers");
 		}
 		this.instance = instance;
 	}
 	
 	public String getAspRepresentation() 
 	{
-		return this.placement + "(" + this.number + "," + this.color.getColorcode() + "," + this.instance + ").";	
+		if (this.getInstance()<3)
+		{
+		    return this.placement + "(" + this.number + "," + this.color.getColorcode() + "," + this.instance + ").";
+		}
+		else // Joker
+		{
+			return this.placement + "(" + (this.instance-2) + ").";
+		}
 	}
 	
 	@Override
@@ -133,7 +147,43 @@ public class RummikubFigure {
 	@Override
 	public String toString()
 	{
-		return String.format("#%s in %s, instance %s", this.getNumber(),this.getColor(), this.getInstance());
+		return String.format("<#%s in %s instance %s>", this.getNumber(),this.getColor(), this.getInstance());
+	}
+	
+
+	@Override
+	public int compareTo(RummikubFigure fig) {
+		RummikubColor[] colors=RummikubColor.values();
+		int idx1=-1,idx2=-2;
+		for (int cnt=0;cnt<colors.length;cnt++)
+		{
+			if (fig.getColor()==colors[cnt])
+			{
+				idx2 = cnt;
+			}
+			if (this.getColor()==colors[cnt])
+			{
+				idx1 = cnt;
+			}
+		}
+		if (idx1 == idx2)
+		{
+			int n1,n2;
+			n1 = this.getNumber();
+			n2 = fig.getNumber();
+			if (n1 ==n2)
+			{
+				return this.getInstance() - fig.getInstance();
+			}
+			else
+			{
+				return n1-n2;
+			}
+		}
+		else
+		{
+			return idx1-idx2;
+		}
 	}
 	
 }

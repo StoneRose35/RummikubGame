@@ -40,6 +40,13 @@ fig(N,C,I) :- color(C), number(N), idx(I).
 %%
 
 % put each figure which lies in a number range in a series going from L to H or not.
+% Predicate: 
+%    L: Lowest number in series
+%    H: Highest number in series
+%    N: Number of element in series (predicate exist for each element in series)
+%    C: Color of the Elements in the Serie
+%    I3: Instance of Element in series
+%    I: instance of series itself, a with the same Color and L, H can exists twice
 0 { series(L,H,N,C,I3,I) } 1 :- ontable(L,C,I1),ontable(H,C,I2), ontable(N,C,I3), L<H, N>L-1, N<H+1,idx(I). 
 
 % count how many element exist in a series from L to H
@@ -55,6 +62,11 @@ sum_series(L,H,C,Q,I):- series(L,H,_,C,_,I), Q = #sum{1, N,I3: series(L,H,N,C,I3
 %% collections of same number
 %%
 
+% Predicate:
+%    N: number of the collection
+%    C: color of the element in the collection
+%    I1: instance of the element in the collection
+%    I: instance of the collection itself, the collection can exist twice
 0 { collection(N,C,I1,I) } 1 :- ontable(N,C,I1),idx(I). 
 
 sum_collection(N,Q,I):- collection(N,_,_,I), Q = #sum{1, C2: collection(N,C2,_,I)}.
@@ -118,7 +130,7 @@ remaining(J) :- onshelf(J), not ontable(J).
 #show collection/4.
 
 #show ontable/3.
-#show ontable/1.
+%#show ontable/1.
 
 %#show sum_collection/3.
 

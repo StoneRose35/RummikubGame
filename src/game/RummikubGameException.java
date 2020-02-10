@@ -2,6 +2,10 @@ package game;
 
 public class RummikubGameException extends RummikubException {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5526209918047263884L;
+	/**
 	 * Exception Class for non-technical Exceptions occurring during the game, i.e. not following game rule
 	 * , "cheating"
 	 */

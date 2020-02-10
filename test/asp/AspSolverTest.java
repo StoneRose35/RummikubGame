@@ -1,12 +1,11 @@
 package asp;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.Assert;
 
 import asp.AspSolver;
-import game.GameState;
-import game.RummikubException;
+import game.*;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -64,8 +63,9 @@ class AspSolverTest {
 	void gamestateGenerationTest() throws RummikubException
 	{
 		AspSolver as = new AspSolver();
+		as.setJsonresult(this.exampleJson);
 	
-		GameState gs = as.jsonToGamestate(this.exampleJson);
+		GameState gs = as.jsonToGamestate();
 		Assert.assertTrue(gs != null);
 		Assert.assertTrue(gs.getTableFigures().size() > 0);
 		Assert.assertTrue(gs.getShelfFigures().size() > 0);
@@ -76,9 +76,22 @@ class AspSolverTest {
 	void solve_round_test() throws RummikubException
 	{
 		AspSolver as = new AspSolver();
-		GameState state_old = as.jsonToGamestate(this.exampleJson);
+		as.setJsonresult(this.exampleJson);
+		
+		GameState state_old = as.jsonToGamestate();
 		GameState state_new = as.solve_round(state_old);
 		Assert.assertNotNull(state_new);
 
+	}
+	
+	@Test
+	void getTableDescriptionTest() 
+	{
+		AspSolver as = new AspSolver();
+		as.setJsonresult(this.exampleJson);
+		List<IRummikubFigureBag> td = as.getTableDescription();
+		Assert.assertNotNull(td);
+		Assert.assertEquals(2, td.size());
+		
 	}
 }

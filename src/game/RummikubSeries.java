@@ -6,6 +6,7 @@ import java.util.List;
 
 public class RummikubSeries implements IRummikubFigureBag{
 	private List<RummikubFigure> figures;
+	private long hash;
 	
 	public RummikubSeries() {
 		this.figures = new ArrayList<RummikubFigure>();
@@ -76,5 +77,28 @@ public class RummikubSeries implements IRummikubFigureBag{
 
 	public Iterator<RummikubFigure> iterator() {
          return this.figures.iterator();
+	}
+
+	@Override
+	public long getHash() {
+		return this.hash;
+	}
+
+	@Override
+	public void setHash(long hash) {
+		this.hash = hash;
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other instanceof RummikubSeries)
+		{
+			return ((IRummikubFigureBag)other).getHash() == this.getHash();
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

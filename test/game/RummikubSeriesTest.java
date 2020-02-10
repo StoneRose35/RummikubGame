@@ -2,6 +2,9 @@ package game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +61,22 @@ class RummikubSeriesTest {
 		} catch (RummikubGameException e) {
 
 		} 
+	}
+	
+	@Test
+	void listContainsSeriesTest()
+	{
+		List<IRummikubFigureBag> list = new ArrayList<IRummikubFigureBag>();
+		IRummikubFigureBag rs = new RummikubSeries();
+		rs.setHash(13);
+		list.add(rs);
+		rs = new RummikubSeries();
+		rs.setHash(14);
+		Assert.assertTrue(!list.contains(rs));
+		list.add(rs);
+		rs = new RummikubSeries();
+		rs.setHash(13);
+		Assert.assertTrue(list.contains(rs));
 	}
 
 }

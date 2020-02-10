@@ -5,9 +5,20 @@ import org.json.JSONArray;
 import org.json.JSONObject; 
 
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class AspSolver {
 	
+	private String jsonresult;
+
+	public String getJsonresult() {
+		return jsonresult;
+	}
+
+	public void setJsonresult(String jsonresult) {
+		this.jsonresult = jsonresult;
+	}
 
 	public AspSolver()
 	{
@@ -32,14 +43,14 @@ public class AspSolver {
 			String line = null;
 			while ((line = br.readLine())!=null)
 			{
-				System.out.println(line);
 				jsoncontent += line;
 			}
+			this.jsonresult = jsoncontent;
 			br.close();
 			isr.close();
 			is.close();
 			
-			return this.jsonToGamestate(jsoncontent);
+			return this.jsonToGamestate();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (RummikubException e) {
@@ -49,13 +60,9 @@ public class AspSolver {
 		return null;
 	}
 	
-	public GameState jsonToGamestate(String jsoncontent) throws RummikubException
+	public GameState jsonToGamestate() throws RummikubException
 	{
-		JSONObject jobj = new JSONObject(jsoncontent);
-		JSONArray witnesses = ((JSONArray)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
-				.get("Witnesses")));
-		JSONObject witness = (JSONObject)witnesses.get(witnesses.length()-1);
-		JSONArray values = ((JSONArray)witness.get("Value"));
+		JSONArray values = this.getLastWitnessValues();
 		GameState result = new GameState();
 		values.forEach(val -> {
 			String strval = (String)val;
@@ -74,5 +81,78 @@ public class AspSolver {
 			}
 		});
 		return result;
+	}
+	
+	public List<IRummikubFigureBag> getTableDescription()
+	{
+		JSONArray values = this.getLastWitnessValues();
+		List<IRummikubFigureBag> result = new ArrayList<IRummikubFigureBag>();
+		values.forEach(val -> {
+			String strval = (String)val;
+			AspPredicate pred = AspHelper.parsePredicate(strval);
+			if (pred.getName().equals("series"))
+			{
+				List<Integer> a = pred.atomsAsIntegers();
+				long hash = a.get(0) + a.get(1)*13 + a.get(3)*13*13 + a.get(5)*13*13*13;
+				IRummikubFigureBag rs;
+				rs = new RummikubSeries();
+				rs.setHash(hash);
+				if (!result.contains(rs))
+				{
+					result.add(rs);
+				}
+				else
+				{
+					rs = result.get(result.indexOf(rs));
+				}
+				RummikubFigure rf = new RummikubFigure();
+				try {
+					rf.setColor(RummikubColorFactory.getByCode(a.get(3)));
+					rf.setNumber(a.get(2));
+					rf.setInstance(a.get(4));
+					rf.setPlacement(RummikubPlacement.ON_TABLE);
+					rs.addFigure(rf);
+				} catch (RummikubException e) {
+				}
+			}
+			else if (pred.getName().equals("collection"))
+			{
+				List<Integer> a = pred.atomsAsIntegers();
+				long hash = a.get(0) + a.get(2)*17;
+				IRummikubFigureBag rs;
+				rs = new RummikubCollection();
+				rs.setHash(hash);
+				if (!result.contains(rs))
+				{
+					result.add(rs);
+				}
+				else
+				{
+					rs = result.get(result.indexOf(rs));
+				}
+				RummikubFigure rf = new RummikubFigure();
+				try {
+					rf.setColor(RummikubColorFactory.getByCode(a.get(1)));
+					rf.setNumber(a.get(0));
+					rf.setInstance(a.get(2));
+					rf.setPlacement(RummikubPlacement.ON_TABLE);
+					rs.addFigure(rf);
+				} catch (RummikubException e) {
+				}
+			}
+		});
+		
+		return result;
+	}
+	
+	private JSONArray getLastWitnessValues()
+	{
+		JSONObject jobj = new JSONObject(this.jsonresult);
+		JSONArray witnesses = ((JSONArray)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
+				.get("Witnesses")));
+		JSONObject witness = (JSONObject)witnesses.get(witnesses.length()-1);
+		JSONArray values = ((JSONArray)witness.get("Value"));
+		
+		return values;
 	}
 }

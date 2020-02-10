@@ -1,8 +1,6 @@
 package game;
 import java.awt.Color;
 
-import javax.swing.*;
-
 
 public enum RummikubColor {
 	BLACK(1, new Color(0,0,0), "black"),

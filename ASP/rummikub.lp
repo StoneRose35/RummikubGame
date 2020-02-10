@@ -46,7 +46,7 @@ fig(N,C,I) :- color(C), number(N), idx(I).
 %    N: Number of element in series (predicate exist for each element in series)
 %    C: Color of the Elements in the Serie
 %    I3: Instance of Element in series
-%    I: instance of series itself, a with the same Color and L, H can exists twice
+%    I: instance of series itself, a serie with the same Color and L, H can exists twice
 0 { series(L,H,N,C,I3,I) } 1 :- ontable(L,C,I1),ontable(H,C,I2), ontable(N,C,I3), L<H, N>L-1, N<H+1,idx(I). 
 
 % count how many element exist in a series from L to H

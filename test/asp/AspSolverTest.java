@@ -79,6 +79,7 @@ class AspSolverTest {
 		as.setJsonresult(this.exampleJson);
 		
 		GameState state_old = as.jsonToGamestate();
+		state_old.setRoundNr(1);
 		GameState state_new = as.solve_round(state_old);
 		Assert.assertNotNull(state_new);
 

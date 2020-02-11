@@ -36,21 +36,41 @@ public class AspSolver {
 			bw.write(state_old.toAspRepresentation());
 			bw.close();
 			fw.close();
-			Process proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ");
+			Process proc;
+			if (state_old.getRoundNr()<1)
+			{
+			    proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ASP/first_round_rule.lp ");
+			}
+			else
+			{
+				proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ");
+			}
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			while ((line = br.readLine())!=null)
 			{
+				System.out.println(line);
 				jsoncontent += line;
 			}
 			this.jsonresult = jsoncontent;
 			br.close();
 			isr.close();
 			is.close();
-			
-			return this.jsonToGamestate();
+			if (!this.getSolverResult().equals("UNSATISFIABLE"))
+			{
+				GameState state = this.jsonToGamestate();
+				if (state.getSumLaid()>0)
+				{
+					state.setRoundNr(state_old.getRoundNr()+1);
+				}
+				return state;
+			}
+			else
+			{
+				return state_old;
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (RummikubException e) {
@@ -143,6 +163,12 @@ public class AspSolver {
 		});
 		
 		return result;
+	}
+	
+	private String getSolverResult()
+	{
+		JSONObject jobj = new JSONObject(this.jsonresult);
+		return (String)jobj.get("Result");
 	}
 	
 	private JSONArray getLastWitnessValues()

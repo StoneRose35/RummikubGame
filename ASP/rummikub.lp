@@ -19,7 +19,7 @@ fig(N,C,I) :- color(C), number(N), idx(I).
 %%%
 
 0 { ontable(N,C,I) } 1 :- onshelf(N,C,I).
-1 { ontable(J) } 1 :- onshelf(J). 
+0 { ontable(J) } 1 :- onshelf(J). 
 
 
 %%

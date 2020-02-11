@@ -1,0 +1,46 @@
+{
+  "Solver": "clingo version 5.4.0",
+  "Input": [
+    "game1.lp","rummikub.lp"
+  ],
+  "Call": [
+    {
+      "Witnesses": [
+        {
+          "Value": [
+            "ontable(1,2,1)", "ontable(2,2,1)", "ontable(3,2,1)", "ontable(3,3,1)", "ontable(3,1,1)", "ontable(3,4,1)", "ontable(1)", "ontable(4,2,1)", "ontable(3,2,3)", "series(1,4,1,2,1,1)", "series(1,4,2,2,1,1)", "series(1,4,3,2,1,1)", "series(1,4,4,2,1,1)", "collection(3,3,1,1)", "collection(3,1,1,1)", "collection(3,4,1,1)", "collection(3,2,3,1)", "sum_on_table(4)", "remaining(7,3,1)"
+          ],
+          "Costs": [
+            1, 0, -4, -3
+          ]
+        },
+        {
+          "Value": [
+            "ontable(1,2,1)", "ontable(2,2,1)", "ontable(3,2,1)", "ontable(3,3,1)", "ontable(3,1,1)", "ontable(3,4,1)", "ontable(1)", "ontable(4,2,1)", "ontable(5,2,3)", "series(1,5,1,2,1,1)", "series(1,5,2,2,1,1)", "series(1,5,3,2,1,1)", "series(1,5,4,2,1,1)", "series(1,5,5,2,3,1)", "collection(3,3,1,2)", "collection(3,1,1,2)", "collection(3,4,1,2)", "sum_on_table(4)", "remaining(7,3,1)"
+          ],
+          "Costs": [
+            1, 0, -4, -5
+          ]
+        }
+      ]
+    }
+  ],
+  "Result": "OPTIMUM FOUND",
+  "Models": {
+    "Number": 2,
+    "More": "no",
+    "Optimum": "yes",
+    "Optimal": 1,
+    "Costs": [
+      1, 0, -4, -5
+    ]
+  },
+  "Calls": 1,
+  "Time": {
+    "Total": 0.582,
+    "Solve": 0.126,
+    "Model": 0.013,
+    "Unsat": 0.008,
+    "CPU": 0.582
+  }
+}

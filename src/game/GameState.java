@@ -12,11 +12,13 @@ public class GameState {
 	private List<RummikubFigure> ontable;
 	private String aspRepresentation;
 	private int sumLaid;
+	private int roundNr;
 	
 	public GameState() 
 	{
 		this.onshelf = new ArrayList<RummikubFigure>();
 		this.ontable = new ArrayList<RummikubFigure>();
+		this.roundNr = 0;
 	}
 	
 	public void drawFigure(RummikubFigure figure) throws RummikubGameException
@@ -68,6 +70,23 @@ public class GameState {
 
 	public void setSumLaid(int sumLaid) {
 		this.sumLaid = sumLaid;
+	}
+
+	public int getRoundNr() {
+		return roundNr;
+	}
+	
+	public void setRoundNr(int roundNr)
+	{
+		this.roundNr=roundNr;
+	}
+	
+	public void initialize()
+	{
+		this.sumLaid = 0;
+		this.roundNr = 0;
+		this.onshelf.clear();
+		this.ontable.clear();
 	}
 	
 }

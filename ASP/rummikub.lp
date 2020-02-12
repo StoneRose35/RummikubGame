@@ -49,8 +49,8 @@ fig(N,C,I) :- color(C), number(N), idx(I).
 %    I: instance of series itself, a serie with the same Color and L, H can exists twice
 0 { series(L,H,N,C,I3,I) } 1 :- ontable(L,C,I1),ontable(H,C,I2), ontable(N,C,I3), L<H, N>L-1, N<H+1,idx(I). 
 
-% count how many element exist in a series from L to H
-sum_series(L,H,C,Q,I):- series(L,H,_,C,_,I), Q = #sum{1, N,I3: series(L,H,N,C,I3,I)}.
+% count how many elements exist in a series from L to H
+sum_series(L,H,C,Q,I):- series(L,H,_,C,_,I), Q = #sum{1, N: series(L,H,N,C,I3,I)}.
 
 % make an answer set invalid if it contains series with less than three elements
 :- sum_series(_,_,_,Q,_), Q <3.

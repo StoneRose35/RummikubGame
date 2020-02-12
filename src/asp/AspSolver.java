@@ -138,7 +138,7 @@ public class AspSolver {
 			else if (pred.getName().equals("collection"))
 			{
 				List<Integer> a = pred.atomsAsIntegers();
-				long hash = a.get(0) + a.get(2)*17;
+				long hash = a.get(0) + a.get(3)*17;
 				IRummikubFigureBag rs;
 				rs = new RummikubCollection();
 				rs.setHash(hash);

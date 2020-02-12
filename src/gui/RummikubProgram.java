@@ -32,7 +32,6 @@ public class RummikubProgram extends JFrame{
 	private static final long serialVersionUID = 1418187771696355888L;
 	private JPanel contentPane;
 	private Game stack;
-	private GameState state;
 	private AspSolver solver;
     private FigureRepresentation f;
 	
@@ -57,7 +56,6 @@ public class RummikubProgram extends JFrame{
 	 */
 	public RummikubProgram() {
 		this.stack = new Game();
-		this.state = new GameState();
 		this.solver = new AspSolver();
 		
 		setTitle("Rummikub Program");
@@ -69,7 +67,7 @@ public class RummikubProgram extends JFrame{
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		this.f = new FigureRepresentation();
-		this.f.setState(this.state);
+		this.f.setState(new GameState());
 		contentPane.add(this.f, BorderLayout.CENTER);
 		
 		JPanel buttonsPanel = new JPanel();
@@ -111,10 +109,10 @@ public class RummikubProgram extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			this.parent.stack.initializeGame();
-			this.parent.state.initialize();
+			this.parent.f.getState().initialize();
 			for(int cnt=0;cnt<14;cnt++)
 			{
-				this.parent.state.addFigure(this.parent.stack.drawFromStack());
+				this.parent.f.getState().addFigure(this.parent.stack.drawFromStack());
 			}
 			this.parent.repaint();
 		}
@@ -135,7 +133,7 @@ public class RummikubProgram extends JFrame{
 			RummikubFigure rf = this.parent.stack.drawFromStack();
 			if (rf != null)
 			{
-				this.parent.state.addFigure(rf);
+				this.parent.f.getState().addFigure(rf);
 				this.parent.repaint();
 			}
 		}
@@ -154,7 +152,7 @@ public class RummikubProgram extends JFrame{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			GameState s_new = this.parent.solver.solve_round(this.parent.state);
+			GameState s_new = this.parent.solver.solve_round(this.parent.f.getState());
 			if (s_new.getSumLaid()==0)
 			{
 				RummikubFigure rf = this.parent.stack.drawFromStack();
@@ -179,7 +177,7 @@ public class RummikubProgram extends JFrame{
 					this.parent.f.setTableFigures(this.parent.solver.getTableDescription());
 				}
 			}
-			this.parent.state = s_new;
+			this.parent.f.setState(s_new);
 			this.parent.repaint();
 		}
 	}

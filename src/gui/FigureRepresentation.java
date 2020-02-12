@@ -57,6 +57,8 @@ public class FigureRepresentation extends JPanel {
 		int dy = (int)(d.getWidth()/13.0*this.H_RATIO);
 		int n_bags = this.tableFigures.size();
 		g.fillRect(0, 0, this.getWidth(), n_bags*dy);
+		
+		
 		while(itb.hasNext())
 		{
 			figureBag = itb.next();
@@ -95,6 +97,11 @@ public class FigureRepresentation extends JPanel {
 	public void setState(GameState s)
 	{
 		this.state = s;
+	}
+	
+	public GameState getState()
+	{
+		return this.state;
 	}
 
 

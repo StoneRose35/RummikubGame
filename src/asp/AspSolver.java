@@ -60,10 +60,15 @@ public class AspSolver {
 			is.close();
 			if (!this.getSolverResult().equals("UNSATISFIABLE"))
 			{
+				
 				GameState state = this.jsonToGamestate();
 				if (state.getSumLaid()>0)
 				{
 					state.setRoundNr(state_old.getRoundNr()+1);
+				}
+				else
+				{
+					state.setRoundNr(state_old.getRoundNr());
 				}
 				return state;
 			}

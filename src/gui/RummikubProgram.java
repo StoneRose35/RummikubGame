@@ -110,11 +110,10 @@ public class RummikubProgram extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			this.parent.stack.initializeGame();
 			this.parent.f.getState().initialize();
-			/*for(int cnt=0;cnt<14;cnt++)
+			for(int cnt=0;cnt<14;cnt++)
 			{
 				this.parent.f.getState().addFigure(this.parent.stack.drawFromStack());
 			}
-			*/
 			this.parent.repaint();
 		}
 		
@@ -160,7 +159,6 @@ public class RummikubProgram extends JFrame{
 				if (rf != null)
 				{
 					s_new.addFigure(rf);
-					this.parent.repaint();
 				}
 				else
 				{
@@ -173,10 +171,7 @@ public class RummikubProgram extends JFrame{
 				{
 					showMessageDialog(this.parent,"Game Won!");
 				}
-				else
-				{
-					this.parent.f.setTableFigures(this.parent.solver.getTableDescription());
-				}
+				this.parent.f.setTableFigures(this.parent.solver.getTableDescription());
 			}
 			this.parent.f.setState(s_new);
 			this.parent.repaint();

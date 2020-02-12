@@ -87,6 +87,9 @@ sum_collection(N,Q,I):- collection(N,_,_,I), Q = #sum{1, C2: collection(N,C2,_,I
 :- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), H1!=H2.
 :- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), Is1!=Is2.
 
+% the same number twice in the same series
+:- series(L,H,N,C,I,Is), series(L1,H1,N,C,I2,Is), I != I2.
+
 % in two collections
 :- collection(N,C,I,Ic1), collection(N,C,I,Ic2), Ic1!=Ic2.
 
@@ -125,7 +128,7 @@ remaining(J) :- onshelf(J), not ontable(J).
 
 #show series/6.
 
-#show sum_series/5.
+%#show sum_series/5.
 
 #show collection/4.
 

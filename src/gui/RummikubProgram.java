@@ -110,10 +110,11 @@ public class RummikubProgram extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			this.parent.stack.initializeGame();
 			this.parent.f.getState().initialize();
-			for(int cnt=0;cnt<14;cnt++)
+			/*for(int cnt=0;cnt<14;cnt++)
 			{
 				this.parent.f.getState().addFigure(this.parent.stack.drawFromStack());
 			}
+			*/
 			this.parent.repaint();
 		}
 		

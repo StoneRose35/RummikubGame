@@ -8,4 +8,5 @@ public interface IRummikubFigureBag {
 	public Iterator<RummikubFigure> iterator();
 	public long getHash();
 	public void setHash(long hash);
+	public int getFigureCount();
 }

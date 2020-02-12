@@ -47,41 +47,47 @@ public class FigureRepresentation extends JPanel {
 	
 	private void updateFigures(Graphics g)
 	{
-		Integer row = 0;
-		Integer column = 0;
-		Iterator<IRummikubFigureBag> itb = this.tableFigures.iterator();
 		IRummikubFigureBag figureBag;
 		// draw table figures
 		g.setColor(new Color(105, 15, 45));
 		Dimension d = this.getSize();
 		int dy = (int)(d.getWidth()/13.0*this.H_RATIO);
-		int n_bags = this.tableFigures.size();
-		g.fillRect(0, 0, this.getWidth(), n_bags*dy);
+
 		
+		// compute table dimensions and fill table
+		int n_places = 0;
+		Iterator<IRummikubFigureBag> itb = this.tableFigures.iterator();
+		while(itb.hasNext())
+		{
+			figureBag = itb.next();
+			n_places += figureBag.getFigureCount()+1;
+		}
+		n_places =  (int)Math.ceil((double)n_places/13);
+		g.fillRect(0, 0, this.getWidth(), n_places*dy);
 		
+		Coordinates coords = new Coordinates();
+		itb = this.tableFigures.iterator();
 		while(itb.hasNext())
 		{
 			figureBag = itb.next();
 			Iterator<RummikubFigure> it = figureBag.iterator();
 			while(it.hasNext())
 			{
-				this.drawRummikubFigure(it.next(), row, column, g);
-				column++;
+				this.drawRummikubFigure(it.next(), coords, g);
+				coords.increase();
 			}
-			column = 0;
-			row++;
+			coords.increase();
+		}
+		if(coords.getColumn()> 0)
+		{
+		    coords.nextLine();
 		}
 		// draw shelf figures
 		Iterator<RummikubFigure> its = this.state.getShelfFigures().iterator();
 		while (its.hasNext())
 		{
-			this.drawRummikubFigure(its.next(), row, column, g);
-			column++;
-			if (column == 13)
-			{
-				row++;
-				column = 0;
-			}
+			this.drawRummikubFigure(its.next(), coords, g);
+			coords.increase();
 		}
 	}
 	
@@ -104,6 +110,10 @@ public class FigureRepresentation extends JPanel {
 		return this.state;
 	}
 
+	private void drawRummikubFigure(RummikubFigure f,Coordinates c, Graphics g)
+	{
+		drawRummikubFigure(f,c.getRow(),c.getColumn(),g);
+	}
 
 	private void drawRummikubFigure(RummikubFigure f,int row,int column, Graphics g)
 	{
@@ -137,6 +147,54 @@ public class FigureRepresentation extends JPanel {
 			}
 			g.drawString("J", x0 + figureWidth/2, y0 + figureHeight/4);
 		}
+	}
+	
+	class Coordinates
+	{
+		private int column;
+		private int row;
+		
+		public Coordinates()
+		{
+			this.column = 0;
+			this.row = 0;
+		}
+		
+		public Coordinates(int r,int c)
+		{
+			this.column = c;
+			this.row = r;
+		}
+		
+		public void increase()
+		{
+			this.column++;
+			if (this.column==13)
+			{
+				this.column = 0;
+				this.row++;
+			}
+		}
+		
+		public void nextLine()
+		{
+			this.row++;
+			this.column = 0;
+		}
+		
+		public Integer getColumn() {
+			return column;
+		}
+		public void setColumn(Integer column) {
+			this.column = column;
+		}
+		public Integer getRow() {
+			return row;
+		}
+		public void setRow(Integer row) {
+			this.row = row;
+		}
+		
 	}
 		
 }

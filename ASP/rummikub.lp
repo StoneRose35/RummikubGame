@@ -125,7 +125,7 @@ remaining(J) :- onshelf(J), not ontable(J).
 
 #show series/6.
 
-%#show sum_series/5.
+#show sum_series/5.
 
 #show collection/4.
 

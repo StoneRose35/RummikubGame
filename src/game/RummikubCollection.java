@@ -83,5 +83,10 @@ public class RummikubCollection implements IRummikubFigureBag{
 			return false;
 		}
 	}
+
+	@Override
+	public int getFigureCount() {
+        return this.figures.size();
+	}
 	
 }

@@ -4,24 +4,21 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import asp.AspSolver;
 import game.Game;
 import game.GameState;
 import game.RummikubFigure;
+import game.IRummikubFigureBag;
 
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.util.ArrayList;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class RummikubProgram extends JFrame{
@@ -110,6 +107,7 @@ public class RummikubProgram extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			this.parent.stack.initializeGame();
 			this.parent.f.getState().initialize();
+			this.parent.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
 			for(int cnt=0;cnt<14;cnt++)
 			{
 				this.parent.f.getState().addFigure(this.parent.stack.drawFromStack());

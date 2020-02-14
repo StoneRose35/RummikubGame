@@ -102,6 +102,18 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	public int getInstance() {
 		return instance;
 	}
+	
+	public int getScore()
+	{
+		if(this.instance < 3)
+		{
+			return this.number;
+		}
+		else
+		{
+			return 50;
+		}
+	}
 
 	public void setInstance(int instance) throws RummikubException {
 		if (instance <1 || instance > 4)

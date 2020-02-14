@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 
 import game.RummikubFigure;
+import game.RummikubPlayer;
 import game.GameState;
 import game.IRummikubFigureBag;
 
@@ -26,12 +27,12 @@ public class FigureRepresentation extends JPanel {
 	private static final long serialVersionUID = -6847047541601038545L;
 	private final double H_RATIO = 1.35;
 	private List<IRummikubFigureBag> tableFigures;
-	private GameState state;
+	private List<RummikubPlayer> players;
 	
 	public FigureRepresentation()
 	{
 		this.tableFigures = new ArrayList<IRummikubFigureBag>();
-        this.state = new GameState();
+		this.players = new ArrayList<RummikubPlayer>();
 	}
 	
 
@@ -83,11 +84,15 @@ public class FigureRepresentation extends JPanel {
 		    coords.nextLine();
 		}
 		// draw shelf figures
-		Iterator<RummikubFigure> its = this.state.getShelfFigures().iterator();
-		while (its.hasNext())
+		for (RummikubPlayer p : this.players)
 		{
-			this.drawRummikubFigure(its.next(), coords, g);
-			coords.increase();
+			Iterator<RummikubFigure> its = p.getOnShelf().iterator();
+			while (its.hasNext())
+			{
+				this.drawRummikubFigure(its.next(), coords, g);
+				coords.increase();
+			}
+			coords.nextLine();
 		}
 	}
 	
@@ -100,14 +105,14 @@ public class FigureRepresentation extends JPanel {
 		this.tableFigures = tableFigures;
 	}
 	
-	public void setState(GameState s)
+	public void setPlayers(List<RummikubPlayer> p)
 	{
-		this.state = s;
+		this.players = p;
 	}
 	
-	public GameState getState()
+	public List<RummikubPlayer> getState()
 	{
-		return this.state;
+		return this.players;
 	}
 
 	private void drawRummikubFigure(RummikubFigure f,Coordinates c, Graphics g)
@@ -127,13 +132,13 @@ public class FigureRepresentation extends JPanel {
 		g.fillRoundRect(x0,y0,figureWidth, figureHeight, figureWidth/10, figureWidth/10);
 		g.setColor(new Color(240, 204, 113));
 		g.drawRoundRect(x0,y0,figureWidth, figureHeight, figureWidth/10, figureWidth/10);
-		Font nr_font =  new Font(Font.SANS_SERIF,Font.PLAIN,figureHeight/7);
+		Font nr_font =  new Font(Font.SANS_SERIF,Font.BOLD,figureHeight/4);
 		g.setFont(nr_font);
 		if (f.getInstance()<3)
 		{
 			g.setColor(f.getColor().getColor());
 
-			g.drawString(String.format("%d", f.getNumber()), x0 + figureWidth/2, y0 + figureHeight/4);
+			g.drawString(String.format("%d", f.getNumber()), x0 + figureWidth/3, y0 + figureHeight/3);
 		}
 		else
 		{

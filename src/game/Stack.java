@@ -61,6 +61,11 @@ public class Stack {
 		
 	}
 	
+	public int getSize()
+	{
+		return this.on_stack.size();
+	}
+	
 	public RummikubFigure drawFromStack()
 	{
 		if (this.on_stack.size() > 0)

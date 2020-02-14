@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import asp.AspSolver;
-import game.Game;
+import game.Stack;
 import game.GameState;
 import game.RummikubFigure;
 import game.IRummikubFigureBag;
@@ -28,7 +28,7 @@ public class RummikubProgram extends JFrame{
 	 */
 	private static final long serialVersionUID = 1418187771696355888L;
 	private JPanel contentPane;
-	private Game stack;
+	private Stack stack;
 	private AspSolver solver;
     private FigureRepresentation f;
 	
@@ -52,7 +52,7 @@ public class RummikubProgram extends JFrame{
 	 * Create the frame.
 	 */
 	public RummikubProgram() {
-		this.stack = new Game();
+		this.stack = new Stack();
 		this.solver = new AspSolver();
 		
 		setTitle("Rummikub Program");
@@ -90,7 +90,7 @@ public class RummikubProgram extends JFrame{
 	}
 	
 	
-	public Game getGame() {
+	public Stack getGame() {
 		return stack;
 	}
 

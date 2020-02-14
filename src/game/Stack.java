@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class Game {
+public class Stack {
 	private List<RummikubFigure> on_stack;
 	
-	public Game()
+	public Stack()
 	{
 		on_stack = new ArrayList<RummikubFigure>();
 	}

@@ -17,6 +17,7 @@ public class Stack {
 	{
 		RummikubColor[] colors = RummikubColor.values();
 		RummikubFigure rf;
+		on_stack.clear();
 		
 		// create regular rummikub figures
 		for (int n=1;n<14;n++)

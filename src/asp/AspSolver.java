@@ -51,7 +51,7 @@ public class AspSolver {
 			String line = null;
 			while ((line = br.readLine())!=null)
 			{
-				System.out.println(line);
+				//System.out.println(line);
 				jsoncontent += line;
 			}
 			this.jsonresult = jsoncontent;

@@ -83,15 +83,15 @@ sum_collection(N,Q,I):- collection(N,_,_,I), Q = #sum{1, C2: collection(N,C2,_,I
 :- ontable(N,C,I), collection(N,C,I,_), series(_,_,N,C,I,_).
 
 % in two series
-:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), L1!=L2.
-:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), H1!=H2.
-:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), Is1!=Is2.
+:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), L1<L2.
+:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), H1<H2.
+:- series(L1,H1,N,C,I,Is1), series(L2,H2,N,C,I,Is2), Is1<Is2.
 
 % the same number twice in the same series
-:- series(L,H,N,C,I,Is), series(L1,H1,N,C,I2,Is), I != I2.
+:- series(L,H,N,C,I,Is), series(L1,H1,N,C,I2,Is), I < I2.
 
 % in two collections
-:- collection(N,C,I,Ic1), collection(N,C,I,Ic2), Ic1!=Ic2.
+:- collection(N,C,I,Ic1), collection(N,C,I,Ic2), Ic1<Ic2.
 
 % remove answer sets where a figure on table is neither in a collection or a series
 :- ontable(N,C,I),not series(_,_,N,C,I,_),not collection(N,C,I,_).
@@ -114,10 +114,10 @@ sum_jokers(S) :- S= #sum{N,C, I: ontable(N,C,I), onshelf(I-2)}.
 remaining(N,C,I) :- onshelf(N,C,I), not ontable(N,C,I).
 remaining(J) :- onshelf(J), not ontable(J).
 
-#minimize{1@10, N,C,I: remaining(N,C,I)}.
-#minimize{1@9, J: remaining(J)}.
-#maximize{S@8, S: sum_on_table(S)}.
-#maximize{S@7, S: sum_jokers(S)}.
+#minimize{N@10, N,C,I: remaining(N,C,I)}.
+#minimize{50@10, J: remaining(J)}.
+%#maximize{S@8, S: sum_on_table(S)}.
+%#maximize{S@8, S: sum_jokers(S)}.
 
 
 %%%

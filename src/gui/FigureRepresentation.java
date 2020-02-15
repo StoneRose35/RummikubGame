@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import game.RummikubFigure;
 import game.RummikubPlayer;
-import game.GameState;
 import game.IRummikubFigureBag;
 
 public class FigureRepresentation extends JPanel {

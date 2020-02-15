@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import asp.AspSolver;
 import game.Stack;
 import game.RummikubFigure;
 import game.IRummikubFigureBag;
@@ -16,6 +15,9 @@ import game.RummikubResult;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
@@ -40,7 +42,9 @@ public class RummikubProgram extends JFrame{
     private List<RummikubPlayer> players;
     private int currentPlayer;
     private final String[] PLAYER_NAMES = {"Anna","Anton","Antonia","Arthur","August","Augusta","Benno","Bruno","Charlotte","Clemens","Dorothea","Edda","Elisa","Elisabeth","Elsa","Emil","Emma","Eugen","Franka","Franz","Franziska","Frederick","Frieda","Friederike","Friedrich","Gabriel","Georg","Greta","Gustav","Hagen","Hedda","Helene","Henri","Henriette","Hugo","Ida","Johann","Johanna","Johannes","Josephine","Julius","Justus","Karl","Karla","Karolina","Kaspar","Katharina","K","Konrad","Konstantin","Korbinian","Leonhard","Leopold","Lorenz","Ludwig","Luise","Margarete","Maria","Martha","Margarete","Mathilda","Maximilian","Oskar","Otto","Paul","Paula","Richard","Ruth","Thea","Theodor","Theresa","Viktoria","Wilhelmine"};
-	
+	private final int GAME_ABORTED = 0;
+	private final int GAME_ONGOING = 1;
+    
 	/**
 	 * Launch the application.
 	 */
@@ -102,9 +106,53 @@ public class RummikubProgram extends JFrame{
 		
 		this.round_nr=0;
 		this.players = new ArrayList<RummikubPlayer>();
+		
 
 	}
 	
+	private void testingScript()
+	{
+		File logfile=new File("log.txt");
+		FileWriter fw;
+		Rounder rounder;
+
+		try {
+			fw = new FileWriter(logfile);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write("'Player number won','round nr','stack size at end of game'\n");
+			int cnt = 0;
+			rounder = new Rounder(this);
+			while(cnt < 50)
+			{
+				boolean gameEnds = false;
+				this.initNewGame(2);
+				while(!gameEnds)
+				{
+					int res = this.playRound();
+					this.repaint();
+
+					if (res > 9)
+					{
+						bw.write(String.format("%d,%d,%d\n",res-10,this.round_nr,this.stack.getSize()));
+						bw.flush();
+						gameEnds = true;
+					}
+					else if (res == this.GAME_ABORTED)
+					{
+						bw.write(String.format("%d,%d,%d\n",0,this.round_nr,this.stack.getSize()));
+						bw.flush();
+						gameEnds=true;
+					}
+					System.out.println(String.format("played round %d of game %d",this.round_nr,cnt));
+				}
+				cnt++;
+			}
+			bw.close();
+		} catch (Exception e)
+		{
+		
+		} 
+	}
 	
 	public Stack getStack() {
 		return stack;
@@ -139,6 +187,63 @@ public class RummikubProgram extends JFrame{
 			this.currentPlayer = 0;
 		}
 	}
+	
+	private void initNewGame(int nPlayers)
+	{
+		this.stack.initializeGame();
+		this.players.clear();
+		Random r = new Random();
+		for (int c=0;c<nPlayers;c++)
+		{
+			RummikubPlayer p = new RummikubPlayer();
+			p.setName(this.PLAYER_NAMES[r.nextInt(this.PLAYER_NAMES.length)]);
+			for(int cnt=0;cnt<14;cnt++)
+			{
+				p.getOnShelf().add(this.stack.drawFromStack());
+			}
+			this.players.add(p);
+		}
+		this.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
+		this.f.setPlayers(this.players);
+
+		this.round_nr=0;
+		this.updateGameInfo();
+		this.repaint();
+	}
+	
+	private int playRound()
+	{
+		int result=this.GAME_ONGOING;
+		if (!this.getCurrentPlayer().getOnShelf().isEmpty())
+		{
+			RummikubResult res  = this.getCurrentPlayer().solveRound(this.f.getTableFigures());
+			if (res.getScoreLaid()==0)
+			{
+				RummikubFigure rf = this.stack.drawFromStack();
+				if (rf != null)
+				{
+					this.getCurrentPlayer().getOnShelf().add(rf);
+				}
+				else
+				{
+					result = this.GAME_ABORTED;
+				}
+			}
+			else
+			{
+				if (this.getCurrentPlayer().getOnShelf().isEmpty())
+				{
+					result = 10 + this.currentPlayer;  
+				}
+				this.f.setTableFigures(res.getOnTable());
+			}
+		}
+
+		this.updateGameInfo();
+		this.setNextPlayer();
+		this.round_nr++;
+		return result;
+	}
 
 
 	class BtnInitGameHandler implements ActionListener
@@ -160,25 +265,7 @@ public class RummikubProgram extends JFrame{
 					playerSelection,
 					2);
 
-			this.parent.stack.initializeGame();
-			this.parent.players.clear();
-			Random r = new Random();
-			for (int c=0;c<nPlayersChosen;c++)
-			{
-				RummikubPlayer p = new RummikubPlayer();
-				p.setName(this.parent.PLAYER_NAMES[r.nextInt(this.parent.PLAYER_NAMES.length)]);
-				for(int cnt=0;cnt<14;cnt++)
-				{
-					p.getOnShelf().add(this.parent.stack.drawFromStack());
-				}
-				this.parent.players.add(p);
-			}
-			this.parent.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
-			this.parent.f.setPlayers(this.parent.players);
-
-			this.parent.round_nr=0;
-			this.parent.updateGameInfo();
-			this.parent.repaint();
+			this.parent.initNewGame(nPlayersChosen);
 		}
 		
 	}
@@ -194,12 +281,8 @@ public class RummikubProgram extends JFrame{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			RummikubFigure rf = this.parent.stack.drawFromStack();
-			if (rf != null)
-			{
-				this.parent.players.get(this.parent.currentPlayer).getOnShelf().add(rf);
-				this.parent.repaint();
-			}
+			Rounder r = new Rounder(this.parent);
+			r.start();
 		}
 	}
 	
@@ -214,36 +297,36 @@ public class RummikubProgram extends JFrame{
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if (!this.parent.getCurrentPlayer().getOnShelf().isEmpty())
+			int res = this.parent.playRound();
+			if (res == this.parent.GAME_ABORTED)
 			{
-				RummikubResult res  = this.parent.getCurrentPlayer().solveRound(this.parent.f.getTableFigures());
-				if (res.getScoreLaid()==0)
-				{
-					RummikubFigure rf = this.parent.stack.drawFromStack();
-					if (rf != null)
-					{
-						this.parent.getCurrentPlayer().getOnShelf().add(rf);
-					}
-					else
-					{
-						showMessageDialog(this.parent,"No more figures on Stack");
-					}
-				}
-				else
-				{
-					if (this.parent.getCurrentPlayer().getOnShelf().isEmpty())
-					{
-						showMessageDialog(this.parent,String.format("Player %s Won!",this.parent.getCurrentPlayer().getName()));
-					}
-					this.parent.f.setTableFigures(res.getOnTable());
-				}
+				showMessageDialog(this.parent,"Non more figures on Stack");
 			}
-
-			this.parent.updateGameInfo();
-			this.parent.setNextPlayer();
-			this.parent.round_nr++;
-			this.parent.repaint();
+			if (res >= 10)
+			{
+				showMessageDialog(this.parent,String.format("Player %s Won!",this.parent.players.get(res-10).getName()));
+			}
 		}
+	}
+	
+	class Rounder extends Thread
+	{
+		private int result = 0;
+		private RummikubProgram parent;
+		
+		public Rounder(RummikubProgram parent)
+		{
+			this.parent = parent;
+		}
+		@Override
+		public void run()
+		{
+			this.parent.testingScript();
+		}
+		public int getResult() {
+			return result;
+		}
+
 	}
 	
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class AspSolver {
 	
 	private String jsonresult;
+	private String strategyFile;
 
 	public String getJsonresult() {
 		return jsonresult;
@@ -22,6 +23,12 @@ public class AspSolver {
 
 	public AspSolver()
 	{
+		this.strategyFile = "minim_score.lp";
+	}
+	
+	public AspSolver(String strategy)
+	{
+		this.strategyFile = strategy;
 	}
 	
 	public GameState solve_round(GameState state_old)
@@ -39,11 +46,11 @@ public class AspSolver {
 			Process proc;
 			if (state_old.getRoundNr()<1)
 			{
-			    proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ASP/first_round_rule.lp ");
+			    proc = rt.exec(String.format("clingo --outf=2 game.lp ASP/rummikub.lp ASP/%s ASP/first_round_rule.lp ",this.strategyFile));
 			}
 			else
 			{
-				proc = rt.exec("clingo --outf=2 game.lp ASP/rummikub.lp ");
+				proc = rt.exec(String.format("clingo --outf=2 game.lp ASP/rummikub.lp  ASP/%s ",this.strategyFile));
 			}
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
@@ -51,7 +58,7 @@ public class AspSolver {
 			String line = null;
 			while ((line = br.readLine())!=null)
 			{
-				//System.out.println(line);
+				System.out.println(line);
 				jsoncontent += line;
 			}
 			this.jsonresult = jsoncontent;

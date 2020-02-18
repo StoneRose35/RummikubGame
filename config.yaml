@@ -1,0 +1,10 @@
+games_to_play: 500
+logfile: unequal_duel.txt
+players:
+- 
+ name: p1
+ strategy: minim_nr.lp
+-
+ name: p2
+ strategy: minim_score.lp
+

@@ -19,6 +19,12 @@ public class RummikubPlayer {
     	this.solver = new AspSolver();
     }
     
+    public RummikubPlayer(String strategy)
+    {
+    	this.onShelf = new ArrayList<RummikubFigure>();
+    	this.solver = new AspSolver(strategy);
+    }
+    
     public RummikubResult solveRound(List<IRummikubFigureBag> onTableBeginning)
     {
     	RummikubResult result = new RummikubResult();

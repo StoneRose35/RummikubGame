@@ -17,7 +17,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.InputStream;
 
 import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
@@ -25,7 +28,10 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import org.yaml.snakeyaml.Yaml;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -41,6 +47,8 @@ public class RummikubProgram extends JFrame{
     private int round_nr;
     private List<RummikubPlayer> players;
     private int currentPlayer;
+    private int gamesToPlay;
+    private String logFileName;
     private final String[] PLAYER_NAMES = {"Anna","Anton","Antonia","Arthur","August","Augusta","Benno","Bruno","Charlotte","Clemens","Dorothea","Edda","Elisa","Elisabeth","Elsa","Emil","Emma","Eugen","Franka","Franz","Franziska","Frederick","Frieda","Friederike","Friedrich","Gabriel","Georg","Greta","Gustav","Hagen","Hedda","Helene","Henri","Henriette","Hugo","Ida","Johann","Johanna","Johannes","Josephine","Julius","Justus","Karl","Karla","Karolina","Kaspar","Katharina","K","Konrad","Konstantin","Korbinian","Leonhard","Leopold","Lorenz","Ludwig","Luise","Margarete","Maria","Martha","Margarete","Mathilda","Maximilian","Oskar","Otto","Paul","Paula","Richard","Ruth","Thea","Theodor","Theresa","Viktoria","Wilhelmine"};
 	private final int GAME_ABORTED = 0;
 	private final int GAME_ONGOING = 1;
@@ -88,7 +96,7 @@ public class RummikubProgram extends JFrame{
 		JButton btnPlayRound = new JButton("Play round");
 		buttonsPanel.add(btnPlayRound);
 		
-		JButton btnDrawFigure = new JButton("draw Figure");
+		JButton btnDrawFigure = new JButton("launch Script");
 		buttonsPanel.add(btnDrawFigure);
 		
 		JTextArea gameInfoText = new JTextArea();
@@ -106,26 +114,24 @@ public class RummikubProgram extends JFrame{
 		
 		this.round_nr=0;
 		this.players = new ArrayList<RummikubPlayer>();
-		
-
+		this.gamesToPlay = 500;
+		this.logFileName = "log.txt";
 	}
 	
 	private void testingScript()
 	{
-		File logfile=new File("log.txt");
+		File logfile=new File(this.logFileName);
 		FileWriter fw;
-		Rounder rounder;
 
 		try {
 			fw = new FileWriter(logfile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("'Player number won','round nr','stack size at end of game'\n");
 			int cnt = 0;
-			rounder = new Rounder(this);
-			while(cnt < 50)
+			while(cnt < this.gamesToPlay)
 			{
 				boolean gameEnds = false;
-				this.initNewGame(2);
+				this.initFromConfig();
 				while(!gameEnds)
 				{
 					int res = this.playRound();
@@ -158,6 +164,8 @@ public class RummikubProgram extends JFrame{
 		return stack;
 	}
 	
+	
+	
 	private void updateGameInfo()
 	{
 		String fmt = "Round Nr: %d\nStack Size: %d\nLast Action: %s\n";
@@ -168,6 +176,36 @@ public class RummikubProgram extends JFrame{
 			fmt += String.format("Player #%s\nScore %d\n\n",p.getName(),p.getTotalScore());
 		}
 		ta.setText(fmt);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void initFromConfig() throws FileNotFoundException
+	{
+		Yaml yaml = new Yaml();
+		InputStream is = new FileInputStream(new File("config.yaml"));
+		Map<String, Object> obj = yaml.load(is);
+		
+		this.stack.initializeGame();
+		this.players.clear();
+		this.gamesToPlay = (int)obj.get("games_to_play");
+		this.logFileName = (String)obj.get("logfile");
+		ArrayList<Object> players = (ArrayList<Object>)obj.get("players");
+		players.forEach(p -> {
+			Map<String,String> pMap = (Map<String,String>)p;
+			RummikubPlayer pObj = new RummikubPlayer(pMap.get("strategy"));
+			pObj.setName(pMap.get("name"));
+			for(int cnt=0;cnt<14;cnt++)
+			{
+				pObj.getOnShelf().add(this.stack.drawFromStack());
+			}
+			this.players.add(pObj);
+		});
+		this.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
+		this.f.setPlayers(this.players);
+		
+		this.round_nr=0;
+		this.updateGameInfo();
+		this.repaint();
 	}
 
 
@@ -192,6 +230,7 @@ public class RummikubProgram extends JFrame{
 	{
 		this.stack.initializeGame();
 		this.players.clear();
+		this.gamesToPlay = 500;
 		Random r = new Random();
 		for (int c=0;c<nPlayers;c++)
 		{
@@ -283,6 +322,7 @@ public class RummikubProgram extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			Rounder r = new Rounder(this.parent);
 			r.start();
+
 		}
 	}
 	

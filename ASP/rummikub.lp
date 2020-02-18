@@ -18,7 +18,7 @@ fig(N,C,I) :- color(C), number(N), idx(I).
 %%%
 %%%
 
-0 { ontable(N,C,I) } 1 :- onshelf(N,C,I).
+1 { ontable(N,C,I) : onshelf(N,C,I) }.
 0 { ontable(J) } 1 :- onshelf(J). 
 
 
@@ -109,15 +109,10 @@ sum_jokers(S) :- S= #sum{N,C, I: ontable(N,C,I), onshelf(I-2)}.
 %%%
 %%%
 %%% Optimize: the solution is best if most of the figures on the shelf could be placed on the table
-%%%
+%%% the optimization strategy is in a difference file to be able to assign different strategies to different players
 %%%
 remaining(N,C,I) :- onshelf(N,C,I), not ontable(N,C,I).
 remaining(J) :- onshelf(J), not ontable(J).
-
-#minimize{N@10, N,C,I: remaining(N,C,I)}.
-#minimize{50@10, J: remaining(J)}.
-%#maximize{S@8, S: sum_on_table(S)}.
-%#maximize{S@8, S: sum_jokers(S)}.
 
 
 %%%

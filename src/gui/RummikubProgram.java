@@ -120,10 +120,11 @@ public class RummikubProgram extends JFrame{
 	
 	private void testingScript()
 	{
-		File logfile=new File(this.logFileName);
-		FileWriter fw;
 
 		try {
+			this.initFromConfig();
+			File logfile=new File(this.logFileName);
+			FileWriter fw;
 			fw = new FileWriter(logfile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("'Player number won','round nr','stack size at end of game'\n");

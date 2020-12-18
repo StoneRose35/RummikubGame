@@ -4,6 +4,13 @@ import java.util.List;
 import asp.AspHelper;
 import asp.AspPredicate;
 
+/**
+ * a Representation of a rummikub figurem, it has a number and a color and exists somewhere (on the table, in the bag/on the stack or 
+ * an on player's shelf. Since all Rummikub figures exist twice they are distinguished using their instance which is 0 or 1 
+ * for normal figures and 3 or 4 for jokers
+ * @author philipp
+ *
+ */
 public class RummikubFigure implements Comparable<RummikubFigure> {
 	private int number = 0;
 	private RummikubColor color=null;
@@ -15,6 +22,12 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 		
 	}
 	
+	/**
+	 * Generates a figure from a asp representation, this is actually a factory method
+	 * return null if something goes wrong
+	 * @param aspRepresentation
+	 * @return
+	 */
 	public static RummikubFigure getRummikubFigure(String aspRepresentation)
 	{
 		RummikubFigure fig = null;
@@ -27,6 +40,7 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 		return fig;
 		
 	}
+	
 	
 	private RummikubFigure(String aspRepresentation) throws RummikubException
 	{
@@ -164,6 +178,12 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	}
 	
 
+	/**
+	 * Comparison function used for sorting, comparison is done hierarchically using
+	 * * Color
+	 * * Number
+	 * * Instance
+	 */
 	@Override
 	public int compareTo(RummikubFigure fig) {
 		RummikubColor[] colors=RummikubColor.values();

@@ -21,6 +21,11 @@ public class GameState {
 		this.roundNr = 0;
 	}
 	
+	/**
+	 * CAll this function when the player draws a figure, e.g. places the figure on his shelf
+	 * @param figure the figure to be drawn
+	 * @throws RummikubGameException if the figure is already on the shelf
+	 */
 	public void drawFigure(RummikubFigure figure) throws RummikubGameException
 	{
 		if (this.onshelf.contains(figure))
@@ -30,6 +35,11 @@ public class GameState {
 		this.onshelf.add(figure);
 	}
 	
+	/**
+	 * Adds a figure either to the player's shelf or the table, this function doesn't throw an exception 
+	 * for the case a figure is already in the game
+	 * @param fig
+	 */
 	public void addFigure(RummikubFigure fig)
 	{
 		if (fig.getPlacement()==RummikubPlacement.ON_TABLE)
@@ -42,6 +52,11 @@ public class GameState {
 		}
 	}
 	
+	/**
+	 * return a clingo representation of the game state meaning a representation of the figures in the sheplf and on the table
+	 * 
+	 * @return the clingo representation as a string
+	 */
 	public String toAspRepresentation()
 	{
 		this.aspRepresentation = "";
@@ -54,33 +69,60 @@ public class GameState {
 		return this.aspRepresentation;
 	}
 	
+	/**
+	 * return the figures on the table
+	 * @return
+	 */
 	public List<RummikubFigure> getTableFigures()
 	{
 		return this.ontable;
 	}
 	
+	/**
+	 * returns the figures on the shelf
+	 * @return
+	 */
 	public List<RummikubFigure> getShelfFigures()
 	{
 		return this.onshelf;
 	}
 
+	/**
+	 * returns the sum of point laid down on the table.
+	 * @return
+	 */
 	public int getSumLaid() {
 		return sumLaid;
 	}
 
+	/**
+	 * The the sum laid, this sum is currently computed by the ASP solver after each round
+	 * @param sumLaid
+	 */
 	public void setSumLaid(int sumLaid) {
 		this.sumLaid = sumLaid;
 	}
 
+	/**
+	 * Returns the number of rounds played
+	 * @return
+	 */
 	public int getRoundNr() {
 		return roundNr;
 	}
 	
+	/**
+	 * The number of round is normally increased after each round played and set in all GameStates
+	 * @param roundNr
+	 */
 	public void setRoundNr(int roundNr)
 	{
 		this.roundNr=roundNr;
 	}
 	
+	/**
+	 * a reset function, sets the roundnumber and sumlaid back to zero and clears the table and shelf list
+	 */
 	public void initialize()
 	{
 		this.sumLaid = 0;

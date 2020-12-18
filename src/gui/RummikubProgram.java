@@ -186,7 +186,7 @@ public class RummikubProgram extends JFrame{
 		InputStream is = new FileInputStream(new File("config.yaml"));
 		Map<String, Object> obj = yaml.load(is);
 		
-		this.stack.initializeGame();
+		this.stack.fill();
 		this.players.clear();
 		this.gamesToPlay = (int)obj.get("games_to_play");
 		this.logFileName = (String)obj.get("logfile");
@@ -229,7 +229,7 @@ public class RummikubProgram extends JFrame{
 	
 	private void initNewGame(int nPlayers)
 	{
-		this.stack.initializeGame();
+		this.stack.fill();
 		this.players.clear();
 		this.gamesToPlay = 500;
 		Random r = new Random();
@@ -339,9 +339,10 @@ public class RummikubProgram extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			int res = this.parent.playRound();
+			this.parent.repaint();
 			if (res == this.parent.GAME_ABORTED)
 			{
-				showMessageDialog(this.parent,"Non more figures on Stack");
+				showMessageDialog(this.parent,"No more figures on Stack");
 			}
 			if (res >= 10)
 			{

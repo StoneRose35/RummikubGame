@@ -1,7 +1,11 @@
 package game;
 import java.awt.Color;
 
-
+/**
+ * Defines all the figure colors
+ * @author philipp
+ *
+ */
 public enum RummikubColor {
 	BLACK(1, new Color(0,0,0), "black"),
 	RED(2, new Color(255,0,0), "red"),

@@ -80,11 +80,14 @@ class AspSolverTest {
 		
 		GameState state_old = as.jsonToGamestate();
 		state_old.setRoundNr(1);
-		GameState state_new = as.solve_round(state_old);
+		GameState state_new = as.solveRound(state_old);
 		Assert.assertNotNull(state_new);
-
+		List<RummikubFigure>  tf = state_new.getTableFigures();
+		Assert.assertNotNull(tf);
+		Assert.assertEquals(8, tf.size());
 	}
 	
+
 	@Test
 	void getTableDescriptionTest() 
 	{
@@ -96,3 +99,4 @@ class AspSolverTest {
 		
 	}
 }
+

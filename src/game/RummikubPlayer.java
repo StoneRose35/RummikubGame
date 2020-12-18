@@ -7,6 +7,11 @@ import asp.AspSolver;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Representation of a player whose brain is an asp solver
+ * @author philipp
+ *
+ */
 public class RummikubPlayer {
     private List<RummikubFigure> onShelf;
     private AspSolver solver;
@@ -25,6 +30,13 @@ public class RummikubPlayer {
     	this.solver = new AspSolver(strategy);
     }
     
+    /**
+     * Solves a round. Basically the following happens: The initial state is put into a GameState.
+     * Then the state is updated using solve
+     * The onShelf is updated according the new state
+     * @param onTableBeginning
+     * @return
+     */
     public RummikubResult solveRound(List<IRummikubFigureBag> onTableBeginning)
     {
     	RummikubResult result = new RummikubResult();
@@ -45,7 +57,7 @@ public class RummikubPlayer {
     		}
     	});
     	this.onShelf.forEach(el->{stateInitial.addFigure(el);});
-    	GameState stateNew = this.solver.solve_round(stateInitial);
+    	GameState stateNew = this.solver.solveRound(stateInitial);
     	if (stateNew.getSumLaid()>0)
     	{
     		result.setOnTable(this.solver.getTableDescription());
@@ -71,6 +83,10 @@ public class RummikubPlayer {
 		this.onShelf = onShelf;
 	}
 	
+	/**
+	 * Returns the sum of all the figures on the shelf
+	 * @return
+	 */
 	public int getTotalScore()
 	{
 		return this.onShelf.stream().mapToInt(fig -> fig.getScore()).sum();

@@ -8,6 +8,11 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Represent the ASP solver
+ * @author philipp
+ *
+ */
 public class AspSolver {
 	
 	private String jsonresult;
@@ -31,7 +36,12 @@ public class AspSolver {
 		this.strategyFile = strategy;
 	}
 	
-	public GameState solve_round(GameState state_old)
+	/**
+	 * solves a round, takes the initial state as an input and outputs the new state, which can be the same as the old one
+	 * @param state_old
+	 * @return
+	 */
+	public GameState solveRound(GameState state_old)
 	{
 		Runtime rt=Runtime.getRuntime();
 		File clingoinput=new File("game.lp");

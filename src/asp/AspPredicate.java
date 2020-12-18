@@ -3,6 +3,11 @@ package asp;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Represents an ASP predicate, someething in the form "pred(a1,a2,a3)
+ * @author philipp
+ *
+ */
 public class AspPredicate {
 	private List<String> atoms;
 	private String name;
@@ -12,10 +17,14 @@ public class AspPredicate {
 		this.atoms = new ArrayList<String>();
 	}
 	
+	/**
+	 * returns the atoms, with the example given this would be ["a1", "a2", "a3"]
+	 * @return
+	 */
 	public List<String> getAtoms() {
 		return atoms;
 	}
-	public void addAtoms(String atom) {
+	public void addAtom(String atom) {
 		this.atoms.add(atom);
 	}
 	

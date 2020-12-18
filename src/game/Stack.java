@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
+/**
+ * Represent all figures on the stack/in the bag
+ * @author philipp
+ *
+ */
 public class Stack {
 	private List<RummikubFigure> on_stack;
 	
@@ -13,7 +18,10 @@ public class Stack {
 		on_stack = new ArrayList<RummikubFigure>();
 	}
 	
-	public void initializeGame()
+	/**
+	 * fills the stack. This is usually done at the beginning of the game
+	 */
+	public void fill()
 	{
 		RummikubColor[] colors = RummikubColor.values();
 		RummikubFigure rf;
@@ -67,6 +75,10 @@ public class Stack {
 		return this.on_stack.size();
 	}
 	
+	/**
+	 * removes on figure from the stack and places it on the shelf
+	 * @return
+	 */
 	public RummikubFigure drawFromStack()
 	{
 		if (this.on_stack.size() > 0)

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A series of figures consists of the figures of the same color a successive number, example: 1,2,3,4
+ * @author philipp
+ *
+ */
 public class RummikubSeries implements IRummikubFigureBag{
 	private List<RummikubFigure> figures;
 	private long hash;

@@ -12,14 +12,14 @@ class RummikubGameTest {
 	@Test
 	void gameInitSmoketest() {
 		Stack g = new Stack();
-		g.initializeGame();
+		g.fill();
 	}
 	
 	@Test
 	void drawCountTest()
 	{
 		Stack g = new Stack();
-		g.initializeGame();
+		g.fill();
 		int cnt = 0;
 		while ((g.drawFromStack()) != null)
 		{

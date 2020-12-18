@@ -1,5 +1,10 @@
 package game;
 
+/**
+ * An explicit Exception for the application indicating that something is wrong on purpose
+ * @author philipp
+ *
+ */
 public class RummikubException extends Exception {
 
 	private String message = "";

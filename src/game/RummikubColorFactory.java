@@ -1,5 +1,10 @@
 package game;
 
+/**
+ * Factory for generating the RummikubColors based on an integer code
+ * @author philipp
+ *
+ */
 public class RummikubColorFactory {
 	
 	public static RummikubColor getByCode(int code) throws RummikubException

@@ -18,7 +18,7 @@ public class AspHelper {
 			String[] list = atomslist.split(",");
 			for (String entry : list)
 			{
-			    result.addAtoms(entry);
+			    result.addAtom(entry);
 			}
 		}
 		return result;

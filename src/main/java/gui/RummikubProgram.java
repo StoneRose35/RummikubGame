@@ -1,5 +1,11 @@
 package gui;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -27,11 +33,14 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.yaml.snakeyaml.Yaml;
+
+import api.RummikubApi;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -40,6 +49,7 @@ public class RummikubProgram extends JFrame{
 	/**
 	 * 
 	 */
+	private final static boolean RUN_API = true;
 	private static final long serialVersionUID = 1418187771696355888L;
 	private JPanel contentPane;
 	private Stack stack;
@@ -57,17 +67,37 @@ public class RummikubProgram extends JFrame{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RummikubProgram frame = new RummikubProgram();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		Yaml yaml = new Yaml();
+		InputStream is;
+		String launchtype;
+		try {
+			is = new FileInputStream(new File("config.yaml"));
+			Map<String, Object> obj = yaml.load(is);
+			launchtype = (String)obj.get("runtype");
+		} catch (FileNotFoundException e1) {
+			launchtype = "gui";
+			e1.printStackTrace();
+		}
+
+		if (launchtype == "gui")
+		{
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						RummikubProgram frame = new RummikubProgram();
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		}
+		else
+		{
+			SpringApplication.run(RummikubApi.class, args);
+		}
 	}
+	
 
 	/**
 	 * Create the frame.

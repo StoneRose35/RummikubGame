@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A series of figures consists of the figures of the same color a successive number, example: 1,2,3,4
@@ -110,5 +111,11 @@ public class RummikubSeries implements IRummikubFigureBag{
 	@Override
 	public int getFigureCount() {
         return this.figures.size();
+	}
+	
+	
+	@Override public Stream<RummikubFigure> stream()
+	{
+		return  this.figures.stream();
 	}
 }

@@ -6,6 +6,7 @@ import org.junit.Assert;
 import asp.AspSolver;
 import game.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -97,6 +98,16 @@ class AspSolverTest {
 		Assert.assertNotNull(td);
 		Assert.assertEquals(2, td.size());
 		
+	}
+	
+	@Test 
+	void mappingTest()
+	{
+		AspSolver as = new AspSolver();
+		as.setJsonresult(this.exampleJson);
+		List<IRummikubFigureBag> td = as.getTableDescription();
+		List<RummikubFigure> arr = td.stream().flatMap(e -> e.stream()).collect(Collectors.toList());
+		Assert.assertTrue(arr.size()==8);
 	}
 }
 

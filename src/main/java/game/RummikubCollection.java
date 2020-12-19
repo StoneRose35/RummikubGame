@@ -1,6 +1,7 @@
 package game;
 
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -108,6 +109,11 @@ public class RummikubCollection implements IRummikubFigureBag{
 	@Override
 	public int getFigureCount() {
         return this.figures.size();
+	}
+	
+	@Override public Stream<RummikubFigure> stream()
+	{
+		return  this.figures.stream();
 	}
 	
 }

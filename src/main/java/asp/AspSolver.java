@@ -106,7 +106,9 @@ public class AspSolver {
 	{
 		JSONArray values = this.getLastWitnessValues();
 		GameState result = new GameState();
-		values.forEach(val -> {
+		for (int c=0;c<values.length();c++)
+		{
+			Object val=values.get(c);
 			String strval = (String)val;
 			RummikubFigure fig = RummikubFigure.getRummikubFigure(strval);
 			if (fig != null)
@@ -121,7 +123,7 @@ public class AspSolver {
 					result.setSumLaid(pred.atomsAsIntegers().get(0));
 				}
 			}
-		});
+		}
 		return result;
 	}
 	
@@ -129,7 +131,8 @@ public class AspSolver {
 	{
 		JSONArray values = this.getLastWitnessValues();
 		List<IRummikubFigureBag> result = new ArrayList<IRummikubFigureBag>();
-		values.forEach(val -> {
+		for (int c=0;c< values.length();c++) {
+			Object val=values.get(c);
 			String strval = (String)val;
 			AspPredicate pred = AspHelper.parsePredicate(strval);
 			if (pred.getName().equals("series"))
@@ -182,7 +185,7 @@ public class AspSolver {
 				} catch (RummikubException e) {
 				}
 			}
-		});
+		}
 		
 		return result;
 	}

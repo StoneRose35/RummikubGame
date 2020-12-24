@@ -9,6 +9,22 @@ public class GameState {
 	 * on the shelf
 	 */
 	private List<RummikubFigure> onshelf;
+	public List<RummikubFigure> getOnshelf() {
+		return onshelf;
+	}
+
+	public void setOnshelf(List<RummikubFigure> onshelf) {
+		this.onshelf = onshelf;
+	}
+
+	public List<RummikubFigure> getOntable() {
+		return ontable;
+	}
+
+	public void setOntable(List<RummikubFigure> ontable) {
+		this.ontable = ontable;
+	}
+
 	private List<RummikubFigure> ontable;
 	private String aspRepresentation;
 	private int sumLaid;

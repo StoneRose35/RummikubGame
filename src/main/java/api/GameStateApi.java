@@ -1,0 +1,118 @@
+package api;
+
+import game.GameState;
+import game.IRummikubFigureBag;
+import game.RummikubCollection;
+import game.RummikubFigure;
+import game.RummikubGameException;
+import game.RummikubSeries;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class GameStateApi {
+	
+	private List<IRummikubFigureBag> tableFiguresStructured;
+	
+	public List<IRummikubFigureBag> getTableFiguresStructured() {
+		return tableFiguresStructured;
+	}
+	private List<List<RummikubFigure>> tableFigures;
+	public List<List<RummikubFigure>> getTableFigures() {
+		return tableFigures;
+	}
+	public void setTableFigures(List<List<RummikubFigure>> tableFigures) {
+		this.tableFigures = tableFigures;
+	}
+	public List<RummikubFigure> getShelfFigures() {
+		return shelfFigures;
+	}
+	public void setShelfFigures(List<RummikubFigure> shelfFigures) {
+		this.shelfFigures = shelfFigures;
+	}
+	public boolean isAccepted() {
+		return accepted;
+	}
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
+	}
+	public int getRoundNr() {
+		return roundNr;
+	}
+	public void setRoundNr(int roundNr) {
+		this.roundNr = roundNr;
+	}
+	private List<RummikubFigure> shelfFigures;
+	private boolean accepted;
+	private int roundNr;
+	private RummikubPlayerApi player;
+	private String gameId;
+	
+	public GameStateApi()
+	{
+		this.tableFiguresStructured = new ArrayList<IRummikubFigureBag>();
+	}
+	
+	public GameState toGameState()
+	{
+		GameState gs = new GameState();
+		gs.setOntable(this.tableFigures.stream().flatMap(lf -> lf.stream()).collect(Collectors.toList()));
+		return gs;
+	}
+	
+	public void validate()
+	{
+		boolean acc=true;
+		for (List<RummikubFigure> lf : this.tableFigures)
+		{
+			boolean acc_coll=true;
+			RummikubCollection rc= new RummikubCollection();
+				for (RummikubFigure el : lf)
+				{
+					try {
+						rc.addFigure(el);
+					} catch (RummikubGameException e) {
+						acc_coll=false;
+					}
+				}
+			if (acc_coll==true)
+			{
+				this.tableFiguresStructured.add(rc);
+			}
+			
+			boolean acc_series=true;
+			RummikubSeries rs= new RummikubSeries();
+			for (RummikubFigure el : lf)
+			{
+				try {
+					rs.addFigure(el);
+				} catch (RummikubGameException e) {
+					acc_series=false;
+				}
+			}
+			if (acc_series==true)
+			{
+				this.tableFiguresStructured.add(rs);
+			}
+
+			if (!(acc_coll || acc_series))
+			{
+				acc= acc_coll || acc_series;
+			}	
+		}
+		this.accepted=acc;
+	}
+	public RummikubPlayerApi getPlayer() {
+		return player;
+	}
+	public void setPlayer(RummikubPlayerApi player) {
+		this.player = player;
+	}
+	public String getGameId() {
+		return gameId;
+	}
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
+	}
+}

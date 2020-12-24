@@ -11,6 +11,8 @@ public class RummikubPlayer {
 	
 	private String name;
 	private boolean active;
+	private List<RummikubFigure> figures;
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -18,8 +20,6 @@ public class RummikubPlayer {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-
-	private List<RummikubFigure> figures;
 	
 	public RummikubPlayer()
 	{

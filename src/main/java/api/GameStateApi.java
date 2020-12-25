@@ -5,6 +5,7 @@ import game.IRummikubFigureBag;
 import game.RummikubCollection;
 import game.RummikubFigure;
 import game.RummikubGameException;
+import game.RummikubPlacement;
 import game.RummikubSeries;
 
 import java.util.ArrayList;
@@ -18,17 +19,17 @@ public class GameStateApi {
 	public List<IRummikubFigureBag> getTableFiguresStructured() {
 		return tableFiguresStructured;
 	}
-	private List<List<RummikubFigure>> tableFigures;
-	public List<List<RummikubFigure>> getTableFigures() {
+	private List<List<RummikubFigureApi>> tableFigures;
+	public List<List<RummikubFigureApi>> getTableFigures() {
 		return tableFigures;
 	}
-	public void setTableFigures(List<List<RummikubFigure>> tableFigures) {
+	public void setTableFigures(List<List<RummikubFigureApi>> tableFigures) {
 		this.tableFigures = tableFigures;
 	}
-	public List<RummikubFigure> getShelfFigures() {
+	public List<RummikubFigureApi> getShelfFigures() {
 		return shelfFigures;
 	}
-	public void setShelfFigures(List<RummikubFigure> shelfFigures) {
+	public void setShelfFigures(List<RummikubFigureApi> shelfFigures) {
 		this.shelfFigures = shelfFigures;
 	}
 	public boolean isAccepted() {
@@ -43,7 +44,7 @@ public class GameStateApi {
 	public void setRoundNr(int roundNr) {
 		this.roundNr = roundNr;
 	}
-	private List<RummikubFigure> shelfFigures;
+	private List<RummikubFigureApi> shelfFigures;
 	private boolean accepted;
 	private int roundNr;
 	private RummikubPlayerApi player;
@@ -57,14 +58,14 @@ public class GameStateApi {
 	public GameState toGameState()
 	{
 		GameState gs = new GameState();
-		gs.setOntable(this.tableFigures.stream().flatMap(lf -> lf.stream()).collect(Collectors.toList()));
+		gs.setOntable(this.tableFigures.stream().flatMap(lf -> lf.stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE))).collect(Collectors.toList()));
 		return gs;
 	}
 	
 	public void validate()
 	{
 		boolean acc=true;
-		for (List<RummikubFigure> lf : this.tableFigures)
+		for (List<RummikubFigure> lf : this.tableFigures.stream().map(tl -> tl.stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE)).collect(Collectors.toList())).collect(Collectors.toList()))
 		{
 			boolean acc_coll=true;
 			RummikubCollection rc= new RummikubCollection();

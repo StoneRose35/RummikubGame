@@ -67,7 +67,7 @@ public class RummikubGame {
 		return this.stack.drawFromStack();
 	}
 	
-	public void addPlayer(String name) throws RummikubApiException 
+	public RummikubPlayer addPlayer(String name) throws RummikubApiException 
 	{
 		if (this.players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null)!=null)
 		{
@@ -90,6 +90,7 @@ public class RummikubGame {
 		p.setName(name);
 		p.setActive(this.players.size()==0);
 		this.players.add(p);
+		return p;
 	}
 	
 	@Override

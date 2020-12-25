@@ -1,30 +1,33 @@
 package api;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import game.GameState;
-import game.IRummikubFigureBag;
 import game.RummikubFigure;
-import game.Stack;
+import game.RummikubPlacement;
 
 @RestController
 public class RummikubController {
 	
 	List<RummikubGame> games;
+	List<RummikubToken> tokens;
 	
 	public RummikubController()
 	{
 		this.games=new ArrayList<RummikubGame>();
+		this.tokens=new ArrayList<RummikubToken>();
 	}
 	
 	
@@ -35,47 +38,58 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/draw")
-	public RummikubFigure getFigure(@RequestParam String name,@RequestParam String gameId)
+	public RummikubFigureApi getFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		RummikubGame g=this.getGame(gameId);
-		if (g!=null)
+		RummikubToken t = this.tokens.stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		if (t!=null)
 		{
+			RummikubGame g=t.getGame();
+			RummikubPlayer p = t.getPlayer();
 			g.increaseRound();
-			return g.drawFigure();
+			RummikubFigure f =  g.drawFigure();
+			p.getFigures().add(f);
+			g.rotatePlayer();
+			return RummikubFigureApi.fromRummikubFigure(f);
 		}
 		return null;
 	}
 	
 	@GetMapping("/newgame")
-	public String generateGame()
+	public Response generateGame(@RequestParam String name)
 	{
-		boolean nameUnique = false;
-		String fname="";
-		Random r = new Random();
-		byte[] b=new byte[3];
-		
-		while (nameUnique==false)
+		Response r = new Response();
+		if (this.games.stream().filter(e -> e.getName().equals(name)).count()==0)
 		{
-			r.nextBytes(b);
-			char[] hexDigits = new char[6];
-			for (int c=0;c<3;c++)
-			{
-				
-		    	hexDigits[2*c] = Character.forDigit((b[c] >> 4) & 0xF, 16);
-		    	hexDigits[2*c+1] = Character.forDigit((b[c] & 0xF), 16);
-			}
-			final String name=new String(hexDigits);
-			nameUnique = this.games.stream().filter(e -> e.getName().equals(name)).count()==0;
-			fname=name;
+			RummikubGame g = new RummikubGame();
+			g.setName(name);
+			this.games.add(g);
+			r.setMessage("Successfully created game " + name);
 		}
-		RummikubGame g = new RummikubGame();
-		g.setName(fname);
-		this.games.add(g);
-		return fname;
+		else
+		{
+			r.setError("Game " + name + " already exists");
+		}
+		return r;
+	}
+
+
+	private String getHexString(short stringSize) {
+		Random r = new Random();
+		byte[] b=new byte[stringSize];
+		r.nextBytes(b);
+		char[] hexDigits = new char[stringSize*2];
+		for (int c=0;c<stringSize;c++)
+		{
+			
+			hexDigits[2*c] = Character.forDigit((b[c] >> 4) & 0xF, 16);
+			hexDigits[2*c+1] = Character.forDigit((b[c] & 0xF), 16);
+		}
+		final String name=new String(hexDigits);
+		return name;
 	}
 	
 	@GetMapping("/registerPlayer")
-	public Response registerPlayer(@RequestParam String name,@RequestParam String gameId)
+	public Response registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
 	{
 		Response r=new Response();
 		
@@ -83,9 +97,14 @@ public class RummikubController {
 		if (game!=null)
 		{
 			try {
-				game.addPlayer(name);
+				RummikubToken t = new RummikubToken();
+				t.setGame(game);
+				t.setPlayer(game.addPlayer(name));
+				t.setToken(this.getHexString((short) 10));
+				this.tokens.add(t);
+				Cookie c = new Cookie("RKToken",t.getToken());
+				response.addCookie(c);
 				r.setMessage("Sucessfully registered " + name);
-				// TODO generate a token and return it as a cookie
 			} catch (RummikubApiException e) {
 				r.setError(e.getMessage());
 			}
@@ -127,25 +146,29 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/shelfFigures")
-	public List<RummikubFigure> getShelfFigure(@RequestParam String gameId,@RequestParam String playerName)
+	public List<RummikubFigureApi> getShelfFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		return this.games.stream()
-			.filter(g -> g.getName().equals(gameId))
-			.findFirst()
-			.orElse(null)
-			.getPlayer(playerName).getFigures();
+		return this.tokens.stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null)
+				.getPlayer()
+				.getFigures()
+				.stream()
+				.map(f -> RummikubFigureApi.fromRummikubFigure(f))
+				.collect(Collectors.toList());
 	}
 	
 	@GetMapping("/tableFigures")
-	public List<List<RummikubFigure>> getTableFigures(@RequestParam String gameId)
+	public List<List<RummikubFigureApi>> getTableFigures(@RequestParam String gameId)
 	{
-		List<List<RummikubFigure>> res=new ArrayList<List<RummikubFigure>>();
+		List<List<RummikubFigureApi>> res=new ArrayList<List<RummikubFigureApi>>();
 		RummikubGame g = this.getGame(gameId);
 		if (g!=null)
 		{
 			g.getTableFigures().stream().forEach((f) -> {
-				List<RummikubFigure> l=new ArrayList<RummikubFigure>();
-				f.iterator().forEachRemaining(el -> l.add(el));
+				List<RummikubFigureApi> l=new ArrayList<RummikubFigureApi>();
+				f.iterator().forEachRemaining(el -> l.add(RummikubFigureApi.fromRummikubFigure(el)));
 				res.add(l);
 			} );
 			
@@ -154,28 +177,30 @@ public class RummikubController {
 	}
 	
 	@PostMapping("/submitMove")
-	public GameStateApi submitMove(GameStateApi gsSubmitted)
+	public GameStateApi submitMove(GameStateApi gsSubmitted,@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		GameStateApi gameStateReturned;
-		RummikubGame currentGame = this.games.stream()
-				.filter(g -> g.getName().equals(gsSubmitted.getGameId()))
+		RummikubGame currentGame = this.tokens.stream()
+				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
-				.orElse(null);
+				.orElse(null)
+				.getGame();
 		gsSubmitted.validate();
 		if (gsSubmitted.isAccepted()==false)
 		{
 			gameStateReturned=new GameStateApi();
 
 			gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
-						f.stream().collect(Collectors.toList())
+						f.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
 					).collect(Collectors.toList()));
-			gameStateReturned.setShelfFigures(currentGame.getPlayer(gsSubmitted.getPlayer().getName()).getFigures());
+			gameStateReturned.setShelfFigures(currentGame.getPlayer(gsSubmitted.getPlayer().getName()).getFigures()
+					.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
 		}
 		else
 		{
 			gameStateReturned=gsSubmitted;
 			currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
-			currentGame.getPlayer(gsSubmitted.getPlayer().getName()).setFigures(gsSubmitted.getShelfFigures());
+			currentGame.getPlayer(gsSubmitted.getPlayer().getName()).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList()));
 		}
 		currentGame.rotatePlayer();
 		return gameStateReturned;

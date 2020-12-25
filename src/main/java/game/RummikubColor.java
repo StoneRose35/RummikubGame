@@ -33,6 +33,23 @@ public enum RummikubColor {
 		return this.color;
 	}
 	
+	public static RummikubColor fromCode(int code)
+	{
+		switch(code)
+		{
+		case 1:
+			return RummikubColor.BLACK;
+		case 2:
+			return RummikubColor.RED;
+		case 3:
+			return RummikubColor.YELLOW;
+		case 4:
+			return RummikubColor.BLUE;
+		default:
+			return null;
+		}
+	}
+	
 	@Override
     public String toString()
     {

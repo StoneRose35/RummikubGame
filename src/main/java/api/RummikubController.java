@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import game.RummikubFigure;
 import game.RummikubPlacement;
 
+@CrossOrigin(origins = "http://localhost:4200",allowCredentials = "true")
 @RestController
 public class RummikubController {
 	
@@ -54,6 +56,7 @@ public class RummikubController {
 		return null;
 	}
 	
+
 	@GetMapping("/newgame")
 	public Response generateGame(@RequestParam String name)
 	{
@@ -72,6 +75,11 @@ public class RummikubController {
 		return r;
 	}
 
+	@GetMapping("/games")
+	public List<RummikubGameApi> getGames()
+	{
+		return this.games.stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
+	}
 
 	private String getHexString(short stringSize) {
 		Random r = new Random();

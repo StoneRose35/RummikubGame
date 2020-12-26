@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import game.RummikubFigure;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 
@@ -99,6 +101,40 @@ public class ApiTest {
 		Assert.assertEquals(players.size(),4);
 		Assert.assertTrue(this.controller.tokens.stream().filter(tt -> tt.getToken()==token).findFirst().orElseThrow().getPlayer()
 			.getFigures().size()==18);
+	}
+	
+	@Test
+	public void AspPlayerTest()
+	{
+		final String tokenValue = "abcd";
+		controller.generateGame("Testgame");
+		ServletResponseMock responseMock = new ServletResponseMock();
+		controller.registerPlayer("Testplayer", "Testgame", responseMock);
+		RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
+		RummikubToken rToken = new RummikubToken();
+		RummikubGame g = controller.games.get(0);
+		rToken.setGame(g);
+		rToken.setPlayer(aiPlayer);
+		rToken.setToken(tokenValue);
+		g.getPlayers().add(aiPlayer);
+		controller.tokens.add(rToken);
+		for (int c=0;c<14;c++)
+		{
+			aiPlayer.getFigures().add(g.drawFigure());
+		}
+		
+		controller.getFigure(responseMock.getCookie().getValue());
+		Assert.assertTrue(aiPlayer.isActive());
+		long t0 = System.currentTimeMillis();
+		while (aiPlayer.isActive())
+		{
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+			}
+		}
+		long t1 = System.currentTimeMillis();
+		Assert.assertTrue(t1-t0 > 1);
 	}
 	
 	

@@ -38,6 +38,7 @@ class RummikubSeriesTest {
 		Assert.assertTrue(!rs.isValid());
 	}
 	
+	
 	@Test
 	void addWrongColor() {
 		RummikubSeries rs = new RummikubSeries();

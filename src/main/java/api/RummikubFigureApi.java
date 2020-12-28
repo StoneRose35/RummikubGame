@@ -61,5 +61,23 @@ public class RummikubFigureApi {
 		return fa;
 	}
 	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof RummikubFigureApi)
+		{
+			RummikubFigureApi rfo=(RummikubFigureApi)o;
+			if (this.instance < 3 && rfo.instance < 3)
+			{
+				return rfo.color.getCode()==this.color.getCode() && rfo.instance==this.instance && rfo.number==this.number;
+			}
+			else if (this.instance > 2 && rfo.instance > 2 )
+			{
+				return this.instance == rfo.instance;
+			}
+		}
+		return false;
+	}
+	
 
 }

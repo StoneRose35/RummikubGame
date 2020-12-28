@@ -20,15 +20,10 @@ public class AspRunner extends Thread {
 			RummikubFigure df = game.drawFigure();
 			gsNew.getShelfFigures().add(df);
 		}
-		GameStateApi gsApiNew = new GameStateApi();
-		gsApiNew.setGameId(game.getName());
-		gsApiNew.setShelfFigures(gsNew.getShelfFigures().stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
-		gsApiNew.setTableFigures(((RummikubPlayerAsp)game.getActivePlayer())
-				.getTableFigures()
-				.stream()
-				.map(l -> l.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()))
-				.collect(Collectors.toList()));
-		game.setTableFigures(gsApiNew.getTableFiguresStructured());
+		else
+		{
+			game.setTableFigures(((RummikubPlayerAsp)game.getActivePlayer()).getTableFigures());
+		}
 		game.getActivePlayer().setFigures(gsNew.getShelfFigures());
 		try {Thread.sleep(1234);} catch (InterruptedException e) {}
 		game.rotatePlayer();

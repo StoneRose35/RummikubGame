@@ -129,8 +129,13 @@ public class AspSolver {
 	
 	public List<IRummikubFigureBag> getTableDescription()
 	{
-		JSONArray values = this.getLastWitnessValues();
+
 		List<IRummikubFigureBag> result = new ArrayList<IRummikubFigureBag>();
+		JSONArray values = this.getLastWitnessValues();
+		if (values==null)
+		{
+			return result;
+		}
 		for (int c=0;c< values.length();c++) {
 			Object val=values.get(c);
 			String strval = (String)val;
@@ -199,6 +204,10 @@ public class AspSolver {
 	private JSONArray getLastWitnessValues()
 	{
 		JSONObject jobj = new JSONObject(this.jsonresult);
+		if (jobj.get("Result").equals("UNSATISFIABLE"))
+		{
+			return null;
+		}
 		JSONArray witnesses = ((JSONArray)((JSONArray)((JSONObject)((JSONArray)jobj.get("Call")).get(0))
 				.get("Witnesses")));
 		JSONObject witness = (JSONObject)witnesses.get(witnesses.length()-1);

@@ -213,6 +213,7 @@ public class RummikubController {
 			laidDownEnough = currentGame.getPlayer(playerName)
 				.getFigures() 
 				.stream()
+				.map(el -> RummikubFigureApi.fromRummikubFigure(el))
 				.filter( f -> !gsSubmitted.getShelfFigures().contains(f))
 				.mapToInt(f -> { 
 					if (f.getInstance()<3)

@@ -67,7 +67,11 @@ public class GameStateApi {
 	public void validate()
 	{
 		boolean acc=true;
-		for (List<RummikubFigure> lf : this.tableFigures.stream().map(tl -> tl.stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE)).collect(Collectors.toList())).collect(Collectors.toList()))
+		for (List<RummikubFigure> lf : this.tableFigures.stream()
+										.map(tl -> tl.stream()
+												.map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE))
+												.collect(Collectors.toList()))
+										.collect(Collectors.toList()))
 		{
 			boolean acc_coll=true;
 			RummikubCollection rc= new RummikubCollection();
@@ -79,6 +83,11 @@ public class GameStateApi {
 						acc_coll=false;
 					}
 				}
+			if (acc_coll==true)
+			{
+				acc_coll = rc.isValid();
+			}
+			
 			if (acc_coll==true)
 			{
 				this.tableFiguresStructured.add(rc);
@@ -96,12 +105,17 @@ public class GameStateApi {
 			}
 			if (acc_series==true)
 			{
+				acc_series = rs.isValid();
+			}
+			if (acc_series==true)
+			{
 				this.tableFiguresStructured.add(rs);
 			}
 
 			if (!(acc_coll || acc_series))
 			{
 				acc= acc_coll || acc_series;
+				break;
 			}	
 		}
 		

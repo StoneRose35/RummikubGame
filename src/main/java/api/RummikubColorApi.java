@@ -1,15 +1,15 @@
 package api;
 
 public class RummikubColorApi {
-	private int[] rgb;
+	private String rgb;
 	private String name;
 	private int code;
 	
 	
-	public int[] getRgb() {
+	public String getRgb() {
 		return rgb;
 	}
-	public void setRgb(int[] rgb) {
+	public void setRgb(String rgb) {
 		this.rgb = rgb;
 	}
 	public int getCode() {
@@ -35,25 +35,25 @@ public class RummikubColorApi {
 			retval = new RummikubColorApi();
 			retval.setCode(1);
 			retval.setName("black");
-			retval.setRgb(new int[] {0,0,0});
+			retval.setRgb("#000000");
 			return retval;
 		case 2:
 			retval = new RummikubColorApi();
 			retval.setCode(2);
 			retval.setName("red");
-			retval.setRgb(new int[] {255,0,0});
+			retval.setRgb("#ff0000");
 			return retval;
 		case 3:
 			retval = new RummikubColorApi();
 			retval.setCode(3);
 			retval.setName("yellow");
-			retval.setRgb(new int[] {255,255,0});
+			retval.setRgb("#d8d800");
 			return retval;
 		case 4:
 			retval = new RummikubColorApi();
-			retval.setCode(3);
+			retval.setCode(4);
 			retval.setName("blue");
-			retval.setRgb(new int[] {0,0,255});
+			retval.setRgb("#0000ff");
 			return retval;
 		default:
 			return retval;

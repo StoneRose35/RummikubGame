@@ -14,6 +14,7 @@ public class RummikubGame {
 	private List<RummikubPlayer> players;
 	private int round=0;
 	private List<IRummikubFigureBag> tableFigures;
+	private boolean started=false;
 	
 	
 	public List<RummikubPlayer> getPlayers() {
@@ -77,9 +78,9 @@ public class RummikubGame {
 		{
 			throw new RummikubApiException("Game " + this.getName() + " Full");
 		}
-		if (this.round > 0)
+		if (this.started==true)
 		{
-			throw new RummikubApiException("Game " + this.getName() + " Full");
+			throw new RummikubApiException("Game " + this.getName() + " already started");
 		}
 		RummikubPlayer p = new RummikubPlayer();
 		List<RummikubFigure> f = p.getFigures();
@@ -115,6 +116,8 @@ public class RummikubGame {
 	public void rotatePlayer()
 	{
 		int idx = 0;
+		int idx_old;
+		this.started=true;
 		for (RummikubPlayer p : this.players)
 		{
 			if (p.isActive()==true)
@@ -124,7 +127,12 @@ public class RummikubGame {
 			}
 			idx++;
 		}
+		idx_old = idx;
 		idx = (idx + 1) % this.players.size();
+		if(idx < idx_old)
+		{
+			this.increaseRound();
+		}
 		RummikubPlayer currentPlayer = this.players.get(idx);
 		currentPlayer.setActive(true);
 		if (currentPlayer instanceof RummikubPlayerAsp)
@@ -133,6 +141,14 @@ public class RummikubGame {
 			aspRunner.setGame(this);
 			aspRunner.start();
 		}
+	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
 	}
 
 }

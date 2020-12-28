@@ -52,7 +52,10 @@ public class RummikubFigureApi {
 	public static RummikubFigureApi fromRummikubFigure(RummikubFigure f)
 	{
 		RummikubFigureApi fa = new RummikubFigureApi();
-		fa.setColor(RummikubColorApi.fromCode(f.getColor().getColorcode()));
+		if (f.getInstance()<3)
+		{
+			fa.setColor(RummikubColorApi.fromCode(f.getColor().getColorcode()));
+		}
 		fa.setInstance(f.getInstance());
 		fa.setNumber(f.getNumber());
 		return fa;

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,11 +26,15 @@ public class RummikubController {
 	
 	List<RummikubGame> games;
 	List<RummikubToken> tokens;
+	AspPlayerDispatcher dispatcher;
 	
 	public RummikubController()
 	{
 		this.games=new ArrayList<RummikubGame>();
 		this.tokens=new ArrayList<RummikubToken>();
+		this.dispatcher = new AspPlayerDispatcher();
+		this.dispatcher.setGames(this.games);
+		this.dispatcher.start();
 	}
 	
 	
@@ -97,9 +102,9 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/registerPlayer")
-	public Response registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
+	public PlayerResponse registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
 	{
-		Response r=new Response();
+		PlayerResponse r=new PlayerResponse();
 		
 		RummikubGame game = this.getGame(gameId);
 		if (game!=null)
@@ -113,6 +118,7 @@ public class RummikubController {
 				Cookie c = new Cookie("RKToken",t.getToken());
 				response.addCookie(c);
 				r.setMessage("Sucessfully registered " + name);
+				r.setPlayer(new RummikubPlayerApi(t.getPlayer()));
 			} catch (RummikubApiException e) {
 				r.setError(e.getMessage());
 			}
@@ -141,16 +147,15 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/players")
-	public List<RummikubPlayerApi> getPlayers(@RequestParam String gameId)
+	public List<RummikubPlayerApi> getPlayers(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		RummikubGame g = this.getGame(gameId);
-		if (g!=null)
-		{
-			return g.getPlayers().stream().map(p -> {
+			return this.tokens.stream()
+					.filter(tt -> tt.getToken().equals(token))
+					.findFirst()
+					.orElse(null).getGame().getPlayers().stream().map(p -> {
 				return new RummikubPlayerApi(p);
 			}).collect(Collectors.toList());
-		}
-		return null;
+
 	}
 	
 	@GetMapping("/shelfFigures")
@@ -168,10 +173,13 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/tableFigures")
-	public List<List<RummikubFigureApi>> getTableFigures(@RequestParam String gameId)
+	public List<List<RummikubFigureApi>> getTableFigures(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		List<List<RummikubFigureApi>> res=new ArrayList<List<RummikubFigureApi>>();
-		RummikubGame g = this.getGame(gameId);
+		RummikubGame g = 		this.tokens.stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null).getGame();
 		if (g!=null)
 		{
 			g.getTableFigures().stream().forEach((f) -> {
@@ -185,7 +193,7 @@ public class RummikubController {
 	}
 	
 	@PostMapping("/submitMove")
-	public GameStateApi submitMove(GameStateApi gsSubmitted,@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public GameStateApi submitMove(@RequestBody GameStateApi gsSubmitted,@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		GameStateApi gameStateReturned;
 		RummikubGame currentGame = this.tokens.stream()
@@ -193,22 +201,41 @@ public class RummikubController {
 				.findFirst()
 				.orElse(null)
 				.getGame();
+		String playerName = this.tokens.stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null).getPlayer().getName();
 		gsSubmitted.validate();
-		if (gsSubmitted.isAccepted()==false)
+		boolean laidDownEnough = true;
+		if (currentGame.getRound()==0)
+		{
+			// check if at least 30 points have been laid down
+			laidDownEnough = currentGame.getPlayer(playerName)
+				.getFigures() 
+				.stream()
+				.filter( f -> !gsSubmitted.getShelfFigures().contains(f))
+				.mapToInt(f -> { 
+					if (f.getInstance()<3)
+					{return f.getNumber();}
+					return 0;
+				}).sum() >= 30;
+			
+		}
+		if (gsSubmitted.isAccepted()==false || laidDownEnough==false)
 		{
 			gameStateReturned=new GameStateApi();
 
 			gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
 						f.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
 					).collect(Collectors.toList()));
-			gameStateReturned.setShelfFigures(currentGame.getPlayer(gsSubmitted.getPlayer().getName()).getFigures()
+			gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
 					.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
 		}
 		else
 		{
 			gameStateReturned=gsSubmitted;
 			currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
-			currentGame.getPlayer(gsSubmitted.getPlayer().getName()).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList()));
+			currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList()));
 		}
 		currentGame.rotatePlayer();
 		return gameStateReturned;

@@ -15,11 +15,17 @@ import java.util.stream.Collectors;
 public class GameStateApi {
 	
 	private List<IRummikubFigureBag> tableFiguresStructured;
+	private List<List<RummikubFigureApi>> tableFigures;
+	private List<RummikubFigureApi> shelfFigures;
+	private boolean accepted;
+	private int roundNr;
+	private RummikubPlayerApi player;
+	private String gameId;
 	
 	public List<IRummikubFigureBag> getTableFiguresStructured() {
 		return tableFiguresStructured;
 	}
-	private List<List<RummikubFigureApi>> tableFigures;
+
 	public List<List<RummikubFigureApi>> getTableFigures() {
 		return tableFigures;
 	}
@@ -44,11 +50,7 @@ public class GameStateApi {
 	public void setRoundNr(int roundNr) {
 		this.roundNr = roundNr;
 	}
-	private List<RummikubFigureApi> shelfFigures;
-	private boolean accepted;
-	private int roundNr;
-	private RummikubPlayerApi player;
-	private String gameId;
+
 	
 	public GameStateApi()
 	{
@@ -102,6 +104,7 @@ public class GameStateApi {
 				acc= acc_coll || acc_series;
 			}	
 		}
+		
 		this.accepted=acc;
 	}
 	public RummikubPlayerApi getPlayer() {

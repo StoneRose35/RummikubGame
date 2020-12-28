@@ -30,6 +30,7 @@ public class AspRunner extends Thread {
 				.collect(Collectors.toList()));
 		game.setTableFigures(gsApiNew.getTableFiguresStructured());
 		game.getActivePlayer().setFigures(gsNew.getShelfFigures());
+		try {Thread.sleep(1234);} catch (InterruptedException e) {}
 		game.rotatePlayer();
 	}
 

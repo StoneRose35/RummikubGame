@@ -12,7 +12,6 @@ import game.Stack;
 public class RummikubGame {
 	
 	private List<RummikubPlayer> players;
-	private int round=0;
 	private List<IRummikubFigureBag> tableFigures;
 	private boolean started=false;
 	
@@ -104,19 +103,10 @@ public class RummikubGame {
 		return false;
 	}
 	
-	public void increaseRound()
-	{
-		this.round++;
-	}
-
-	public int getRound() {
-		return round;
-	}
 	
 	public void rotatePlayer()
 	{
 		int idx = 0;
-		int idx_old;
 		this.started=true;
 		for (RummikubPlayer p : this.players)
 		{
@@ -127,12 +117,9 @@ public class RummikubGame {
 			}
 			idx++;
 		}
-		idx_old = idx;
+
 		idx = (idx + 1) % this.players.size();
-		if(idx < idx_old)
-		{
-			this.increaseRound();
-		}
+
 		RummikubPlayer currentPlayer = this.players.get(idx);
 		currentPlayer.setActive(true);
 		if (currentPlayer instanceof RummikubPlayerAsp)

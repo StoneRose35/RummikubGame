@@ -52,7 +52,6 @@ public class RummikubController {
 		{
 			RummikubGame g=t.getGame();
 			RummikubPlayer p = t.getPlayer();
-			g.increaseRound();
 			RummikubFigure f =  g.drawFigure();
 			p.getFigures().add(f);
 			g.rotatePlayer();
@@ -118,7 +117,7 @@ public class RummikubController {
 				Cookie c = new Cookie("RKToken",t.getToken());
 				response.addCookie(c);
 				r.setMessage("Sucessfully registered " + name);
-				r.setPlayer(new RummikubPlayerApi(t.getPlayer()));
+				r.setPlayer((RummikubPlayerApi)t.getPlayer());
 			} catch (RummikubApiException e) {
 				r.setError(e.getMessage());
 			}
@@ -201,13 +200,14 @@ public class RummikubController {
 				.findFirst()
 				.orElse(null)
 				.getGame();
-		String playerName = this.tokens.stream()
+		RummikubPlayer player = this.tokens.stream()
 				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
-				.orElse(null).getPlayer().getName();
+				.orElse(null).getPlayer();
+		String playerName = player.getName();
 		gsSubmitted.validate();
 		boolean laidDownEnough = true;
-		if (currentGame.getRound()==0)
+		if (player.getRoundNr()==0)
 		{
 			// check if at least 30 points have been laid down
 			laidDownEnough = currentGame.getPlayer(playerName)
@@ -234,9 +234,21 @@ public class RummikubController {
 		}
 		else
 		{
+			player.setRoundNr(player.getRoundNr()+1);
 			gameStateReturned=gsSubmitted;
 			currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
 			currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList()));
+			
+			if (gsSubmitted.getShelfFigures().size()==0)
+			{
+				// player has legibly placed all the figures on the Table, s*he wins!
+				// set final scores for all the players
+				currentGame.getPlayers().forEach(p -> {
+					p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
+				});
+				
+			}
+			
 		}
 		currentGame.rotatePlayer();
 		return gameStateReturned;

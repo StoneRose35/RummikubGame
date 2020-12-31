@@ -92,7 +92,7 @@ public class ApiTest {
 	public void getPlayersTest()
 	{
 		String token = this.setupGame();
-		List<RummikubPlayerApi> players = this.controller.getPlayers("Testgame");
+		List<RummikubPlayerApi> players = this.controller.getPlayers(token);
 		
 		for(int c=0;c<4;c++)
 		{

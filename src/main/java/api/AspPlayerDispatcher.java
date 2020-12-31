@@ -16,7 +16,12 @@ public class AspPlayerDispatcher extends Thread {
 			}
 			for (RummikubGame g : games)
 			{
-				if (!(g.getPlayers().stream().filter(p -> p instanceof RummikubPlayerAsp).findFirst().isPresent()) && g.getRound()==0 && g.getPlayers().isEmpty()==false)
+				if (!(g.getPlayers().stream()
+						.filter(p -> p instanceof RummikubPlayerAsp)
+						.findFirst().isPresent()) 
+						&& g.getPlayers().isEmpty()==false
+						&& g.getPlayers().stream().filter(p -> p.getRoundNr()>0).findFirst().isPresent()==false
+							)
 					// game hasn't started and the is not Asp Player yet
 				{
 					RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();

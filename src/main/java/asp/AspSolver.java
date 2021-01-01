@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 
 /**
@@ -43,8 +44,10 @@ public class AspSolver {
 	 */
 	public GameState solveRound(GameState state_old)
 	{
+		Random r = new Random();
 		Runtime rt=Runtime.getRuntime();
-		File clingoinput=new File("game.lp");
+		String gname = "game" + r.nextInt(9999-1000)+1000 +  ".lp";
+		File clingoinput=new File(gname);
 		FileWriter fw;
         String jsoncontent = "";
 		try {
@@ -56,11 +59,11 @@ public class AspSolver {
 			Process proc;
 			if (state_old.getRoundNr()<1)
 			{
-			    proc = rt.exec(String.format("clingo --outf=2 game.lp ASP/rummikub.lp ASP/%s ASP/first_round_rule.lp ",this.strategyFile));
+			    proc = rt.exec(String.format("clingo --outf=2 " + gname + " ASP/rummikub.lp ASP/%s ASP/first_round_rule.lp ",this.strategyFile));
 			}
 			else
 			{
-				proc = rt.exec(String.format("clingo --outf=2 game.lp ASP/rummikub.lp  ASP/%s ",this.strategyFile));
+				proc = rt.exec(String.format("clingo --outf=2 " + gname + " ASP/rummikub.lp  ASP/%s ",this.strategyFile));
 			}
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
@@ -75,6 +78,7 @@ public class AspSolver {
 			br.close();
 			isr.close();
 			is.close();
+			clingoinput.delete();
 			if (!this.getSolverResult().equals("UNSATISFIABLE"))
 			{
 				

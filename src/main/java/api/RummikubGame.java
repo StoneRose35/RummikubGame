@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import game.GameState;
 import game.IRummikubFigureBag;
+import game.RummikubColor;
+import game.RummikubException;
 import game.RummikubFigure;
+import game.RummikubPlacement;
 import game.Stack;
 
 public class RummikubGame {
@@ -83,12 +86,13 @@ public class RummikubGame {
 		}
 		RummikubPlayer p = new RummikubPlayer();
 		List<RummikubFigure> f = p.getFigures();
+
 		for (int c=0;c<14;c++)
 		{
 			f.add(this.drawFigure());
-		}
+		}		
 		p.setName(name);
-		p.setActive(this.players.size()==0);
+		p.setActive(this.players.stream().filter(pl -> !(pl instanceof RummikubPlayerAsp)).count()==0);
 		this.players.add(p);
 		return p;
 	}

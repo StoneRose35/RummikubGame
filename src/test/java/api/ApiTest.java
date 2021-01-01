@@ -30,7 +30,7 @@ public class ApiTest {
 	@Test
 	public void successfulRegistration()
 	{
-		Response r = controller.generateGame("Testgame");
+		Response r = controller.generateGame("Testgame",0);
 		Assert.assertNotNull(r.getMessage());
 		Assert.assertNull(r.getError());
 		ServletResponseMock responseMock = new ServletResponseMock();
@@ -44,7 +44,7 @@ public class ApiTest {
 	{
 		ServletResponseMock responseMock = new ServletResponseMock();
 		Response resp;
-		controller.generateGame("Testgame");
+		controller.generateGame("Testgame",0);
 		resp = controller.registerPlayer("Tester", "Game 2", responseMock);
 		Assert.assertNotNull(resp.getError());
 		Assert.assertNull(resp.getMessage());
@@ -55,7 +55,7 @@ public class ApiTest {
 	{
 		Response resp;
 		ServletResponseMock responseMock = new ServletResponseMock();
-		controller.generateGame("Testgame");
+		controller.generateGame("Testgame",0);
 		resp = controller.registerPlayer("Tester", "Testgame", responseMock);
 		Assert.assertNull(resp.getError());
 		Assert.assertNotNull(resp.getMessage());
@@ -78,7 +78,7 @@ public class ApiTest {
 	{
 		Response resp;
 		ServletResponseMock responseMock = new ServletResponseMock();
-		controller.generateGame("Testgame");
+		controller.generateGame("Testgame",0);
 		resp = controller.registerPlayer("Tester", "Testgame", responseMock);
 		String cookieValue = responseMock.getCookie().getValue();
 		Assert.assertTrue(controller.tokens.stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
@@ -107,7 +107,7 @@ public class ApiTest {
 	public void AspPlayerTest()
 	{
 		final String tokenValue = "abcd";
-		controller.generateGame("Testgame");
+		controller.generateGame("Testgame",0);
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.registerPlayer("Testplayer", "Testgame", responseMock);
 		RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
@@ -137,12 +137,17 @@ public class ApiTest {
 		Assert.assertTrue(t1-t0 > 1);
 	}
 	
-	
+	@Test
+	public void AiPlayerGenerationTest()
+	{
+		controller.generateGame("Testgame",3);
+		Assert.assertEquals(3,controller.games.get(0).getPlayers().stream().filter(p -> {return p instanceof RummikubPlayerAsp;}).count());
+	}
 	
 	private String setupGame()
 	{
 		ServletResponseMock responseMock = new ServletResponseMock();
-		controller.generateGame("Testgame");
+		controller.generateGame("Testgame",0);
 		controller.registerPlayer("Tester", "Testgame", responseMock);
 		controller.registerPlayer("Tester2", "Testgame", responseMock);
 		controller.registerPlayer("Tester3", "Testgame", responseMock);

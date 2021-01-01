@@ -26,15 +26,11 @@ public class RummikubController {
 	
 	List<RummikubGame> games;
 	List<RummikubToken> tokens;
-	AspPlayerDispatcher dispatcher;
 	
 	public RummikubController()
 	{
 		this.games=new ArrayList<RummikubGame>();
 		this.tokens=new ArrayList<RummikubToken>();
-		this.dispatcher = new AspPlayerDispatcher();
-		this.dispatcher.setGames(this.games);
-		this.dispatcher.start();
 	}
 	
 	
@@ -62,21 +58,40 @@ public class RummikubController {
 	
 
 	@GetMapping("/newgame")
-	public Response generateGame(@RequestParam String name)
+	public Response generateGame(@RequestParam String name,@RequestParam int nrAiPlayers)
 	{
 		Response r = new Response();
+		if (nrAiPlayers < 0 || nrAiPlayers > 3)
+		{
+			r.setError("Number of Ai Players must be in the range from 0 to 3");
+			return r;
+		}
 		if (this.games.stream().filter(e -> e.getName().equals(name)).count()==0)
 		{
 			RummikubGame g = new RummikubGame();
 			g.setName(name);
 			this.games.add(g);
+			
+			for(int c=0;c<nrAiPlayers;c++)
+			{
+				RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
+				aiPlayer.setActive(false);
+				aiPlayer.setName(AiPlayerNameGenerator.generateName());
+				for (int cc=0;cc<14;cc++)
+				{
+					aiPlayer.getFigures().add(g.drawFigure());
+				}
+				g.getPlayers().add(aiPlayer);
+			}
+			
 			r.setMessage("Successfully created game " + name);
+			return r;
 		}
 		else
 		{
 			r.setError("Game " + name + " already exists");
+			return r;
 		}
-		return r;
 	}
 
 	@GetMapping("/games")

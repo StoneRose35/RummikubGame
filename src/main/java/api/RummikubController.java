@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import game.RummikubFigure;
 import game.RummikubPlacement;
 
-@CrossOrigin(origins = "http://localhost:4200",allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:4200","http://192.168.0.207:4200"},allowCredentials = "true")
 @RestController
 public class RummikubController {
 	
@@ -207,10 +207,7 @@ public class RummikubController {
 		String playerName = player.getName();
 		gsSubmitted.validate();
 		boolean laidDownEnough = true;
-		if (player.getRoundNr()==0)
-		{
-			// check if at least 30 points have been laid down
-			laidDownEnough = currentGame.getPlayer(playerName)
+		int sumLaidDown = currentGame.getPlayer(playerName)
 				.getFigures() 
 				.stream()
 				.map(el -> RummikubFigureApi.fromRummikubFigure(el))
@@ -219,9 +216,18 @@ public class RummikubController {
 					if (f.getInstance()<3)
 					{return f.getNumber();}
 					return 0;
-				}).sum() >= 30;
+				}).sum();
+		if (player.getRoundNr()==0)
+		{
+			// check if at least 30 points have been laid down
+			laidDownEnough = sumLaidDown >= 30;
 			
+		} else
+		{
+			// the player must lay down at least one point
+			laidDownEnough = sumLaidDown > 0;
 		}
+		
 		if (gsSubmitted.isAccepted()==false || laidDownEnough==false)
 		{
 			gameStateReturned=new GameStateApi();
@@ -229,6 +235,8 @@ public class RummikubController {
 			gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
 						f.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
 					).collect(Collectors.toList()));
+			RummikubFigure f =  currentGame.drawFigure();
+			currentGame.getPlayer(playerName).getFigures().add(f);
 			gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
 					.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
 		}

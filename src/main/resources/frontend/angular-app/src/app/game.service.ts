@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, timer, Subject } from 'rxjs';
+import { Observable, timer, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Figure } from './figure';
 import { HttpClient } from '@angular/common/http';
-import { backendPort, environment } from './../environments/environment';
+import { backendPort } from './../environments/environment';
 
 
 export interface Game {
@@ -56,7 +56,7 @@ export class GameService {
 
   constructor(private http: HttpClient) { 
     this.activityChangedSubject=new Subject<boolean>();
-    this.p = {name: null, active: false, finalScore: null};
+    this.p = null;
     this.url = window.location.protocol + "//" + window.location.hostname + ":" + backendPort;
   }
 
@@ -68,12 +68,6 @@ export class GameService {
   public pollGames(): Observable<Array<GameOverview>>
   {
     return timer(1,500).pipe(switchMap(() => this.http.get<Array<GameOverview>>(this.url + "/games")));
-  }
-
-  public startGame(gameId: String): Observable<Game>
-  {
-    let data = {message: "Game Started", tableFigures: [[{color: {name: "red", rgb: "#ff0000", code: 0}, instance: 0, number: 12}]], error: ""}
-    return of(data);
   }
 
   public registerPlayer(playerName: String, gameName: String): Observable<ResponsePlayer>
@@ -105,6 +99,11 @@ export class GameService {
   getTable(): Observable<Array<Array<Figure>>>
   {  
     return this.http.get<Array<Array<Figure>>>(this.url + "/tableFigures",{withCredentials: true});
+  }
+
+  pollTable(): Observable<Array<Array<Figure>>>
+  {
+    return timer(1,500).pipe(switchMap(() => this.http.get<Array<Array<Figure>>>(this.url + "/tableFigures",{withCredentials: true})));
   }
 
   public drawFigure(): Observable<Figure>

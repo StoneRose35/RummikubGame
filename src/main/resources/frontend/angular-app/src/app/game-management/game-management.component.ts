@@ -20,15 +20,12 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   tableFigures: Array<Array<Figure>>;
   stackFigures: Array<Figure>;
   players: Array<Player>;
-  message: String;
   playing: Boolean;
-  gameState: String;
   activePlayer: Player;
   stackFiguresOld: Array<Figure>;
   tableFiguresOld: Array<Array<Figure>>;
   playerPollSubscription: any;
   tablePollSubscription: any;
-  activityChangeSubscription: any;
   cannotDraw: boolean;
   cannotSubmit: boolean;
  
@@ -44,15 +41,12 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     this.sbConfig.duration=2000;
     this.stackFigures = [];
     this.players=[];
-    this.gameState = "New Game";
   }
 
   ngOnInit(): void {
 
     this.activePlayer = this.gs.p;
-    this.gameState="Start Game";
-    this.snackBar.open(`New Game ${this.gs.gameId} Initialized`,null,this.sbConfig);
-    this.message=`Running Game ${this.gs.gameId}`;
+    this.snackBar.open(`Entering Game ${this.gs.gameId}`,null,this.sbConfig);
     this.stackFigures = [];
     this.tableFigures=[];
     this.gs.getTable().subscribe(t => {
@@ -62,10 +56,12 @@ export class GameManagementComponent implements OnInit, OnDestroy {
       this.stackFigures=f;
       this.onTurn();
     });
-    this.cannotSubmit
     if (this.playerPollSubscription == null)
     {
       this.playerPollSubscription = this.gs.pollPlayers().subscribe(ps => {
+        let prevPlayer = this.players.find(p => p.active===true);
+        let actualPlayer = ps.find(p2 => p2.active===true);
+
         this.players=ps;
         this.gs.p.active = ps.filter(p => p.name === this.gs.p.name)[0].active;
         this.gs.p.finalScore = ps.filter(p => p.name === this.gs.p.name)[0].finalScore;
@@ -75,7 +71,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
         }
         if (this.playing===true && this.gs.p.active===false)
         {
-          // switch from active to inactive
+          // switch from active to passive
           this.playing=this.gs.p.active;
         }
         else if (this.playing===false && this.gs.p.active===true)
@@ -87,6 +83,12 @@ export class GameManagementComponent implements OnInit, OnDestroy {
             this.playing=this.gs.p.active;
           });
         }
+        else if (prevPlayer!= null && prevPlayer.name !== actualPlayer.name)
+        // switch between opponents
+        {
+          this.gs.getTable().subscribe(t => {
+            this.tableFigures=t; });
+        }
         else
         {
           this.playing = this.gs.p.active;
@@ -97,11 +99,17 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
   ngOnDestroy()
   {
-    if (this.playerPollSubscription !== null) 
+    if (this.playerPollSubscription != null) 
     {
       this.playerPollSubscription.unsubscribe();
       this.playerPollSubscription=null;
     }
+    if (this.tablePollSubscription != null)
+    {
+      this.tablePollSubscription.unsubscribe();
+      this.tablePollSubscription=null;
+    }
+    this.gs.p=null;
   }
 
   showWinnerScreen()

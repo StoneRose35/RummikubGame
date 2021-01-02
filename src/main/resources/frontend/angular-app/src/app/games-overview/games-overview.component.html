@@ -1,0 +1,27 @@
+<ul class="rk-game">
+    <li *ngFor="let g of games" class="rk-game">
+        <div class="rk-game">
+            <div class="rk-game-title">{{g.name}}</div>
+            <div *ngFor="let pl of g.players" class="rk-game-players">{{pl}}</div>
+        </div>
+        <button mat-stroked-button (click)="joinGame(g.name)" class="rk-game" [disabled]="g.state !== 'initial'">Join</button>
+    </li>
+</ul>
+
+<div class="rk-newgame">
+    <mat-form-field appearance="fill">
+        <mat-label>Game Name</mat-label>
+        <input matInput [(ngModel)]="gameName"> 
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Computer Players</mat-label>
+        <mat-select [(value)]="aiPlayers">
+            <mat-option value="0">0</mat-option>
+            <mat-option value="1">1</mat-option>
+            <mat-option value="2">2</mat-option>
+            <mat-option value="3">3</mat-option>
+        </mat-select>
+    </mat-form-field>
+        <button mat-raised-button color="primary" (click)="registerGame()" class="rk-newgame">Create Game</button>
+</div>
+

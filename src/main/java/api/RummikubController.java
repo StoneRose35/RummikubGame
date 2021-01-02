@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import game.RummikubFigure;
 import game.RummikubPlacement;
 
-@CrossOrigin(origins = {"http://localhost:4200","http://192.168.0.207:4200"},allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:4200"},allowCredentials = "true")
 @RestController
 public class RummikubController {
 	
@@ -218,6 +218,7 @@ public class RummikubController {
 		}
 		return res;
 	}
+	
 	
 	@PostMapping("/submitMove")
 	public GameStateApi submitMove(@RequestBody GameStateApi gsSubmitted,@CookieValue(value = "RKToken", defaultValue = "") String token)

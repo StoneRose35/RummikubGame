@@ -3,13 +3,13 @@
 
 <h2>Players</h2>
 <div class="rk-container"><div *ngFor="let p of players" class="rk-player" [ngClass]="{'rk-player-active': p.active === true}">{{p.name}} </div></div>
-<div [hidden]="!playing" class="rk-container">
-    <button mat-raised-button class="rk-top-element" (click)="drawFigure()" [disabled]="cannotDraw">Draw Figure</button>
-    <button mat-raised-button class="rk-top-element" (click)="submitMove()" [disabled]="cannotSubmit">Submit Move</button>
-    <button mat-raised-button class="rk-top-element" (click)="resetMove()" >Reset Move</button>
+<div class="rk-container">
+    <button mat-raised-button class="rk-top-element" (click)="drawFigure()" [disabled]="cannotDraw || !playing">Draw Figure</button>
+    <button mat-raised-button class="rk-top-element" (click)="submitMove()" [disabled]="cannotSubmit || !playing">Submit Move</button>
+    <button mat-raised-button class="rk-top-element" (click)="resetMove()"[disabled]="!playing" >Reset Move</button>
 </div>
     
-<div cdkDropListGroup [ngClass]="{'rk-inactive': playing === false}">
+<div cdkDropListGroup [ngClass]="{'rk-inactive': playing === false}" class="rk-table-stack">
   <h2>Table</h2>
     <div class="rk-table">
       <app-figure-serie 

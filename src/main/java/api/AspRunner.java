@@ -28,6 +28,7 @@ public class AspRunner extends Thread {
 			{
 				// player has legibly placed all the figures on the Table, s*he wins!
 				// set final scores for all the players
+				game.getActivePlayer().setFigures(gsNew.getShelfFigures());
 				game.getPlayers().forEach(p -> {
 					p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
 				});

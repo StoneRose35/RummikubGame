@@ -1,22 +1,20 @@
 package api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import game.GameState;
 import game.IRummikubFigureBag;
-import game.RummikubColor;
-import game.RummikubException;
 import game.RummikubFigure;
-import game.RummikubPlacement;
 import game.Stack;
 
 public class RummikubGame {
 	
 	private List<RummikubPlayer> players;
 	private List<IRummikubFigureBag> tableFigures;
-	private boolean started=false;
+	private boolean drawn=false;
+	private Date created;
+	private Date lastAccessed;
 	
 	
 	public List<RummikubPlayer> getPlayers() {
@@ -44,6 +42,7 @@ public class RummikubGame {
 
 	public void setTableFigures(List<IRummikubFigureBag> tableFigures) {
 		this.tableFigures = tableFigures;
+		this.lastAccessed = new Date();
 	}
 
 	private Stack stack;
@@ -63,10 +62,13 @@ public class RummikubGame {
 		this.tableFigures=new ArrayList<IRummikubFigureBag>();
 		this.stack=new Stack();
 		this.stack.fill();
+		this.created = new Date();
 	}
 	
 	public RummikubFigure drawFigure()
 	{
+		this.drawn=true;
+		this.lastAccessed = new Date();
 		return this.stack.drawFromStack();
 	}
 	
@@ -80,7 +82,7 @@ public class RummikubGame {
 		{
 			throw new RummikubApiException("Game " + this.getName() + " Full");
 		}
-		if (this.started==true)
+		if (this.getStarted()==true)
 		{
 			throw new RummikubApiException("Game " + this.getName() + " already started");
 		}
@@ -89,12 +91,37 @@ public class RummikubGame {
 
 		for (int c=0;c<14;c++)
 		{
-			f.add(this.drawFigure());
+			f.add(this.stack.drawFromStack());
 		}		
 		p.setName(name);
 		p.setActive(this.players.stream().filter(pl -> !(pl instanceof RummikubPlayerAsp)).count()==0);
 		this.players.add(p);
 		return p;
+	}
+	
+	public void addPlayer(RummikubPlayerAsp rp) throws RummikubApiException
+	{
+		if (this.players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null)!=null)
+		{
+			throw new RummikubApiException("Player " + rp.getName() + " already exists");
+		}
+		if (this.players.size()>=4)
+		{
+			throw new RummikubApiException("Game " + this.getName() + " Full");
+		}
+		if (this.getStarted()==true)
+		{
+			throw new RummikubApiException("Game " + this.getName() + " already started");
+		}
+		
+		List<RummikubFigure> f = rp.getFigures();
+
+		for (int c=0;c<14;c++)
+		{
+			f.add(this.stack.drawFromStack());
+		}	
+		rp.setActive(false);
+		this.players.add(rp);
 	}
 	
 	@Override
@@ -111,7 +138,6 @@ public class RummikubGame {
 	public void rotatePlayer()
 	{
 		int idx = 0;
-		this.started=true;
 		for (RummikubPlayer p : this.players)
 		{
 			if (p.isActive()==true)
@@ -132,14 +158,24 @@ public class RummikubGame {
 			aspRunner.setGame(this);
 			aspRunner.start();
 		}
+		this.lastAccessed = new Date();
+	}
+	
+	public boolean getStarted()
+	{
+		return !this.tableFigures.isEmpty() || this.drawn; 
+	}
+	
+	public boolean getFinished()
+	{
+		return this.players.stream().anyMatch(p -> p.getFinalScore()!=null);
 	}
 
-	public boolean isStarted() {
-		return started;
+	public Date getCreated() {
+		return created;
 	}
 
-	public void setStarted(boolean started) {
-		this.started = started;
+	public Date getLastAccessed() {
+		return lastAccessed;
 	}
-
 }

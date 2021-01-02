@@ -106,6 +106,10 @@ public class ApiTest {
 	@Test
 	public void AspPlayerTest()
 	{
+		/**
+		 * sets up a game, added a human player, add a ai player, the "human" player then draws a figure.
+		 * Then it is checked that the ai player is active for at least 100ms
+		 */
 		final String tokenValue = "abcd";
 		controller.generateGame("Testgame",0);
 		ServletResponseMock responseMock = new ServletResponseMock();
@@ -134,7 +138,21 @@ public class ApiTest {
 			}
 		}
 		long t1 = System.currentTimeMillis();
-		Assert.assertTrue(t1-t0 > 1);
+		Assert.assertTrue(t1-t0 > 100);
+	}
+	
+	
+	@Test
+	public void DisposeTest()
+	{
+		controller.generateGame("Testgame",0);
+		ServletResponseMock responseMock = new ServletResponseMock();
+		controller.registerPlayer("Testplayer", "Testgame", responseMock);
+		controller.disposeGame(responseMock.getCookie().getValue());
+
+		PlayerResponse pr = controller.registerPlayer("Testplayer", "Testgame", responseMock);
+		Assert.assertNotNull(pr.getError());
+
 	}
 	
 	@Test

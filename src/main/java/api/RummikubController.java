@@ -34,10 +34,23 @@ public class RummikubController {
 	}
 	
 	
-	@GetMapping("")
+	@GetMapping("/ping")
 	public String aboutRummikubGame()
 	{
 		return "This is the Rummikub Game Web API";
+	}
+	
+	@GetMapping("/dispose")
+	public Response disposeGame(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	{
+		Response r = new Response();
+		RummikubToken t = this.tokens.stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		if (t!=null)
+		{
+			this.games.remove(t.getGame());
+			this.tokens.remove(t);
+		}
+		return r;
 	}
 	
 	@GetMapping("/draw")
@@ -75,13 +88,13 @@ public class RummikubController {
 			for(int c=0;c<nrAiPlayers;c++)
 			{
 				RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
-				aiPlayer.setActive(false);
 				aiPlayer.setName(AiPlayerNameGenerator.generateName());
-				for (int cc=0;cc<14;cc++)
-				{
-					aiPlayer.getFigures().add(g.drawFigure());
+				try {
+					g.addPlayer(aiPlayer);
+				} catch (RummikubApiException e1) {
+					r.setError(e1.getMessage());
+					return r;
 				}
-				g.getPlayers().add(aiPlayer);
 			}
 			
 			r.setMessage("Successfully created game " + name);

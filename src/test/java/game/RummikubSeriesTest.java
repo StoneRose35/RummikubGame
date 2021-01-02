@@ -38,6 +38,15 @@ class RummikubSeriesTest {
 		Assert.assertTrue(!rs.isValid());
 	}
 	
+	@Test
+	void setupWrongSeries2() throws RummikubGameException {
+		RummikubSeries rs = new RummikubSeries();
+		rs.addFigure(RummikubFigure.getRummikubFigure("ontable(9,1,1)."));
+		rs.addFigure(RummikubFigure.getRummikubFigure("ontable(10,1,1)."));
+		rs.addFigure(RummikubFigure.getRummikubFigure("ontable(12,1,1)."));
+		Assert.assertTrue(!rs.isValid());
+	}
+	
 	
 	@Test
 	void addWrongColor() {

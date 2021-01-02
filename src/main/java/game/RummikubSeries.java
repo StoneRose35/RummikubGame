@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -65,19 +66,17 @@ public class RummikubSeries implements IRummikubFigureBag{
 		}
 		else // check if the accumulated sum is equal so the sum of the arithmetic series
 		{
-			int n_last = this.figures.get(this.figures.size()-1).getNumber();
-			int n_first = this.figures.get(0).getNumber();
-			int sum=0;
-			Iterator<RummikubFigure> it= figures.iterator();
-			RummikubFigure el;
-			while (it.hasNext())
+			int[] fnumbers = this.figures
+					.stream()
+					.mapToInt(f -> f.getNumber())
+					.sorted()
+					.toArray();
+			for (int cnt=0;cnt<fnumbers.length-1;cnt++)
 			{
-				el=it.next();
-				sum += el.getNumber();
+				if (fnumbers[cnt+1]-fnumbers[cnt] != 1)
+				return false;
 			}
-			int sum_calc =(this.figures.size()*(n_last+n_first));
-			sum_calc /= 2;
-			return sum_calc == sum;
+			return true;
 		}
 	}
 

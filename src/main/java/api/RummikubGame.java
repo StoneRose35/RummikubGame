@@ -15,7 +15,17 @@ public class RummikubGame {
 	private boolean drawn=false;
 	private Date created;
 	private Date lastAccessed;
+	private WebsocketController wsController;
 	
+	public RummikubGame(WebsocketController wsc)
+	{
+		this.players = new ArrayList<RummikubPlayer>();
+		this.tableFigures=new ArrayList<IRummikubFigureBag>();
+		this.stack=new Stack();
+		this.stack.fill();
+		this.created = new Date();
+		this.wsController = wsc;
+	}
 	
 	public List<RummikubPlayer> getPlayers() {
 		return players;
@@ -56,14 +66,6 @@ public class RummikubGame {
 		this.name = name;
 	}
 
-	public RummikubGame()
-	{
-		this.players = new ArrayList<RummikubPlayer>();
-		this.tableFigures=new ArrayList<IRummikubFigureBag>();
-		this.stack=new Stack();
-		this.stack.fill();
-		this.created = new Date();
-	}
 	
 	public RummikubFigure drawFigure()
 	{
@@ -154,7 +156,7 @@ public class RummikubGame {
 		currentPlayer.setActive(true);
 		if (currentPlayer instanceof RummikubPlayerAsp)
 		{
-			AspRunner aspRunner = new AspRunner();
+			AspRunner aspRunner = new AspRunner(this.wsController);
 			aspRunner.setGame(this);
 			aspRunner.start();
 		}

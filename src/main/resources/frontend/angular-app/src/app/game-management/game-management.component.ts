@@ -58,7 +58,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     });
     if (this.playerPollSubscription == null)
     {
-      this.playerPollSubscription = this.gs.pollPlayers().subscribe(ps => {
+      this.playerPollSubscription = this.gs.watchPlayers().subscribe(ps => {
         let prevPlayer = this.players.find(p => p.active===true);
         let actualPlayer = ps.find(p2 => p2.active===true);
 
@@ -93,8 +93,9 @@ export class GameManagementComponent implements OnInit, OnDestroy {
         {
           this.playing = this.gs.p.active;
         }
-      });
+      },error => {console.log("something bad happened: " + error)});
     }
+    this.gs.getPlayers();
   }
 
   ngOnDestroy()

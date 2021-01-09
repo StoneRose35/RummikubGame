@@ -81,11 +81,11 @@ public class ApiTest {
 		controller.generateGame("Testgame",0);
 		resp = controller.registerPlayer("Tester", "Testgame", responseMock);
 		String cookieValue = responseMock.getCookie().getValue();
-		Assert.assertTrue(controller.tokens.stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
+		Assert.assertTrue(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
 		controller.registerPlayer("Tester2", "Testgame", responseMock);
 		RummikubFigureApi f = controller.getFigure(cookieValue);
 		Assert.assertNotNull(f);
-		Assert.assertFalse(controller.tokens.stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
+		Assert.assertFalse(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
 	}
 	
 	@Test
@@ -99,7 +99,7 @@ public class ApiTest {
 			controller.getFigure(token);
 		}
 		Assert.assertEquals(players.size(),4);
-		Assert.assertTrue(this.controller.tokens.stream().filter(tt -> tt.getToken()==token).findFirst().orElseThrow().getPlayer()
+		Assert.assertTrue(this.controller.data.getTokens().stream().filter(tt -> tt.getToken()==token).findFirst().orElseThrow().getPlayer()
 			.getFigures().size()==18);
 	}
 	
@@ -116,12 +116,12 @@ public class ApiTest {
 		controller.registerPlayer("Testplayer", "Testgame", responseMock);
 		RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
 		RummikubToken rToken = new RummikubToken();
-		RummikubGame g = controller.games.get(0);
+		RummikubGame g = controller.data.getGames().get(0);
 		rToken.setGame(g);
 		rToken.setPlayer(aiPlayer);
 		rToken.setToken(tokenValue);
 		g.getPlayers().add(aiPlayer);
-		controller.tokens.add(rToken);
+		controller.data.getTokens().add(rToken);
 		for (int c=0;c<14;c++)
 		{
 			aiPlayer.getFigures().add(g.drawFigure());
@@ -159,7 +159,7 @@ public class ApiTest {
 	public void AiPlayerGenerationTest()
 	{
 		controller.generateGame("Testgame",3);
-		Assert.assertEquals(3,controller.games.get(0).getPlayers().stream().filter(p -> {return p instanceof RummikubPlayerAsp;}).count());
+		Assert.assertEquals(3,controller.data.getGames().get(0).getPlayers().stream().filter(p -> {return p instanceof RummikubPlayerAsp;}).count());
 	}
 	
 	private String setupGame()
@@ -174,11 +174,18 @@ public class ApiTest {
 		
 	}
 	
+	
+	@Test
+	public void webSocketAvailableTest()
+	{
+		Assert.assertNotNull(controller.wsController);
+	}
+	
 	@BeforeEach
 	public void init()
 	{
-		controller.games.clear();
-		controller.tokens.clear();
+		controller.data.getGames().clear();
+		controller.data.getTokens().clear();
 	}
 	
 }

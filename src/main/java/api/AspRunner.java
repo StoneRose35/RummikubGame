@@ -2,11 +2,23 @@ package api;
 
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import game.GameState;
 import game.RummikubFigure;
 
+@Service
 public class AspRunner extends Thread {
 	private RummikubGame game;
+	
+
+	WebsocketController wsController;
+	
+	public AspRunner(WebsocketController wsController)
+	{
+		this.wsController = wsController;
+	}
 	
 	public void run()
 	{
@@ -38,6 +50,7 @@ public class AspRunner extends Thread {
 		game.getActivePlayer().setFigures(gsNew.getShelfFigures());
 		try {Thread.sleep(1234);} catch (InterruptedException e) {}
 		game.rotatePlayer();
+		wsController.updatePlayers2(game.getPlayers().stream().map(p -> new RummikubPlayerApi(p)).collect(Collectors.toList()));
 	}
 
 	public void setGame(RummikubGame game) {

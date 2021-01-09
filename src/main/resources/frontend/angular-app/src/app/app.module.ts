@@ -21,6 +21,8 @@ import { WinnerScreenComponent } from './winner-screen/winner-screen.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
+import { RkStompConfig } from './rk_rx_stomp.config';
+import { InjectableRxStompConfig, RxStompService, rxStompServiceFactory } from '@stomp/ng2-stompjs';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,12 @@ import {MatButtonModule} from '@angular/material/button';
     MatSelectModule,
     MatButtonModule
   ],
-  providers: [MatSnackBar, Overlay, MatSnackBarConfig],
+  providers: [MatSnackBar,
+              Overlay, 
+              MatSnackBarConfig,
+              {provide: InjectableRxStompConfig, useValue: RkStompConfig},
+              {provide: RxStompService, useFactory: rxStompServiceFactory, deps: [InjectableRxStompConfig]}
+            ],
   bootstrap: [AppComponent],
   entryComponents: [NewPlayerDialogComponent, WinnerScreenComponent]
 })

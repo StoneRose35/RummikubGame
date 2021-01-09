@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, timer, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { Figure } from './figure';
 import { HttpClient } from '@angular/common/http';
 import { backendPort } from './../environments/environment';
+import { RxStompService } from '@stomp/ng2-stompjs';
 
 
 export interface Game {
@@ -41,6 +42,7 @@ export interface ResponsePlayer {
   message: String;
   error: String;
   player: Player;
+  token: String;
 }
 
 @Injectable({
@@ -53,8 +55,9 @@ export class GameService {
   activityChangedSubject: Subject<boolean>;
   roundNr: number;
   url: String;
+  token: String;
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient, private stompClient: RxStompService) { 
     this.activityChangedSubject=new Subject<boolean>();
     this.p = null;
     this.url = window.location.protocol + "//" + window.location.hostname + ":" + backendPort;
@@ -72,7 +75,7 @@ export class GameService {
 
   public registerPlayer(playerName: String, gameName: String): Observable<ResponsePlayer>
   {
-    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {name: playerName.toString(),gameId: gameName.toString() },withCredentials: true})
+    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {name: playerName.toString(),gameId: gameName.toString() },withCredentials: true});
   }
 
   public shelfFigures(): Observable<Array<Figure>>
@@ -86,10 +89,16 @@ export class GameService {
     return this.http.get<Response>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString()}});
   }
 
-  public pollPlayers(): Observable<Array<Player>> 
+  public watchPlayers(): Observable<Array<Player>> 
   {
-    const act_old = this.p.active;
-    return timer(1,500).pipe(switchMap(() => this.http.get<Array<Player>>(this.url + "/players",{withCredentials: true})));
+    //const act_old = this.p.active;
+    return this.stompClient.watch("/topic/players").pipe(map(msg => {return JSON.parse(msg.body);}));
+    //return timer(1,500).pipe(switchMap(() => this.http.get<Array<Player>>(this.url + "/players",{withCredentials: true})));
+  }
+
+  public getPlayers()
+  {
+    this.stompClient.publish({destination: "/app/getplayers", body: "RKToken=" + this.token});
   }
 
   activityChanged(): Observable<boolean> {

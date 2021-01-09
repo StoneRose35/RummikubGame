@@ -61,6 +61,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
             else
             {
                 this.gs.p = r.player;
+                this.gs.token = r.token;
                 this.router.navigateByUrl("/game-management");
             }
           });

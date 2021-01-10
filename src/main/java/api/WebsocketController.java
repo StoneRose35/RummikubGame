@@ -27,22 +27,21 @@ public class WebsocketController {
 	    }
 	  
 	  @MessageMapping("/getplayers")
-	  @SendTo("/topic/players")
-	  public List<RummikubPlayerApi> updatePlayers(@Payload String msg)
+	  public void watchPlayers(@Payload String msg)
 	  {
 		  RummikubToken token = data.getTokens().stream().filter(t -> t.getToken().equals(msg.replace("RKToken=", ""))).findFirst().orElse(null);
 		  if (token != null)
 		  {
-			  return token.getGame().getPlayers().stream().map(ps -> new RummikubPlayerApi(ps)).collect(Collectors.toList());
+			  updatePlayers(token.getGame());
 		  }
-		  return null;
 	  }
 	  
 	  
-	  public void updatePlayers2(List<RummikubPlayerApi> players)
+	  public void updatePlayers(RummikubGame g)
 	  {
-		  simpMessagingTemplate.convertAndSend("/topic/players",
-		            players);
+		  
+		  simpMessagingTemplate.convertAndSend("/topic/players" + g.getName().replace(" ", ""),
+				  g.getPlayers().stream().map(ps -> new RummikubPlayerApi(ps)).collect(Collectors.toList()));
 	  }
 
 }

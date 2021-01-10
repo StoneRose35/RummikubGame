@@ -38,7 +38,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
     }
   }
 
-
+  
   registerGame()
   {
     this.gs.initGame(this.gameName,this.aiPlayers).subscribe(r => {
@@ -62,6 +62,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
             {
                 this.gs.p = r.player;
                 this.gs.token = r.token;
+                this.gs.gameId = gameName.replace(" ","");
                 this.router.navigateByUrl("/game-management");
             }
           });

@@ -66,6 +66,7 @@ public class RummikubController {
 			RummikubFigure f =  g.drawFigure();
 			p.getFigures().add(f);
 			g.rotatePlayer();
+			wsController.updatePlayers(g);
 			return RummikubFigureApi.fromRummikubFigure(f);
 		}
 		return null;
@@ -115,20 +116,6 @@ public class RummikubController {
 		return this.data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
 	}
 
-	private String getHexString(short stringSize) {
-		Random r = new Random();
-		byte[] b=new byte[stringSize];
-		r.nextBytes(b);
-		char[] hexDigits = new char[stringSize*2];
-		for (int c=0;c<stringSize;c++)
-		{
-			
-			hexDigits[2*c] = Character.forDigit((b[c] >> 4) & 0xF, 16);
-			hexDigits[2*c+1] = Character.forDigit((b[c] & 0xF), 16);
-		}
-		final String name=new String(hexDigits);
-		return name;
-	}
 	
 	@GetMapping("/registerPlayer")
 	public PlayerResponse registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
@@ -291,11 +278,25 @@ public class RummikubController {
 			
 		}
 		currentGame.rotatePlayer();
-		wsController.updatePlayers2(currentGame.getPlayers().stream().map(p -> new RummikubPlayerApi(p)).collect(Collectors.toList()));
+		wsController.updatePlayers(currentGame);
 		return gameStateReturned;
 	}
 	
 	
+	private String getHexString(short stringSize) {
+		Random r = new Random();
+		byte[] b=new byte[stringSize];
+		r.nextBytes(b);
+		char[] hexDigits = new char[stringSize*2];
+		for (int c=0;c<stringSize;c++)
+		{
+			
+			hexDigits[2*c] = Character.forDigit((b[c] >> 4) & 0xF, 16);
+			hexDigits[2*c+1] = Character.forDigit((b[c] & 0xF), 16);
+		}
+		final String name=new String(hexDigits);
+		return name;
+	}
 	
 	private RummikubGame getGame(String gameId)
 	{

@@ -50,7 +50,7 @@ public class AspRunner extends Thread {
 		game.getActivePlayer().setFigures(gsNew.getShelfFigures());
 		try {Thread.sleep(1234);} catch (InterruptedException e) {}
 		game.rotatePlayer();
-		wsController.updatePlayers2(game.getPlayers().stream().map(p -> new RummikubPlayerApi(p)).collect(Collectors.toList()));
+		wsController.updatePlayers(game);
 	}
 
 	public void setGame(RummikubGame game) {

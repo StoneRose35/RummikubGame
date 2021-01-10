@@ -91,9 +91,7 @@ export class GameService {
 
   public watchPlayers(): Observable<Array<Player>> 
   {
-    //const act_old = this.p.active;
-    return this.stompClient.watch("/topic/players").pipe(map(msg => {return JSON.parse(msg.body);}));
-    //return timer(1,500).pipe(switchMap(() => this.http.get<Array<Player>>(this.url + "/players",{withCredentials: true})));
+    return this.stompClient.watch("/topic/players" + this.gameId).pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
   public getPlayers()

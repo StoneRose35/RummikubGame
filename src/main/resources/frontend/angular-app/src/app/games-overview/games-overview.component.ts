@@ -34,7 +34,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.pollGamesSubscription == null)
     {
-      this.pollGamesSubscription = this.gs.pollGames().subscribe(games => this.games=games);
+      this.pollGamesSubscription = this.gs.watchGames().subscribe(games => this.games=games);
     }
   }
 

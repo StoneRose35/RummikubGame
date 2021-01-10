@@ -43,5 +43,10 @@ public class WebsocketController {
 		  simpMessagingTemplate.convertAndSend("/topic/players" + g.getName().replace(" ", ""),
 				  g.getPlayers().stream().map(ps -> new RummikubPlayerApi(ps)).collect(Collectors.toList()));
 	  }
+	  
+	  public void updateGames()
+	  {
+		  simpMessagingTemplate.convertAndSend("/topic/games", data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList()));
+	  }
 
 }

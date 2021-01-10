@@ -68,9 +68,10 @@ export class GameService {
       return this.http.get<Array<GameOverview>>(this.url + "/games");
   }
 
-  public pollGames(): Observable<Array<GameOverview>>
+  public watchGames(): Observable<Array<GameOverview>>
   {
-    return timer(1,500).pipe(switchMap(() => this.http.get<Array<GameOverview>>(this.url + "/games")));
+    return this.stompClient.watch("/topic/games").pipe(map(msg => {return JSON.parse(msg.body);}));
+    //return timer(1,500).pipe(switchMap(() => this.http.get<Array<GameOverview>>(this.url + "/games")));
   }
 
   public registerPlayer(playerName: String, gameName: String): Observable<ResponsePlayer>

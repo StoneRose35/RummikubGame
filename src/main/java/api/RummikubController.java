@@ -52,6 +52,7 @@ public class RummikubController {
 			this.data.getGames().remove(t.getGame());
 			this.data.getTokens().remove(t);
 		}
+		wsController.updateGames();
 		return r;
 	}
 	
@@ -101,6 +102,7 @@ public class RummikubController {
 			}
 			
 			r.setMessage("Successfully created game " + name);
+			wsController.updateGames();
 			return r;
 		}
 		else
@@ -144,10 +146,11 @@ public class RummikubController {
 		{
 			r.setError("Game " + gameId + " not existent");
 		}
-		
+		wsController.updateGames();
 		return r;
 	}
 	
+	/*
 	@GetMapping("/registerGame")
 	public Response registerGame(@RequestParam String gameId)
 	{
@@ -161,7 +164,7 @@ public class RummikubController {
 			r.setMessage("Successfully joined game " + gameId);
 		}
 		return r;
-	}
+	}*/
 	
 	@GetMapping("/players")
 	public List<RummikubPlayerApi> getPlayers(@CookieValue(value = "RKToken", defaultValue = "") String token)

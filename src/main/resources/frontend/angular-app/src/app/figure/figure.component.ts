@@ -21,7 +21,7 @@ export class FigureComponent implements OnInit {
     {
       this.repr = this.figure.number + "";
     }
-    else
+    else if (this.figure.instance < 5)
     {
       if (this.figure.number > 0)
       {
@@ -31,6 +31,10 @@ export class FigureComponent implements OnInit {
       {
         this.repr = "J";
       }
+    }
+    else
+    {
+      this.repr = "+";
     }
     this.clr = this.figure.color.rgb;
   }

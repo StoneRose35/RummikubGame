@@ -2,7 +2,6 @@ import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { Figure } from './../figure';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import { JokerProcessor } from './../joker-processor';
-import {  Subject } from 'rxjs';
 
 @Component({
   selector: 'app-figure-serie',

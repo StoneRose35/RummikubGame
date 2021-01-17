@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import {Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { WinnerScreenComponent } from '../winner-screen/winner-screen.component';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-game-management',
@@ -18,6 +17,7 @@ import { ThrowStmt } from '@angular/compiler';
 export class GameManagementComponent implements OnInit, OnDestroy {
 
   tableFigures: Array<Array<Figure>>;
+  voidList: Array<Figure>;
   stackFigures: Array<Figure>;
   players: Array<Player>;
   playing: Boolean;
@@ -49,6 +49,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     this.snackBar.open(`Entering Game ${this.gs.gameId}`,null,this.sbConfig);
     this.stackFigures = [];
     this.tableFigures=[];
+    this.voidList=[new Figure(null,5,0)];
     this.gs.getTable().subscribe(t => {
       this.tableFigures=t;
     });

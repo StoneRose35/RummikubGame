@@ -83,14 +83,23 @@ export class JokerProcessor {
             }
         }
         else {
-            // line is complete, set all jokers to the right side
-            let jcntr = 0;
+            // line is complete, set all jokers to the right side until 13 is reached then add to the left
             let sorted = lineWithoutJokers.sort((fa, fb) => fa.number-fb.number);
             let jokers = line.filter(f => f.instance > 2);
+            let jc_left = 0;
             for(let jc=0;jc<jokers.length;jc++)
-            {
-                jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
-                jokers[jc].color = lineWithoutJokers[0].color;
+            {   
+                if (sorted[sorted.length-1].number + jc + 1 < 14)
+                {
+                    jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
+                    jokers[jc].color = lineWithoutJokers[0].color;
+                }
+                else
+                { // add left
+                    jokers[jc].number = sorted[0].number - jc_left - 1;
+                    jokers[jc].color = lineWithoutJokers[0].color;
+                    jc_left -= 1;
+                }
             }
         }
 

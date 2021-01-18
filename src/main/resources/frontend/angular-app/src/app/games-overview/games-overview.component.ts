@@ -53,6 +53,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
   {
     const dialogRef = this.dialog.open(NewPlayerDialogComponent);
         dialogRef.afterClosed().subscribe(s => {
+          let gameId = gameName.replace(/ /g,"");
           this.gs.registerPlayer(s,gameName).subscribe(r => {
             if (r.error != null)
             {
@@ -62,7 +63,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
             {
                 this.gs.p = r.player;
                 this.gs.token = r.token;
-                this.gs.gameId = gameName.replace(" ","");
+                this.gs.gameId = gameId;
                 this.router.navigateByUrl("/game-management");
             }
           });

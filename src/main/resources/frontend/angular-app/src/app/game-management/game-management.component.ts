@@ -144,6 +144,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
   drawFigure() {
     this.gs.drawFigure().subscribe(fig => this.stackFigures.push(fig));
+
   }
 
   submitMove() {
@@ -175,7 +176,8 @@ export class GameManagementComponent implements OnInit, OnDestroy {
       });
       this.jp.process(tf);
     });
-
+    this.cannotDraw=false;
+    this.cannotSubmit=true;
   }
 
   onTurn() {
@@ -215,6 +217,13 @@ export class GameManagementComponent implements OnInit, OnDestroy {
                       this.tableFigures[this.tableFigures.length-1],
                       event.previousIndex,
                       0);
+    this.tableFigures = this.tableFigures.filter(f => f.length > 0);
+    this.enableSubmit();
+  }
+
+  fdCallback()
+  {
+    this.tableFigures = this.tableFigures.filter(f => f.length > 0);
     this.enableSubmit();
   }
 

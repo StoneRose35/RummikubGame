@@ -17,7 +17,7 @@
         [figures]="item" 
         [disabled]="!playing" 
         [ngClass]="{'rk-inactive': playing === false}"
-        (figuredropped)="enableSubmit()"
+        (figuredropped)="fdCallback()"
         ></app-figure-serie>
         <app-empty-figure-serie
           [figures]="voidList"

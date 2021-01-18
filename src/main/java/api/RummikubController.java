@@ -2,7 +2,9 @@ package api;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +56,22 @@ public class RummikubController {
 		}
 		wsController.updateGames();
 		return r;
+	}
+	
+	@GetMapping("/reconnect")
+	public PlayerResponse handleReconnect(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	{
+		RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		if (t!=null)
+		{
+			PlayerResponse r=new PlayerResponse();
+			r.setMessage("reconnected player " + t.getPlayer().getName() + " to game " + t.getGame().getName());
+			r.setPlayer((RummikubPlayerApi)t.getPlayer());
+			r.setToken(t.getToken());
+			r.setGameName(t.getGame().getName());
+			return r;
+		}
+		return null;
 	}
 	
 	@GetMapping("/draw")
@@ -113,8 +131,18 @@ public class RummikubController {
 	}
 
 	@GetMapping("/games")
-	public List<RummikubGameApi> getGames()
+	public List<RummikubGameApi> getGames(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
+		if (token.length() > 0)
+		{
+			RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+			if (t!=null)
+			{
+				List<RummikubGameApi> apiGames = (List<RummikubGameApi>)this.data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
+				apiGames.stream().filter(g -> g.getName()==t.getGame().getName()).forEach(el -> el.declareAsJoined());
+				return apiGames;
+			}
+		}
 		return this.data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
 	}
 
@@ -138,6 +166,7 @@ public class RummikubController {
 				r.setMessage("Sucessfully registered " + name);
 				r.setPlayer((RummikubPlayerApi)t.getPlayer());
 				r.setToken(t.getToken());
+				r.setGameName(gameId);
 			} catch (RummikubApiException e) {
 				r.setError(e.getMessage());
 			}

@@ -5,6 +5,7 @@ import api.RummikubPlayerApi;
 public class PlayerResponse extends Response {
 	private RummikubPlayerApi player;
 	private String token;
+	private String gameName;
 
 	public RummikubPlayerApi getPlayer() {
 		return player;
@@ -20,5 +21,13 @@ public class PlayerResponse extends Response {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getGameName() {
+		return gameName;
+	}
+
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
 	}
 }

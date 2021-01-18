@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, OnDestroy, DoCheck } from '@angular/core';
 import {MatSnackBar,MatSnackBarConfig} from '@angular/material/snack-bar';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Figure} from './../figure';
@@ -14,7 +14,7 @@ import { WinnerScreenComponent } from '../winner-screen/winner-screen.component'
   templateUrl: './game-management.component.html',
   styleUrls: ['./game-management.component.scss']
 })
-export class GameManagementComponent implements OnInit, OnDestroy {
+export class GameManagementComponent implements OnInit, OnDestroy, DoCheck {
 
   tableFigures: Array<Array<Figure>>;
   voidList: Array<Figure>;
@@ -41,6 +41,12 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     this.sbConfig.duration=2000;
     this.stackFigures = [];
     this.players=[];
+    this.playing=false;
+  }
+
+
+  ngDoCheck(): void {
+    this.gs.getPlayers();
   }
 
   ngOnInit(): void {
@@ -96,7 +102,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
         }
       },error => {console.log("something bad happened: " + error)});
     }
-    this.gs.getPlayers();
+    
   }
 
   ngOnDestroy()

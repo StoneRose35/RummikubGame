@@ -49,6 +49,11 @@ public class RummikubGameApi {
 	{
 		return this.state;
 	}
+	
+	public void declareAsJoined()
+	{
+		this.state = "joined";
+	}
 
 
 }

@@ -43,6 +43,7 @@ export interface ResponsePlayer {
   error: String;
   player: Player;
   token: String;
+  gameName: String;
 }
 
 @Injectable({
@@ -65,7 +66,7 @@ export class GameService {
 
   public getGames(): Observable<Array<GameOverview>>
   {
-      return this.http.get<Array<GameOverview>>(this.url + "/games");
+      return this.http.get<Array<GameOverview>>(this.url + "/games",{withCredentials: true});
   }
 
   public watchGames(): Observable<Array<GameOverview>>
@@ -87,6 +88,11 @@ export class GameService {
   {
     this.gameId = gameName;
     return this.http.get<Response>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString()}});
+  }
+
+  public reconnect(): Observable<ResponsePlayer>
+  {
+    return this.http.get<ResponsePlayer>(this.url + "/reconnect",{withCredentials: true});
   }
 
   public watchPlayers(): Observable<Array<Player>> 

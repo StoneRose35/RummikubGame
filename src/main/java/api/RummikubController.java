@@ -150,22 +150,6 @@ public class RummikubController {
 		return r;
 	}
 	
-	/*
-	@GetMapping("/registerGame")
-	public Response registerGame(@RequestParam String gameId)
-	{
-		Response r=new Response();
-		if (this.getGame(gameId)!=null)
-		{
-			r.setError("Game " + gameId + " not existent");
-		}
-		else
-		{
-			r.setMessage("Successfully joined game " + gameId);
-		}
-		return r;
-	}*/
-	
 	@GetMapping("/players")
 	public List<RummikubPlayerApi> getPlayers(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{

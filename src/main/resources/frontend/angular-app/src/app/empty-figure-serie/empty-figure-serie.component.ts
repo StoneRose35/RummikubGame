@@ -25,6 +25,11 @@ export class EmptyFigureSerieComponent implements OnInit {
   drop(event: CdkDragDrop<Figure[]>) {
       this.figuredropped.emit(event);
     }
-  }
 
+
+  isEnabled(): boolean
+  {
+    return !this.disabled;
+  }
+}
 

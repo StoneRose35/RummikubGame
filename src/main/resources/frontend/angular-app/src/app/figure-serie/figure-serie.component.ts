@@ -40,4 +40,9 @@ export class FigureSerieComponent implements OnInit {
     }
   }
 
+  isEnabled(): boolean
+  {
+    return !this.disabled;
+  }
+
 }

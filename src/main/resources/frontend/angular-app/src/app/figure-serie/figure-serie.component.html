@@ -6,6 +6,8 @@ cdkDropListOrientation="horizontal"
 [cdkDropListData]="figures"
 [cdkDropListDisabled]="disabled"
 (cdkDropListDropped)="drop($event)"
+[ngClass]="{'rk-inactive': disabled === true}"
+[cdkDropListEnterPredicate]="isEnabled"
 class="rk-series"
 >
     <app-figure *ngFor="let item of figures" cdkDrag [figure]="item"></app-figure>

@@ -100,9 +100,9 @@ export class GameService {
     return this.stompClient.watch("/topic/players" + this.gameId).pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
-  public getPlayers()
+  public getPlayers(): Observable<Array<Player>>
   {
-    this.stompClient.publish({destination: "/app/getplayers", body: "RKToken=" + this.token});
+    return this.http.get<Array<Player>>(this.url + "/players",{withCredentials: true});
   }
 
   activityChanged(): Observable<boolean> {

@@ -14,7 +14,7 @@ import { WinnerScreenComponent } from '../winner-screen/winner-screen.component'
   templateUrl: './game-management.component.html',
   styleUrls: ['./game-management.component.scss']
 })
-export class GameManagementComponent implements OnInit, OnDestroy, DoCheck {
+export class GameManagementComponent implements OnInit, OnDestroy {
 
   tableFigures: Array<Array<Figure>>;
   voidList: Array<Figure>;
@@ -45,9 +45,6 @@ export class GameManagementComponent implements OnInit, OnDestroy, DoCheck {
   }
 
 
-  ngDoCheck(): void {
-    this.gs.getPlayers();
-  }
 
   ngOnInit(): void {
 
@@ -65,44 +62,9 @@ export class GameManagementComponent implements OnInit, OnDestroy, DoCheck {
     });
     if (this.playerPollSubscription == null)
     {
-      this.playerPollSubscription = this.gs.watchPlayers().subscribe(ps => {
-        let prevPlayer = this.players.find(p => p.active===true);
-        let actualPlayer = ps.find(p2 => p2.active===true);
-
-        this.players=ps;
-        this.gs.p.active = ps.filter(p => p.name === this.gs.p.name)[0].active;
-        this.gs.p.finalScore = ps.filter(p => p.name === this.gs.p.name)[0].finalScore;
-        if (this.gs.p.finalScore !== null)
-        {
-          this.showWinnerScreen();
-        }
-        if (this.playing===true && this.gs.p.active===false)
-        {
-          // switch from active to passive
-          this.playing=this.gs.p.active;
-        }
-        else if (this.playing===false && this.gs.p.active===true)
-        {
-          // switch from passive to active
-          this.gs.getTable().subscribe(t => {
-            this.tableFigures=t; 
-            this.onTurn();
-            this.playing=this.gs.p.active;
-          });
-        }
-        else if (prevPlayer!= null && prevPlayer.name !== actualPlayer.name)
-        // switch between opponents
-        {
-          this.gs.getTable().subscribe(t => {
-            this.tableFigures=t; });
-        }
-        else
-        {
-          this.playing = this.gs.p.active;
-        }
-      },error => {console.log("something bad happened: " + error)});
+      this.playerPollSubscription = this.gs.watchPlayers().subscribe(ps => this.handlePlayerUpdate(ps),error => {console.log("something bad happened: " + error)});
     }
-    
+    this.gs.getPlayers().subscribe(ps => this.handlePlayerUpdate(ps));
   }
 
   ngOnDestroy()
@@ -151,6 +113,44 @@ export class GameManagementComponent implements OnInit, OnDestroy, DoCheck {
   drawFigure() {
     this.gs.drawFigure().subscribe(fig => this.stackFigures.push(fig));
 
+  }
+
+  handlePlayerUpdate(ps: Array<Player>)
+  {
+    let prevPlayer = this.players.find(p => p.active===true);
+    let actualPlayer = ps.find(p2 => p2.active===true);
+
+    this.players=ps;
+    this.gs.p.active = ps.filter(p => p.name === this.gs.p.name)[0].active;
+    this.gs.p.finalScore = ps.filter(p => p.name === this.gs.p.name)[0].finalScore;
+    if (this.gs.p.finalScore !== null)
+    {
+      this.showWinnerScreen();
+    }
+    if (this.playing===true && this.gs.p.active===false)
+    {
+      // switch from active to passive
+      this.playing=this.gs.p.active;
+    }
+    else if (this.playing===false && this.gs.p.active===true)
+    {
+      // switch from passive to active
+      this.gs.getTable().subscribe(t => {
+        this.tableFigures=t; 
+        this.onTurn();
+        this.playing=this.gs.p.active;
+      });
+    }
+    else if (prevPlayer!= null && prevPlayer.name !== actualPlayer.name)
+    // switch between opponents
+    {
+      this.gs.getTable().subscribe(t => {
+        this.tableFigures=t; });
+    }
+    else
+    {
+      this.playing = this.gs.p.active;
+    }
   }
 
   submitMove() {

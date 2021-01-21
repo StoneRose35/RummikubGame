@@ -39,5 +39,5 @@ describe('FigureComponent', () => {
 
 })
 class TestCmpWrapper {
-  mockFigure = new Figure(new RKColor(0),0,12);
+  mockFigure = new Figure(0,0,12);
 }

@@ -3,13 +3,13 @@ import {RKColor} from './rkcolor'
 
 export class Figure
 {
-    color: RKColor;
+    colorcode: number;
     instance: number;
     number: number;
 
-    constructor(color: RKColor, instance: number, value: number)
+    constructor(colorcode: number, instance: number, value: number)
     {
-        this.color=color;
+        this.colorcode=colorcode;
         this.instance=instance;
         this.number=value;
     }

@@ -36,7 +36,7 @@ export class FigureComponent implements OnInit {
     {
       this.repr = "+";
     }
-    this.clr = this.figure.color.rgb;
+    this.clr = new RKColor(this.figure.colorcode).rgb;
   }
 
 }

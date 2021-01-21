@@ -15,7 +15,7 @@ export class JokerProcessor {
         {
             let lineWithoutJokers = line.filter(f => f.instance<3);
             let jokers = line.filter(f => f.instance > 2);
-            if(lineWithoutJokers.filter((val,idx,fline) => fline.findIndex(v => v.color.code === val.color.code)===idx).length===1)
+            if(lineWithoutJokers.filter((val,idx,fline) => fline.findIndex(v => v.colorcode === val.colorcode)===idx).length===1)
             {
                 // same color, must be a series
                 this.completeSeries(line);
@@ -38,7 +38,7 @@ export class JokerProcessor {
         let jokers = line.filter(f => f.instance > 2);
         jokers.forEach(f => {
             f.number=0;
-            f.color=null;
+            f.colorcode=null;
         });
 
     }
@@ -63,7 +63,7 @@ export class JokerProcessor {
                     if ((sorted[c+1].number-sorted[c].number) > 1)
                     {
                         jokers[jcntr].number = sorted[c].number + 1;
-                        jokers[jcntr].color = lineWithoutJokers[0].color;
+                        jokers[jcntr].colorcode = lineWithoutJokers[0].colorcode;
                         jcntr++;
                     }
                 }
@@ -72,14 +72,14 @@ export class JokerProcessor {
                     for(let jc=jcntr;jc<jokers.length;jc++)
                     {
                         jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
-                        jokers[jc].color = lineWithoutJokers[0].color;
+                        jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
                     }
                 }
             }
             else
             {
                 jokers[0].number = diff;
-                jokers[0].color=lineWithoutJokers[0].color;
+                jokers[0].colorcode=lineWithoutJokers[0].colorcode;
             }
         }
         else {
@@ -92,12 +92,12 @@ export class JokerProcessor {
                 if (sorted[sorted.length-1].number + jc + 1 < 14)
                 {
                     jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
-                    jokers[jc].color = lineWithoutJokers[0].color;
+                    jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
                 }
                 else
                 { // add left
                     jokers[jc].number = sorted[0].number - jc_left - 1;
-                    jokers[jc].color = lineWithoutJokers[0].color;
+                    jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
                     jc_left -= 1;
                 }
             }
@@ -107,13 +107,13 @@ export class JokerProcessor {
 
     private completeCollections(line: Array<Figure>)
     {
-        let allcolors = [new RKColor(1), new RKColor(2), new RKColor(3), new RKColor(4)];
+        let allcolors = [1, 2, 3, 4];
         let lineWithoutJokers = line.filter(f => f.instance<3);
-        let missingColors = allcolors.filter(ac => lineWithoutJokers.filter(el => el.color.code=== ac.code).length === 0 );
+        let missingColors = allcolors.filter(ac => lineWithoutJokers.filter(el => el.colorcode=== ac).length === 0 );
         let jokers = line.filter(f => f.instance > 2);
         let mcCntr = 0;
         jokers.forEach(el => {
-            el.color = missingColors[mcCntr];
+            el.colorcode = missingColors[mcCntr];
             el.number = lineWithoutJokers[0].number;
             mcCntr++;
         });

@@ -21,17 +21,17 @@ public class GameStateApiTest {
 		
 		List<RummikubFigureApi> lf= new ArrayList<RummikubFigureApi>();
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(3));
+		rf.setColorcode(3);
 		rf.setInstance(1);
 		rf.setNumber(1);
 		lf.add(rf);
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(3));
+		rf.setColorcode(3);
 		rf.setInstance(1);
 		rf.setNumber(2);
 		lf.add(rf);
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(3));
+		rf.setColorcode(3);
 		rf.setInstance(2);
 		rf.setNumber(3);
 		lf.add(rf);
@@ -51,17 +51,17 @@ public class GameStateApiTest {
 		
 		List<RummikubFigureApi> lf= new ArrayList<RummikubFigureApi>();
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(1));
+		rf.setColorcode(1);
 		rf.setInstance(1);
 		rf.setNumber(11);
 		lf.add(rf);
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(2));
+		rf.setColorcode(2);
 		rf.setInstance(1);
 		rf.setNumber(11);
 		lf.add(rf);
 		rf=new RummikubFigureApi();
-		rf.setColor(RummikubColorApi.fromCode(3));
+		rf.setColorcode(3);
 		rf.setInstance(2);
 		rf.setNumber(11);
 		lf.add(rf);

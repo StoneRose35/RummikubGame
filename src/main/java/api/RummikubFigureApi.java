@@ -6,7 +6,7 @@ import game.RummikubFigure;
 import game.RummikubPlacement;
 
 public class RummikubFigureApi {
-	private RummikubColorApi color;
+	private int colorcode;
 	private int instance;
 	private int number;
 
@@ -26,12 +26,12 @@ public class RummikubFigureApi {
 		this.instance = instance;
 	}
 
-	public RummikubColorApi getColor() {
-		return color;
+	public int getColorcode() {
+		return colorcode;
 	}
 
-	public void setColor(RummikubColorApi color) {
-		this.color = color;
+	public void setColorcode(int colorcode) {
+		this.colorcode = colorcode;
 	}
 	
 	public RummikubFigure toRummikubFigure(RummikubPlacement placement)
@@ -40,7 +40,7 @@ public class RummikubFigureApi {
 		try {
 			res.setInstance(this.getInstance());
 			res.setNumber(this.getNumber());
-			res.setColor(RummikubColor.fromCode(this.getColor().getCode()));
+			res.setColor(RummikubColor.fromCode(this.getColorcode()));
 			res.setPlacement(placement);
 		} catch (RummikubException e) {
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class RummikubFigureApi {
 		RummikubFigureApi fa = new RummikubFigureApi();
 		if (f.getColor() != null)
 		{
-			fa.setColor(RummikubColorApi.fromCode(f.getColor().getColorcode()));
+			fa.setColorcode(f.getColor().getColorcode());
 		}
 		fa.setInstance(f.getInstance());
 		fa.setNumber(f.getNumber());
@@ -69,7 +69,7 @@ public class RummikubFigureApi {
 			RummikubFigureApi rfo=(RummikubFigureApi)o;
 			if (this.instance < 3 && rfo.instance < 3)
 			{
-				return rfo.color.getCode()==this.color.getCode() && rfo.instance==this.instance && rfo.number==this.number;
+				return rfo.colorcode==this.colorcode && rfo.instance==this.instance && rfo.number==this.number;
 			}
 			else if (this.instance > 2 && rfo.instance > 2 )
 			{

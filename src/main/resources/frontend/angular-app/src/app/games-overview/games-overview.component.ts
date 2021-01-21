@@ -59,12 +59,19 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
   
   registerGame()
   {
-    this.gs.initGame(this.gameName,this.aiPlayers).subscribe(r => {
-      if (r.error !== null)
-      {
-        this.snackBar.open(`game initialization failed: ${r.error}`,null,this.sbConfig);
-      }
-    });
+    if (this.aiPlayers==null)
+    {
+      this.snackBar.open(`Define the number of computer players`,null,this.sbConfig);
+    }
+    else
+    {
+      this.gs.initGame(this.gameName,this.aiPlayers).subscribe(r => {
+        if (r.error !== null)
+        {
+          this.snackBar.open(`game initialization failed: ${r.error}`,null,this.sbConfig);
+        }
+      });
+    }
   }
 
   joinGame(gameName: String)

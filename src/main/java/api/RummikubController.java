@@ -167,6 +167,7 @@ public class RummikubController {
 				r.setPlayer((RummikubPlayerApi)t.getPlayer());
 				r.setToken(t.getToken());
 				r.setGameName(gameId);
+				wsController.updatePlayers(game);
 			} catch (RummikubApiException e) {
 				r.setError(e.getMessage());
 			}
@@ -176,6 +177,7 @@ public class RummikubController {
 			r.setError("Game " + gameId + " not existent");
 		}
 		wsController.updateGames();
+
 		return r;
 	}
 	

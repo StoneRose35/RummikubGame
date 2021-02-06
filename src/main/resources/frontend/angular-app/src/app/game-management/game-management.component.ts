@@ -157,9 +157,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   submitMove() {
     this.tableFigures = this.tableFigures.filter(f => f.length > 0);
     this.tableFigures.forEach(ts => ts.forEach(tf => {tf.position=null; tf.shelfNr=null;}));
-    var allShelfFigures= this.stackFiguresUpper;
-
-    allShelfFigures.concat(this.stackFiguresLower);
+    var allShelfFigures= this.stackFiguresUpper.concat(this.stackFiguresLower);
     const gameState={tableFigures: this.tableFigures, shelfFigures: allShelfFigures, accepted: false, roundNr: 13 };
 
     this.gs.submitMove(gameState).subscribe(r => {
@@ -231,14 +229,24 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+
     } else {
       transferArrayItem(event.previousContainer.data,
                         event.container.data,
                         event.previousIndex,
                         event.currentIndex);
+    }
+    if (shelfIndex===0)
+    {
       this.stackFiguresUpper.forEach((f,i) => {f.position = i; f.shelfNr=shelfIndex;});
       this.jp.reset(this.stackFiguresUpper);
     }
+    else{
+      this.stackFiguresLower.forEach((f,i) => {f.position = i; f.shelfNr=shelfIndex;});
+      this.jp.reset(this.stackFiguresLower);
+    }
+    var allShelfFigures=this.stackFiguresUpper.concat(this.stackFiguresLower);
+    this.gs.updateShelf(allShelfFigures).subscribe();
   }
 
   dropNewSeries(event: CdkDragDrop<Figure[]>) {

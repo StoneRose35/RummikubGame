@@ -114,9 +114,8 @@ export class GameService {
     return this.http.get<Array<Array<Figure>>>(this.url + "/tableFigures",{withCredentials: true});
   }
 
-  pollTable(): Observable<Array<Array<Figure>>>
-  {
-    return timer(1,500).pipe(switchMap(() => this.http.get<Array<Array<Figure>>>(this.url + "/tableFigures",{withCredentials: true})));
+  updateShelf(figures: Array<Figure>): Observable<Response> {
+    return this.http.post<Response>(this.url + "/updateShelf", figures, {withCredentials: true});
   }
 
   public drawFigure(): Observable<Figure>

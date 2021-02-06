@@ -311,6 +311,28 @@ public class RummikubController {
 		return gameStateReturned;
 	}
 	
+	@PostMapping("/updateShelf")
+	public Response updateShelfFigures(@RequestBody List<RummikubFigureApi> figures,@CookieValue(value = "RKToken", defaultValue = "") String token)
+	{
+		RummikubPlayer player = this.data.getTokens().stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null).getPlayer();
+		
+		List<RummikubFigure> replacedFigures = figures.stream().map(f ->f.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList());
+		Response r = new Response();
+		if (replacedFigures.containsAll(player.getFigures()))
+		{
+			player.setFigures(replacedFigures);
+			r.setMessage("updated Shelf");
+		}
+		else
+		{
+			r.setError("Got erroneous Figures from player");
+		}
+		return r;
+	}
+	
 	
 	private String getHexString(short stringSize) {
 		Random r = new Random();

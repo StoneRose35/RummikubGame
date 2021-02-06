@@ -101,9 +101,9 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	}
 
 	public void setNumber(int number) throws RummikubException {
-		if (number < 1 || number > 13)
+		if (number < 0 || number > 13)
 		{
-			throw new RummikubException("Number should bei within 1 to 13");
+			throw new RummikubException("Number should be within 0 to 13");
 		}
 		this.number = number;
 	}

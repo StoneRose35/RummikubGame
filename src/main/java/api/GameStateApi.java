@@ -74,15 +74,20 @@ public class GameStateApi {
 										.collect(Collectors.toList()))
 		{
 			boolean acc_coll=true;
+			boolean acc_figure=true;
 			RummikubCollection rc= new RummikubCollection();
-				for (RummikubFigure el : lf)
-				{
-					try {
-						rc.addFigure(el);
-					} catch (RummikubGameException e) {
-						acc_coll=false;
-					}
+			for (RummikubFigure el : lf)
+			{
+				try {
+					rc.addFigure(el);
+				} catch (RummikubGameException e) {
+					acc_coll=false;
 				}
+				if(el.isValid()==false)
+				{
+					acc_figure=false;
+				}
+			}
 			if (acc_coll==true)
 			{
 				acc_coll = rc.isValid();
@@ -114,9 +119,14 @@ public class GameStateApi {
 
 			if (!(acc_coll || acc_series))
 			{
-				acc= acc_coll || acc_series;
+				acc= (acc_coll || acc_series) && acc_figure;
 				break;
-			}	
+			}
+			else if (!acc_figure)
+			{
+				acc = acc_figure;
+				break;
+			}
 		}
 		
 		this.accepted=acc;

@@ -9,6 +9,8 @@ public class RummikubFigureApi {
 	private int colorcode;
 	private int instance;
 	private int number;
+	private Integer shelfNr;
+	private Integer position;
 
 	public int getNumber() {
 		return number;
@@ -42,6 +44,8 @@ public class RummikubFigureApi {
 			res.setNumber(this.getNumber());
 			res.setColor(RummikubColor.fromCode(this.getColorcode()));
 			res.setPlacement(placement);
+			res.setPosition(this.getPosition());
+			res.setShelfNr(this.getShelfNr());
 		} catch (RummikubException e) {
 			e.printStackTrace();
 		}
@@ -58,6 +62,8 @@ public class RummikubFigureApi {
 		}
 		fa.setInstance(f.getInstance());
 		fa.setNumber(f.getNumber());
+		fa.setPosition(f.getPosition());
+		fa.setShelfNr(f.getShelfNr());
 		return fa;
 	}
 	
@@ -77,6 +83,22 @@ public class RummikubFigureApi {
 			}
 		}
 		return false;
+	}
+
+	public Integer getShelfNr() {
+		return shelfNr;
+	}
+
+	public void setShelfNr(Integer shelfNr) {
+		this.shelfNr = shelfNr;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
 	}
 	
 

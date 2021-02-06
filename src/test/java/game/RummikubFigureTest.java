@@ -98,5 +98,24 @@ class RummikubFigureTest {
 		Assert.assertTrue(lrf.get(3).getColor()==RummikubColor.BLACK);
 		Assert.assertTrue(lrf.get(3).getNumber()==12);
 	}
+	
+	@Test
+	void validationTest(){
+		RummikubFigure rf = new RummikubFigure();
+		rf.setColor(RummikubColor.BLUE);
+		rf.setPlacement(RummikubPlacement.ON_SHELF);
+		rf.setPosition(1);
+		rf.setShelfNr(0);
+		Assert.assertTrue(rf.isValid());
+		rf.setPlacement(RummikubPlacement.ON_STACK);
+		Assert.assertFalse(rf.isValid());
+		rf.setPosition(null);
+		rf.setShelfNr(null);
+		Assert.assertTrue(rf.isValid());
+		rf.setPlacement(RummikubPlacement.ON_SHELF);
+		rf.setPosition(-1);
+		rf.setShelfNr(0);
+		Assert.assertFalse(rf.isValid());
+	}
 
 }

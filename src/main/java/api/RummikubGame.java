@@ -89,11 +89,11 @@ public class RummikubGame {
 			throw new RummikubApiException("Game " + this.getName() + " already started");
 		}
 		RummikubPlayer p = new RummikubPlayer();
-		List<RummikubFigure> f = p.getFigures();
 
 		for (int c=0;c<14;c++)
 		{
-			f.add(this.stack.drawFromStack());
+			p.addFigure(this.stack.drawFromStack());
+
 		}		
 		p.setName(name);
 		p.setActive(this.players.stream().filter(pl -> !(pl instanceof RummikubPlayerAsp)).count()==0);
@@ -116,11 +116,11 @@ public class RummikubGame {
 			throw new RummikubApiException("Game " + this.getName() + " already started");
 		}
 		
-		List<RummikubFigure> f = rp.getFigures();
 
 		for (int c=0;c<14;c++)
 		{
-			f.add(this.stack.drawFromStack());
+			RummikubFigure rf = this.stack.drawFromStack();
+			rp.addFigure(rf);
 		}	
 		rp.setActive(false);
 		this.players.add(rp);

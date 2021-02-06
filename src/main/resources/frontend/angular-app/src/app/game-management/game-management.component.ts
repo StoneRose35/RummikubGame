@@ -18,7 +18,8 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
   tableFigures: Array<Array<Figure>>;
   voidList: Array<Figure>;
-  stackFigures: Array<Figure>;
+  stackFiguresUpper: Array<Figure>;
+  stackFiguresLower: Array<Figure>;
   players: Array<Player>;
   playing: Boolean;
   activePlayer: Player;
@@ -39,7 +40,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
               ,public viewContainerRef: ViewContainerRef
               ) { 
     this.sbConfig.duration=2000;
-    this.stackFigures = [];
+
     this.players=[];
     this.playing=false;
   }
@@ -50,14 +51,15 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
     this.activePlayer = this.gs.p;
     this.snackBar.open(`Entering Game ${this.gs.gameId}`,null,this.sbConfig);
-    this.stackFigures = [];
+    this.stackFiguresUpper = [];
+    this.stackFiguresLower = [];
     this.tableFigures=[];
     this.voidList=[new Figure(null,5,0)];
     this.gs.getTable().subscribe(t => {
       this.tableFigures=t;
     });
     this.gs.shelfFigures().subscribe(f => {
-      this.stackFigures=f;
+      this.placeOnShelves(f);
       this.onTurn();
     });
     if (this.playerPollSubscription == null)
@@ -111,8 +113,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   }
 
   drawFigure() {
-    this.gs.drawFigure().subscribe(fig => this.stackFigures.push(fig));
-
+    this.gs.drawFigure().subscribe(fig => this.placeSingleOnShelves(fig));
   }
 
   handlePlayerUpdate(ps: Array<Player>)
@@ -155,7 +156,11 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
   submitMove() {
     this.tableFigures = this.tableFigures.filter(f => f.length > 0);
-    const gameState={tableFigures: this.tableFigures, shelfFigures: this.stackFigures, accepted: false, roundNr: 13 };
+    this.tableFigures.forEach(ts => ts.forEach(tf => {tf.position=null; tf.shelfNr=null;}));
+    var allShelfFigures= this.stackFiguresUpper;
+
+    allShelfFigures.concat(this.stackFiguresLower);
+    const gameState={tableFigures: this.tableFigures, shelfFigures: allShelfFigures, accepted: false, roundNr: 13 };
 
     this.gs.submitMove(gameState).subscribe(r => {
       if (r.accepted == false) // game state submitted is invalid
@@ -163,18 +168,24 @@ export class GameManagementComponent implements OnInit, OnDestroy {
         this.snackBar.open("Invalid Move, resetting",null,this.sbConfig);
         this.resetMove();
       }
-      this.stackFigures = r.shelfFigures;
+      this.stackFiguresUpper = r.shelfFigures.filter(f => f.shelfNr===0);
+      this.stackFiguresLower = r.shelfFigures.filter(f => f.shelfNr===1);
       this.tableFigures = r.tableFigures;
     });
   }
 
   resetMove() {
-    this.stackFigures=[];
+    this.stackFiguresUpper=[];
+    this.stackFiguresLower=[];
     this.tableFigures=[];
-    this.stackFiguresOld.forEach(f => {
-      this.stackFigures.push(f);
+    this.stackFiguresOld.filter(f => f.shelfNr===0).forEach(f => {
+      this.stackFiguresUpper.push(f);
     });
-    this.jp.reset(this.stackFigures);
+    this.stackFiguresOld.filter(f => f.shelfNr===1).forEach(f => {
+      this.stackFiguresLower.push(f);
+    });
+    this.jp.reset(this.stackFiguresUpper);
+    this.jp.reset(this.stackFiguresLower);
     this.tableFiguresOld.forEach(tf => {
       this.tableFigures.push([]);
       tf.forEach(f => {
@@ -191,7 +202,10 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     this.playing=true;
     this.stackFiguresOld=[];
     this.tableFiguresOld=[];
-    this.stackFigures.forEach(f => {
+    this.stackFiguresUpper.forEach(f => {
+      this.stackFiguresOld.push(f);
+    });
+    this.stackFiguresLower.forEach(f => {
       this.stackFiguresOld.push(f);
     });
     this.tableFigures.forEach(tf => {
@@ -205,7 +219,16 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
   }
 
-  drop(event: CdkDragDrop<Figure[]>) {
+  dropupper(event: CdkDragDrop<Figure[]>) {
+    this.drop(event, 0);
+  }
+
+  droplower(event: CdkDragDrop<Figure[]>) {
+    this.drop(event, 1);
+  }
+
+  drop(event: CdkDragDrop<Figure[]>,shelfIndex: number)
+  {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -213,7 +236,8 @@ export class GameManagementComponent implements OnInit, OnDestroy {
                         event.container.data,
                         event.previousIndex,
                         event.currentIndex);
-      this.jp.reset(event.container.data);
+      this.stackFiguresUpper.forEach((f,i) => {f.position = i; f.shelfNr=shelfIndex;});
+      this.jp.reset(this.stackFiguresUpper);
     }
   }
 
@@ -237,5 +261,23 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   {
     this.cannotDraw=true;
     this.cannotSubmit=false;
+  }
+
+  placeOnShelves(figures: Array<Figure>)
+  {
+    this.stackFiguresUpper = figures.filter(f => f.shelfNr===0).sort((f1,f2) => f1.position - f2.position);
+    this.stackFiguresLower = figures.filter(f => f.shelfNr===1).sort((f1,f2) => f1.position - f2.position);
+  }
+
+  placeSingleOnShelves(figure: Figure)
+  {
+    if (figure.shelfNr===0)
+    {
+      this.stackFiguresUpper.push(figure);
+    }
+    else
+    {
+      this.stackFiguresLower.push(figure);
+    }
   }
 }

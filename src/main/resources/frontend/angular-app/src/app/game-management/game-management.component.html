@@ -34,10 +34,20 @@
       cdkDropList
       #stackList="cdkDropList"
       cdkDropListOrientation="horizontal"
-      [cdkDropListData]="stackFigures"
+      [cdkDropListData]="stackFiguresUpper"
       class="rk-stack"
       [ngClass]="{'rk-inactive': playing === false}"
-      (cdkDropListDropped)="drop($event)">
-      <app-figure *ngFor="let item of stackFigures" cdkDrag [figure]="item"></app-figure>
+      (cdkDropListDropped)="dropupper($event)">
+      <app-figure *ngFor="let item of stackFiguresUpper" cdkDrag [figure]="item"></app-figure>
     </div>
+    <div
+    cdkDropList
+    #stackList="cdkDropList"
+    cdkDropListOrientation="horizontal"
+    [cdkDropListData]="stackFiguresLower"
+    class="rk-stack"
+    [ngClass]="{'rk-inactive': playing === false}"
+    (cdkDropListDropped)="droplower($event)">
+    <app-figure *ngFor="let item of stackFiguresLower" cdkDrag [figure]="item"></app-figure>
+  </div>
 </div>

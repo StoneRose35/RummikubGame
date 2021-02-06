@@ -83,7 +83,12 @@ public class RummikubController {
 			RummikubGame g=t.getGame();
 			RummikubPlayer p = t.getPlayer();
 			RummikubFigure f =  g.drawFigure();
-			p.getFigures().add(f);
+			try {
+				p.addFigure(f);
+			}
+			catch (RummikubApiException e) {
+				return null;
+			}
 			g.rotatePlayer();
 			wsController.updatePlayers(g);
 			return RummikubFigureApi.fromRummikubFigure(f);
@@ -273,7 +278,13 @@ public class RummikubController {
 						f.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
 					).collect(Collectors.toList()));
 			RummikubFigure f =  currentGame.drawFigure();
-			currentGame.getPlayer(playerName).getFigures().add(f);
+			try {
+				currentGame.getPlayer(playerName).addFigure(f);
+			}
+			catch (RummikubApiException e)
+			{
+				return null;
+			}
 			gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
 					.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
 		}

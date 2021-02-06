@@ -16,6 +16,8 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	private RummikubColor color=null;
 	private int instance=0;
 	private RummikubPlacement placement=null;
+	private Integer shelfNr;
+	private Integer position;
 	
 	public RummikubFigure()
 	{
@@ -217,6 +219,40 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 		{
 			return idx1-idx2;
 		}
+	}
+
+	public Integer getShelfNr() {
+		return shelfNr;
+	}
+
+	public void setShelfNr(Integer shelfNr) {
+		this.shelfNr = shelfNr;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
+	}
+	
+	public boolean isValid()
+	{
+		if ((this.placement != RummikubPlacement.ON_SHELF && (this.position != null || this.position!=null))
+			|| (this.placement == RummikubPlacement.ON_SHELF && (this.position == null || this.position==null)))
+		{
+			return false;
+		}
+		if (this.position != null && this.position < 0)
+		{
+			return false;
+		}
+		if (this.shelfNr != null && this.shelfNr < 0)
+		{
+			return false;
+		}
+		return true;
 	}
 	
 }

@@ -6,6 +6,8 @@ export class Figure
     colorcode: number;
     instance: number;
     number: number;
+    position: number;
+    shelfNr: number;
 
     constructor(colorcode: number, instance: number, value: number)
     {

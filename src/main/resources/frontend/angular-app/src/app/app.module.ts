@@ -7,7 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
 import { Overlay } from '@angular/cdk/overlay';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import { FigureComponent } from './figure/figure.component';
 import { FigureSerieComponent } from './figure-serie/figure-serie.component';
 import { MatDialogModule} from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +28,6 @@ import { EmptyFigureSerieComponent } from './empty-figure-serie/empty-figure-ser
   declarations: [
     AppComponent,
     GameManagementComponent,
-    FigureComponent,
     FigureSerieComponent,
     NewPlayerDialogComponent,
     GamesOverviewComponent,

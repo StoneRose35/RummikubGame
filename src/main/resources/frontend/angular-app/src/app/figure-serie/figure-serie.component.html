@@ -10,5 +10,8 @@ cdkDropListOrientation="horizontal"
 [cdkDropListEnterPredicate]="isEnabled"
 class="rk-series"
 >
-    <app-figure *ngFor="let item of figures" cdkDrag [figure]="item"></app-figure>
+<div class="rk-figure" *ngFor="let item of figures" cdkDrag>
+    <div class="figure-placeholder" *cdkDragPlaceholder></div>
+    <h3 [style.color]="item.clr" class="rk-figure-number">{{item.representation}}</h3>
+</div>
 </div>

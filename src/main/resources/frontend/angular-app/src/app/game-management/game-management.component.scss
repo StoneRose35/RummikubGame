@@ -34,13 +34,6 @@
 }
 
 
-h3.rk-figure-number {
-  padding-top: 17px;
-  width: 20%;
-  margin: auto;
-  font-size: 17px;
-}
-
 .rk-table {
   width: 80%;
   display: flex;
@@ -65,4 +58,16 @@ h3.rk-figure-number {
 
 .rk-current-player {
   font-size: 25px;
+}
+
+
+
+
+
+.rk-stack.cdk-drop-list-dragging .rk-figure:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

@@ -38,7 +38,11 @@
       class="rk-stack"
       [ngClass]="{'rk-inactive': playing === false}"
       (cdkDropListDropped)="dropupper($event)">
-      <app-figure *ngFor="let item of stackFiguresUpper" cdkDrag [figure]="item"></app-figure>
+
+      <div class="rk-figure" *ngFor="let item of stackFiguresUpper" cdkDrag>
+        <div class="figure-placeholder" *cdkDragPlaceholder></div>
+        <h3 [style.color]="item.clr" class="rk-figure-number">{{item.representation}}</h3>
+      </div>
     </div>
     <div
     cdkDropList
@@ -48,6 +52,9 @@
     class="rk-stack"
     [ngClass]="{'rk-inactive': playing === false}"
     (cdkDropListDropped)="droplower($event)">
-    <app-figure *ngFor="let item of stackFiguresLower" cdkDrag [figure]="item"></app-figure>
+    <div class="rk-figure" *ngFor="let item of stackFiguresLower" cdkDrag>
+      <div class="figure-placeholder" *cdkDragPlaceholder></div>
+      <h3 [style.color]="item.clr" class="rk-figure-number">{{item.representation}}</h3>
+    </div>
   </div>
 </div>

@@ -54,12 +54,17 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     this.stackFiguresUpper = [];
     this.stackFiguresLower = [];
     this.tableFigures=[];
-    this.voidList=[new Figure(null,5,0)];
-    this.gs.getTable().subscribe(t => {
-      this.tableFigures=t;
-    });
+    this.voidList=[new Figure(null,5,0,0,0)];
+    var f_obj: Figure;
+    var figArray: Array<Figure>;
+    this.gs.getTable().subscribe(t => this.convertTableFigures(t));
     this.gs.shelfFigures().subscribe(f => {
-      this.placeOnShelves(f);
+      figArray =[];
+      f.forEach(fig => {
+        f_obj = new Figure(fig.colorcode,fig.instance,fig.number,fig.shelfNr,fig.position);
+        figArray.push(f_obj);
+      });
+      this.placeOnShelves(figArray);
       this.onTurn();
     });
     if (this.playerPollSubscription == null)
@@ -137,7 +142,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     {
       // switch from passive to active
       this.gs.getTable().subscribe(t => {
-        this.tableFigures=t; 
+        this.convertTableFigures(t);
         this.onTurn();
         this.playing=this.gs.p.active;
       });
@@ -145,13 +150,27 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     else if (prevPlayer!= null && prevPlayer.name !== actualPlayer.name)
     // switch between opponents
     {
-      this.gs.getTable().subscribe(t => {
-        this.tableFigures=t; });
+      this.gs.getTable().subscribe(t => this.convertTableFigures(t));
     }
     else
     {
       this.playing = this.gs.p.active;
     }
+  }
+
+  convertTableFigures(t: Array<Array<Figure>>): void
+  {
+    var figSeries=[];
+    var f_obj: Figure;
+    t.forEach(s => {
+      var figArray =[];
+      s.forEach(tf => {
+      f_obj = new Figure(tf.colorcode,tf.instance,tf.number,tf.shelfNr,tf.position);
+      figArray.push(f_obj);
+      });
+      figSeries.push(figArray);
+    });
+    this.tableFigures=figSeries;
   }
 
   submitMove() {
@@ -281,11 +300,11 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   {
     if (figure.shelfNr===0)
     {
-      this.stackFiguresUpper.push(figure);
+      this.stackFiguresUpper.push(new Figure(figure.colorcode,figure.instance,figure.number,figure.shelfNr,figure.position));
     }
     else
     {
-      this.stackFiguresLower.push(figure);
+      this.stackFiguresLower.push(new Figure(figure.colorcode,figure.instance,figure.number,figure.shelfNr,figure.position));
     }
   }
 }

@@ -101,11 +101,42 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
               0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
-.cdk-drag-placeholder {
-  opacity: 0;
-}
-
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+.rk-figure {
+  width: 50px;
+  height: 80px;
+  border-radius: 10px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  margin: 2px;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background-color: rgb(233, 233, 233);
+}
+
+h3.rk-figure-number {
+  padding-top: 17px;
+  width: fit-content;
+  margin: auto;
+  font-size: 140%;
+}
+
+.figure-placeholder {
+  background: rgb(190, 190, 190);
+  height: 80px;
+  border: none;
+  border-radius: 3px;
+  display: block;
+  min-width: 10px;  
+  margin: 2px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

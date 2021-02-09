@@ -185,9 +185,16 @@ export class GameManagementComponent implements OnInit, OnDestroy {
         this.snackBar.open("Invalid Move, resetting",null,this.sbConfig);
         this.resetMove();
       }
-      this.stackFiguresUpper = r.shelfFigures.filter(f => f.shelfNr===0);
-      this.stackFiguresLower = r.shelfFigures.filter(f => f.shelfNr===1);
-      this.tableFigures = r.tableFigures;
+      var figArray: Array<Figure>;
+      var f_obj: Figure;
+      figArray =[];
+      r.shelfFigures.forEach(fig => {
+        f_obj = new Figure(fig.colorcode,fig.instance,fig.number,fig.shelfNr,fig.position);
+        figArray.push(f_obj);
+      });
+      this.stackFiguresUpper = figArray.filter(f => f.shelfNr===0);
+      this.stackFiguresLower = figArray.filter(f => f.shelfNr===1);
+      this.convertTableFigures(r.tableFigures);
     });
   }
 

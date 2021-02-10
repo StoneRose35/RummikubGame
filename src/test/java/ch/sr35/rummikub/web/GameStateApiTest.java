@@ -3,7 +3,7 @@ package ch.sr35.rummikub.web;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ch.sr35.rummikub.web.dao.GameStateApi;
-import ch.sr35.rummikub.web.dao.RummikubFigureApi;
+import ch.sr35.rummikub.web.dao.FigureApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,21 +19,21 @@ public class GameStateApiTest {
 	public void validateTest()
 	{
 		GameStateApi gsApi=new GameStateApi();
-		List<List<RummikubFigureApi>> tf = new ArrayList<List<RummikubFigureApi>>();
-		RummikubFigureApi rf;
+		List<List<FigureApi>> tf = new ArrayList<List<FigureApi>>();
+		FigureApi rf;
 		
-		List<RummikubFigureApi> lf= new ArrayList<RummikubFigureApi>();
-		rf=new RummikubFigureApi();
+		List<FigureApi> lf= new ArrayList<FigureApi>();
+		rf=new FigureApi();
 		rf.setColorcode(3);
 		rf.setInstance(1);
 		rf.setNumber(1);
 		lf.add(rf);
-		rf=new RummikubFigureApi();
+		rf=new FigureApi();
 		rf.setColorcode(3);
 		rf.setInstance(1);
 		rf.setNumber(2);
 		lf.add(rf);
-		rf=new RummikubFigureApi();
+		rf=new FigureApi();
 		rf.setColorcode(3);
 		rf.setInstance(2);
 		rf.setNumber(3);
@@ -49,21 +49,21 @@ public class GameStateApiTest {
 	public void validateTestCollection()
 	{
 		GameStateApi gsApi=new GameStateApi();
-		List<List<RummikubFigureApi>> tf = new ArrayList<List<RummikubFigureApi>>();
-		RummikubFigureApi rf;
+		List<List<FigureApi>> tf = new ArrayList<List<FigureApi>>();
+		FigureApi rf;
 		
-		List<RummikubFigureApi> lf= new ArrayList<RummikubFigureApi>();
-		rf=new RummikubFigureApi();
+		List<FigureApi> lf= new ArrayList<FigureApi>();
+		rf=new FigureApi();
 		rf.setColorcode(1);
 		rf.setInstance(1);
 		rf.setNumber(11);
 		lf.add(rf);
-		rf=new RummikubFigureApi();
+		rf=new FigureApi();
 		rf.setColorcode(2);
 		rf.setInstance(1);
 		rf.setNumber(11);
 		lf.add(rf);
-		rf=new RummikubFigureApi();
+		rf=new FigureApi();
 		rf.setColorcode(3);
 		rf.setInstance(2);
 		rf.setNumber(11);

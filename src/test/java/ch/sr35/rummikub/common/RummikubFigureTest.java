@@ -5,64 +5,64 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 
 class RummikubFigureTest {
 
 	@Test
-	void testRummikubFigureString() throws RummikubException {
-		RummikubFigure rf = RummikubFigure.getRummikubFigure("onshelf(1,2,1).");
+	void testRummikubFigureString() throws GeneralException {
+		Figure rf = Figure.getRummikubFigure("onshelf(1,2,1).");
 		Assert.assertNotNull(rf);
 		Assert.assertEquals(1,rf.getNumber());
-		Assert.assertEquals(RummikubColor.RED, rf.getColor());
-		Assert.assertEquals(RummikubPlacement.ON_SHELF, rf.getPlacement());
+		Assert.assertEquals(Color.RED, rf.getColor());
+		Assert.assertEquals(Placement.ON_SHELF, rf.getPlacement());
 	}
 	
 	@Test
-	void testRummikubFigureStringWoDot() throws RummikubException {
-		RummikubFigure rf = RummikubFigure.getRummikubFigure("onshelf(1,2,1)");
+	void testRummikubFigureStringWoDot() throws GeneralException {
+		Figure rf = Figure.getRummikubFigure("onshelf(1,2,1)");
 		Assert.assertNotNull(rf);
 		Assert.assertEquals(1,rf.getNumber());
-		Assert.assertEquals(RummikubColor.RED, rf.getColor());
-		Assert.assertEquals(RummikubPlacement.ON_SHELF, rf.getPlacement());
+		Assert.assertEquals(Color.RED, rf.getColor());
+		Assert.assertEquals(Placement.ON_SHELF, rf.getPlacement());
 	}
 	
 	@Test
-	void testRummikubFigureWrong() throws RummikubException {
-		RummikubFigure rf = RummikubFigure.getRummikubFigure("test(4,5,2)");
+	void testRummikubFigureWrong() throws GeneralException {
+		Figure rf = Figure.getRummikubFigure("test(4,5,2)");
 		Assert.assertNull(rf);
 	}
 
 	@Test
-	void testGetAspRepresentation() throws RummikubException {
-		RummikubFigure rf = new RummikubFigure();
-		rf.setColor(RummikubColor.BLUE);
+	void testGetAspRepresentation() throws GeneralException {
+		Figure rf = new Figure();
+		rf.setColor(Color.BLUE);
 		rf.setInstance(1);
 		rf.setNumber(4);
-		rf.setPlacement(RummikubPlacement.ON_TABLE);
+		rf.setPlacement(Placement.ON_TABLE);
 		Assert.assertEquals("ontable(4,4,1).",rf.getAspRepresentation());
 	}
 	
 	@Test
-	void equalityTest() throws RummikubException {
-		RummikubFigure rf = new RummikubFigure();
-		rf.setColor(RummikubColor.YELLOW);
+	void equalityTest() throws GeneralException {
+		Figure rf = new Figure();
+		rf.setColor(Color.YELLOW);
 		rf.setInstance(1);
 		rf.setNumber(7);
-		rf.setPlacement(RummikubPlacement.ON_TABLE);
+		rf.setPlacement(Placement.ON_TABLE);
 		
-		RummikubFigure rf2 = new RummikubFigure();
-		rf2.setColor(RummikubColor.YELLOW);
+		Figure rf2 = new Figure();
+		rf2.setColor(Color.YELLOW);
 		rf2.setInstance(1);
 		rf2.setNumber(11);
-		rf2.setPlacement(RummikubPlacement.ON_TABLE);
+		rf2.setPlacement(Placement.ON_TABLE);
 		
-		RummikubFigure rf3 = new RummikubFigure();
-		rf3.setColor(RummikubColor.YELLOW);
+		Figure rf3 = new Figure();
+		rf3.setColor(Color.YELLOW);
 		rf3.setInstance(1);
 		rf3.setNumber(11);
-		rf3.setPlacement(RummikubPlacement.ON_TABLE);
+		rf3.setPlacement(Placement.ON_TABLE);
 		
 		Assert.assertFalse(rf.equals(rf2));
 		Assert.assertTrue(rf2.equals(rf3));
@@ -71,14 +71,14 @@ class RummikubFigureTest {
 	@Test
 	void sortingTest()
 	{
-		RummikubFigure rf = RummikubFigure.getRummikubFigure("ontable(1,1,1).");
-		RummikubFigure rf1 = RummikubFigure.getRummikubFigure("ontable(4,1,1).");
-		RummikubFigure rf2 = RummikubFigure.getRummikubFigure("ontable(12,1,1).");
-		RummikubFigure rf5 = RummikubFigure.getRummikubFigure("ontable(4,2,1).");
-		RummikubFigure rf3 = RummikubFigure.getRummikubFigure("ontable(10,1,1).");
-		RummikubFigure rf4 = RummikubFigure.getRummikubFigure("ontable(1,2,1).");
-		RummikubFigure rf6 = RummikubFigure.getRummikubFigure("ontable(4,3,2).");
-		List<RummikubFigure> lrf= new ArrayList<RummikubFigure>();
+		Figure rf = Figure.getRummikubFigure("ontable(1,1,1).");
+		Figure rf1 = Figure.getRummikubFigure("ontable(4,1,1).");
+		Figure rf2 = Figure.getRummikubFigure("ontable(12,1,1).");
+		Figure rf5 = Figure.getRummikubFigure("ontable(4,2,1).");
+		Figure rf3 = Figure.getRummikubFigure("ontable(10,1,1).");
+		Figure rf4 = Figure.getRummikubFigure("ontable(1,2,1).");
+		Figure rf6 = Figure.getRummikubFigure("ontable(4,3,2).");
+		List<Figure> lrf= new ArrayList<Figure>();
 		lrf.add(rf);
 		lrf.add(rf1);
 		lrf.add(rf2);
@@ -95,24 +95,24 @@ class RummikubFigureTest {
 		lrf.forEach(el -> {
 			System.out.println(el);
 		});
-		Assert.assertTrue(lrf.get(3).getColor()==RummikubColor.BLACK);
+		Assert.assertTrue(lrf.get(3).getColor()==Color.BLACK);
 		Assert.assertTrue(lrf.get(3).getNumber()==12);
 	}
 	
 	@Test
 	void validationTest(){
-		RummikubFigure rf = new RummikubFigure();
-		rf.setColor(RummikubColor.BLUE);
-		rf.setPlacement(RummikubPlacement.ON_SHELF);
+		Figure rf = new Figure();
+		rf.setColor(Color.BLUE);
+		rf.setPlacement(Placement.ON_SHELF);
 		rf.setPosition(1);
 		rf.setShelfNr(0);
 		Assert.assertTrue(rf.isValid());
-		rf.setPlacement(RummikubPlacement.ON_STACK);
+		rf.setPlacement(Placement.ON_STACK);
 		Assert.assertFalse(rf.isValid());
 		rf.setPosition(null);
 		rf.setShelfNr(null);
 		Assert.assertTrue(rf.isValid());
-		rf.setPlacement(RummikubPlacement.ON_SHELF);
+		rf.setPlacement(Placement.ON_SHELF);
 		rf.setPosition(-1);
 		rf.setShelfNr(0);
 		Assert.assertFalse(rf.isValid());

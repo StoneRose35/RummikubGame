@@ -12,8 +12,8 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ch.sr35.rummikub.web.dao.RummikubGameApi;
-import ch.sr35.rummikub.web.dao.RummikubPlayerApi;
+import ch.sr35.rummikub.web.dao.GameApi;
+import ch.sr35.rummikub.web.dao.PlayerApi;
 
 @Controller
 public class WebsocketController {
@@ -22,7 +22,7 @@ public class WebsocketController {
 	  
 	  
 	  @Autowired
-	  RummikubGameData data;
+	  GameData data;
 
 	  
 	  WebsocketController(SimpMessagingTemplate simpMessagingTemplate) {
@@ -40,16 +40,16 @@ public class WebsocketController {
 	  }
 	  
 	  
-	  public void updatePlayers(RummikubGame g)
+	  public void updatePlayers(Game g)
 	  {
 		  
 		  simpMessagingTemplate.convertAndSend("/topic/players" + g.getName().replace(" ", ""),
-				  g.getPlayers().stream().map(ps -> new RummikubPlayerApi(ps)).collect(Collectors.toList()));
+				  g.getPlayers().stream().map(ps -> new PlayerApi(ps)).collect(Collectors.toList()));
 	  }
 	  
 	  public void updateGames()
 	  {
-		  simpMessagingTemplate.convertAndSend("/topic/games", data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList()));
+		  simpMessagingTemplate.convertAndSend("/topic/games", data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList()));
 	  }
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 
 /**
@@ -13,11 +13,11 @@ import ch.sr35.rummikub.common.exceptions.RummikubException;
  *
  */
 public class Stack {
-	private List<RummikubFigure> on_stack;
+	private List<Figure> on_stack;
 	
 	public Stack()
 	{
-		on_stack = new ArrayList<RummikubFigure>();
+		on_stack = new ArrayList<Figure>();
 	}
 	
 	/**
@@ -25,8 +25,8 @@ public class Stack {
 	 */
 	public void fill()
 	{
-		RummikubColor[] colors = RummikubColor.values();
-		RummikubFigure rf;
+		Color[] colors = Color.values();
+		Figure rf;
 		on_stack.clear();
 		
 		// create regular rummikub figures
@@ -34,39 +34,39 @@ public class Stack {
 		{
 			for(int c=0;c<4;c++)
 			{
-				rf = new RummikubFigure();
+				rf = new Figure();
 				rf.setColor(colors[c]);
 				try {
 					rf.setNumber(n);
 					rf.setInstance(1);
-				} catch (RummikubException e) {
+				} catch (GeneralException e) {
 				}
-				rf.setPlacement(RummikubPlacement.ON_STACK);
+				rf.setPlacement(Placement.ON_STACK);
 				this.on_stack.add(rf);
 				
-				rf = new RummikubFigure();
+				rf = new Figure();
 				rf.setColor(colors[c]);
 				try {
 					rf.setNumber(n);
 					rf.setInstance(2);
-				} catch (RummikubException e) {
+				} catch (GeneralException e) {
 				}
-				rf.setPlacement(RummikubPlacement.ON_STACK);
+				rf.setPlacement(Placement.ON_STACK);
 				this.on_stack.add(rf);
 			}
 		}
 		
 		// create jokers
-		rf = new RummikubFigure();
+		rf = new Figure();
 		try {
 			rf.setInstance(3);
-		} catch (RummikubException e) {
+		} catch (GeneralException e) {
 		}
 		this.on_stack.add(rf);
-		rf = new RummikubFigure();
+		rf = new Figure();
 		try {
 			rf.setInstance(4);
-		} catch (RummikubException e) {
+		} catch (GeneralException e) {
 		}
 		this.on_stack.add(rf);
 		
@@ -81,14 +81,14 @@ public class Stack {
 	 * removes on figure from the stack and places it on the shelf
 	 * @return
 	 */
-	public RummikubFigure drawFromStack()
+	public Figure drawFromStack()
 	{
 		if (this.on_stack.size() > 0)
 		{
 		    Random r = new Random();
-		    RummikubFigure rf = this.on_stack.get(r.nextInt(this.on_stack.size()));
+		    Figure rf = this.on_stack.get(r.nextInt(this.on_stack.size()));
 		    this.on_stack.remove(rf);
-		    rf.setPlacement(RummikubPlacement.ON_SHELF);
+		    rf.setPlacement(Placement.ON_SHELF);
 		    return rf;
 		}
 		else

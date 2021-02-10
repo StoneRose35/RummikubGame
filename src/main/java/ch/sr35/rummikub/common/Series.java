@@ -6,26 +6,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ch.sr35.rummikub.common.exceptions.RummikubGameException;
+import ch.sr35.rummikub.common.exceptions.GameException;
 
 /**
  * A series of figures consists of the figures of the same color a successive number, example: 1,2,3,4
  * @author philipp
  *
  */
-public class RummikubSeries implements IRummikubFigureBag{
-	private List<RummikubFigure> figures;
+public class Series implements IFigureBag{
+	private List<Figure> figures;
 	private long hash;
 	
-	public RummikubSeries() {
-		this.figures = new ArrayList<RummikubFigure>();
+	public Series() {
+		this.figures = new ArrayList<Figure>();
 	}
 	
-	public void addFigure(RummikubFigure fig) throws RummikubGameException
+	public void addFigure(Figure fig) throws GameException
 	{
-		if(fig.getPlacement()!=RummikubPlacement.ON_TABLE)
+		if(fig.getPlacement()!=Placement.ON_TABLE)
 		{
-			throw new RummikubGameException("A Series can only be made from figures on the table");
+			throw new GameException("A Series can only be made from figures on the table");
 		}
 		if (this.figures.size()==0)
 		{
@@ -33,8 +33,8 @@ public class RummikubSeries implements IRummikubFigureBag{
 		}
 		else
 		{
-			Iterator<RummikubFigure> irf = this.figures.iterator();
-			RummikubFigure tf;
+			Iterator<Figure> irf = this.figures.iterator();
+			Figure tf;
 			boolean same_element_exists = false;
 			while (irf.hasNext())
 			{
@@ -46,11 +46,11 @@ public class RummikubSeries implements IRummikubFigureBag{
 			}
 			if (same_element_exists==true)
 			{
-				throw new RummikubGameException(String.format("The Number %d already exists in the series",fig.getNumber()));
+				throw new GameException(String.format("The Number %d already exists in the series",fig.getNumber()));
 			}
 			if (fig.getColor()!=null && fig.getColor() != this.figures.get(0).getColor())
 			{
-				throw new RummikubGameException(String.format("%s has the wrong color for the series which is %s", fig, this.figures.get(0).getColor()));
+				throw new GameException(String.format("%s has the wrong color for the series which is %s", fig, this.figures.get(0).getColor()));
 			}
 			else
 			{
@@ -82,7 +82,7 @@ public class RummikubSeries implements IRummikubFigureBag{
 		}
 	}
 
-	public Iterator<RummikubFigure> iterator() {
+	public Iterator<Figure> iterator() {
          return this.figures.iterator();
 	}
 
@@ -99,9 +99,9 @@ public class RummikubSeries implements IRummikubFigureBag{
 	@Override
 	public boolean equals(Object other)
 	{
-		if (other instanceof RummikubSeries)
+		if (other instanceof Series)
 		{
-			return ((IRummikubFigureBag)other).getHash() == this.getHash();
+			return ((IFigureBag)other).getHash() == this.getHash();
 		}
 		else
 		{
@@ -115,7 +115,7 @@ public class RummikubSeries implements IRummikubFigureBag{
 	}
 	
 	
-	@Override public Stream<RummikubFigure> stream()
+	@Override public Stream<Figure> stream()
 	{
 		return  this.figures.stream();
 	}

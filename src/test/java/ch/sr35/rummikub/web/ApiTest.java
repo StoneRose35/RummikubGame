@@ -8,12 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ch.sr35.rummikub.web.PlayerResponse;
 import ch.sr35.rummikub.web.Response;
-import ch.sr35.rummikub.web.RummikubController;
-import ch.sr35.rummikub.web.RummikubGame;
-import ch.sr35.rummikub.web.RummikubPlayerAsp;
+import ch.sr35.rummikub.web.RestController;
+import ch.sr35.rummikub.web.Game;
+import ch.sr35.rummikub.web.PlayerAsp;
 import ch.sr35.rummikub.web.RummikubToken;
-import ch.sr35.rummikub.web.dao.RummikubFigureApi;
-import ch.sr35.rummikub.web.dao.RummikubPlayerApi;
+import ch.sr35.rummikub.web.dao.FigureApi;
+import ch.sr35.rummikub.web.dao.PlayerApi;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class ApiTest {
 	
 	@Autowired
-	RummikubController controller;
+	RestController controller;
 	
 	String gameId;
 	
@@ -88,7 +88,7 @@ public class ApiTest {
 		String cookieValue = responseMock.getCookie().getValue();
 		Assert.assertTrue(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
 		controller.registerPlayer("Tester2", "Testgame", responseMock);
-		RummikubFigureApi f = controller.getFigure(cookieValue);
+		FigureApi f = controller.getFigure(cookieValue);
 		Assert.assertNotNull(f);
 		Assert.assertFalse(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
 	}
@@ -97,7 +97,7 @@ public class ApiTest {
 	public void getPlayersTest()
 	{
 		String token = this.setupGame();
-		List<RummikubPlayerApi> players = this.controller.getPlayers(token);
+		List<PlayerApi> players = this.controller.getPlayers(token);
 		
 		for(int c=0;c<4;c++)
 		{
@@ -119,9 +119,9 @@ public class ApiTest {
 		controller.generateGame("Testgame",0);
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.registerPlayer("Testplayer", "Testgame", responseMock);
-		RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
+		PlayerAsp aiPlayer = new PlayerAsp();
 		RummikubToken rToken = new RummikubToken();
-		RummikubGame g = controller.data.getGames().get(0);
+		Game g = controller.data.getGames().get(0);
 		rToken.setGame(g);
 		rToken.setPlayer(aiPlayer);
 		rToken.setToken(tokenValue);
@@ -164,7 +164,7 @@ public class ApiTest {
 	public void AiPlayerGenerationTest()
 	{
 		controller.generateGame("Testgame",3);
-		Assert.assertEquals(3,controller.data.getGames().get(0).getPlayers().stream().filter(p -> {return p instanceof RummikubPlayerAsp;}).count());
+		Assert.assertEquals(3,controller.data.getGames().get(0).getPlayers().stream().filter(p -> {return p instanceof PlayerAsp;}).count());
 	}
 	
 	private String setupGame()

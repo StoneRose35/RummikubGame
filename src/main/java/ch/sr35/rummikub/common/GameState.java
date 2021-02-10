@@ -3,52 +3,52 @@ package ch.sr35.rummikub.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.sr35.rummikub.common.exceptions.RummikubGameException;
+import ch.sr35.rummikub.common.exceptions.GameException;
 
 public class GameState {
 	/**
 	 * Represents a Rummikub game state as seen by a single player, which sees all the figures in the game and his figures
 	 * on the shelf
 	 */
-	private List<RummikubFigure> onshelf;
-	public List<RummikubFigure> getOnshelf() {
+	private List<Figure> onshelf;
+	public List<Figure> getOnshelf() {
 		return onshelf;
 	}
 
-	public void setOnshelf(List<RummikubFigure> onshelf) {
+	public void setOnshelf(List<Figure> onshelf) {
 		this.onshelf = onshelf;
 	}
 
-	public List<RummikubFigure> getOntable() {
+	public List<Figure> getOntable() {
 		return ontable;
 	}
 
-	public void setOntable(List<RummikubFigure> ontable) {
+	public void setOntable(List<Figure> ontable) {
 		this.ontable = ontable;
 	}
 
-	private List<RummikubFigure> ontable;
+	private List<Figure> ontable;
 	private String aspRepresentation;
 	private int sumLaid;
 	private int roundNr;
 	
 	public GameState() 
 	{
-		this.onshelf = new ArrayList<RummikubFigure>();
-		this.ontable = new ArrayList<RummikubFigure>();
+		this.onshelf = new ArrayList<Figure>();
+		this.ontable = new ArrayList<Figure>();
 		this.roundNr = 0;
 	}
 	
 	/**
 	 * CAll this function when the player draws a figure, e.g. places the figure on his shelf
 	 * @param figure the figure to be drawn
-	 * @throws RummikubGameException if the figure is already on the shelf
+	 * @throws GameException if the figure is already on the shelf
 	 */
-	public void drawFigure(RummikubFigure figure) throws RummikubGameException
+	public void drawFigure(Figure figure) throws GameException
 	{
 		if (this.onshelf.contains(figure))
 		{
-			throw new RummikubGameException(String.format("The Figure %s is already in the game",figure),4);
+			throw new GameException(String.format("The Figure %s is already in the game",figure),4);
 		}
 		this.onshelf.add(figure);
 	}
@@ -58,13 +58,13 @@ public class GameState {
 	 * for the case a figure is already in the game
 	 * @param fig
 	 */
-	public void addFigure(RummikubFigure fig)
+	public void addFigure(Figure fig)
 	{
-		if (fig.getPlacement()==RummikubPlacement.ON_TABLE)
+		if (fig.getPlacement()==Placement.ON_TABLE)
 		{
 		    this.ontable.add(fig);
 		}
-		else if (fig.getPlacement()==RummikubPlacement.ON_SHELF)
+		else if (fig.getPlacement()==Placement.ON_SHELF)
 		{
 			this.onshelf.add(fig);
 		}
@@ -91,7 +91,7 @@ public class GameState {
 	 * return the figures on the table
 	 * @return
 	 */
-	public List<RummikubFigure> getTableFigures()
+	public List<Figure> getTableFigures()
 	{
 		return this.ontable;
 	}
@@ -100,7 +100,7 @@ public class GameState {
 	 * returns the figures on the shelf
 	 * @return
 	 */
-	public List<RummikubFigure> getShelfFigures()
+	public List<Figure> getShelfFigures()
 	{
 		return this.onshelf;
 	}

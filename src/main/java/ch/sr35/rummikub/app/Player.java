@@ -4,8 +4,8 @@ import java.util.List;
 
 import ch.sr35.rummikub.asp.AspSolver;
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubFigure;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Figure;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,21 +15,21 @@ import java.util.Iterator;
  * @author philipp
  *
  */
-public class RummikubPlayer {
-    private List<RummikubFigure> onShelf;
+public class Player {
+    private List<Figure> onShelf;
     private AspSolver solver;
     private String name;
     private boolean isInFirstRound;
     
-    public RummikubPlayer()
+    public Player()
     {
-    	this.onShelf = new ArrayList<RummikubFigure>();
+    	this.onShelf = new ArrayList<Figure>();
     	this.solver = new AspSolver();
     }
     
-    public RummikubPlayer(String strategy)
+    public Player(String strategy)
     {
-    	this.onShelf = new ArrayList<RummikubFigure>();
+    	this.onShelf = new ArrayList<Figure>();
     	this.solver = new AspSolver(strategy);
     }
     
@@ -40,9 +40,9 @@ public class RummikubPlayer {
      * @param onTableBeginning
      * @return
      */
-    public RummikubResult solveRound(List<IRummikubFigureBag> onTableBeginning)
+    public Result solveRound(List<IFigureBag> onTableBeginning)
     {
-    	RummikubResult result = new RummikubResult();
+    	Result result = new Result();
     	GameState stateInitial = new GameState();
     	if (this.isInFirstRound==false)
     	{
@@ -53,7 +53,7 @@ public class RummikubPlayer {
     		stateInitial.setRoundNr(0);
     	}
     	onTableBeginning.forEach(el -> {
-    		Iterator<RummikubFigure> it = el.iterator();
+    		Iterator<Figure> it = el.iterator();
     		while (it.hasNext())
     		{
     			stateInitial.addFigure(it.next());
@@ -78,11 +78,11 @@ public class RummikubPlayer {
     	return result;
     }
 
-	public List<RummikubFigure> getOnShelf() {
+	public List<Figure> getOnShelf() {
 		return onShelf;
 	}
 
-	public void setOnShelf(List<RummikubFigure> onShelf) {
+	public void setOnShelf(List<Figure> onShelf) {
 		this.onShelf = onShelf;
 	}
 	

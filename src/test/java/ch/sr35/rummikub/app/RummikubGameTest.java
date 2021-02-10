@@ -31,7 +31,7 @@ class RummikubGameTest {
 	@Test
 	void readConfigTest() throws FileNotFoundException
 	{
-		RummikubProgram rg = new RummikubProgram();
+		Program rg = new Program();
 		rg.initFromConfig();
 		
 	}

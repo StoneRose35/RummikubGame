@@ -3,9 +3,9 @@ package ch.sr35.rummikub.web.dao;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ch.sr35.rummikub.web.RummikubGame;
+import ch.sr35.rummikub.web.Game;
 
-public class RummikubGameApi {
+public class GameApi {
 	
 	private String name;
 	private List<String> players;
@@ -27,9 +27,9 @@ public class RummikubGameApi {
 		this.players = players;
 	}
 
-	public static RummikubGameApi fromRummikubGame(RummikubGame game)
+	public static GameApi fromRummikubGame(Game game)
 	{
-		RummikubGameApi g = new RummikubGameApi();
+		GameApi g = new GameApi();
 		g.setName(game.getName());
 		g.setPlayers(game.getPlayers().stream().map(p -> p.getName()).collect(Collectors.toList()));
 		if (game.getFinished()==true)

@@ -4,9 +4,9 @@ import java.util.List;
 
 import ch.sr35.rummikub.asp.AspSolver;
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.IRummikubFigureBag;
+import ch.sr35.rummikub.common.IFigureBag;
 
-public class RummikubPlayerAsp extends RummikubPlayer {
+public class PlayerAsp extends Player {
 	
 	private AspSolver solver = new AspSolver();
 	
@@ -15,7 +15,7 @@ public class RummikubPlayerAsp extends RummikubPlayer {
 		return solver.solveRound(stateOld);
 	}
 	
-	public List<IRummikubFigureBag> getTableFigures()
+	public List<IFigureBag> getTableFigures()
 	{
 		return solver.getTableDescription();
 	}

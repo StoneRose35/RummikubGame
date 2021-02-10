@@ -5,37 +5,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubCollection;
-import ch.sr35.rummikub.common.RummikubFigure;
-import ch.sr35.rummikub.common.RummikubPlacement;
-import ch.sr35.rummikub.common.RummikubSeries;
-import ch.sr35.rummikub.common.exceptions.RummikubGameException;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Collection;
+import ch.sr35.rummikub.common.Figure;
+import ch.sr35.rummikub.common.Placement;
+import ch.sr35.rummikub.common.Series;
+import ch.sr35.rummikub.common.exceptions.GameException;
 
 public class GameStateApi {
 	
-	private List<IRummikubFigureBag> tableFiguresStructured;
-	private List<List<RummikubFigureApi>> tableFigures;
-	private List<RummikubFigureApi> shelfFigures;
+	private List<IFigureBag> tableFiguresStructured;
+	private List<List<FigureApi>> tableFigures;
+	private List<FigureApi> shelfFigures;
 	private boolean accepted;
 	private int roundNr;
-	private RummikubPlayerApi player;
+	private PlayerApi player;
 	private String gameId;
 	
-	public List<IRummikubFigureBag> getTableFiguresStructured() {
+	public List<IFigureBag> getTableFiguresStructured() {
 		return tableFiguresStructured;
 	}
 
-	public List<List<RummikubFigureApi>> getTableFigures() {
+	public List<List<FigureApi>> getTableFigures() {
 		return tableFigures;
 	}
-	public void setTableFigures(List<List<RummikubFigureApi>> tableFigures) {
+	public void setTableFigures(List<List<FigureApi>> tableFigures) {
 		this.tableFigures = tableFigures;
 	}
-	public List<RummikubFigureApi> getShelfFigures() {
+	public List<FigureApi> getShelfFigures() {
 		return shelfFigures;
 	}
-	public void setShelfFigures(List<RummikubFigureApi> shelfFigures) {
+	public void setShelfFigures(List<FigureApi> shelfFigures) {
 		this.shelfFigures = shelfFigures;
 	}
 	public boolean isAccepted() {
@@ -54,33 +54,33 @@ public class GameStateApi {
 	
 	public GameStateApi()
 	{
-		this.tableFiguresStructured = new ArrayList<IRummikubFigureBag>();
+		this.tableFiguresStructured = new ArrayList<IFigureBag>();
 	}
 	
 	public GameState toGameState()
 	{
 		GameState gs = new GameState();
-		gs.setOntable(this.tableFigures.stream().flatMap(lf -> lf.stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE))).collect(Collectors.toList()));
+		gs.setOntable(this.tableFigures.stream().flatMap(lf -> lf.stream().map(el -> el.toRummikubFigure(Placement.ON_TABLE))).collect(Collectors.toList()));
 		return gs;
 	}
 	
 	public void validate()
 	{
 		boolean acc=true;
-		for (List<RummikubFigure> lf : this.tableFigures.stream()
+		for (List<Figure> lf : this.tableFigures.stream()
 										.map(tl -> tl.stream()
-												.map(el -> el.toRummikubFigure(RummikubPlacement.ON_TABLE))
+												.map(el -> el.toRummikubFigure(Placement.ON_TABLE))
 												.collect(Collectors.toList()))
 										.collect(Collectors.toList()))
 		{
 			boolean acc_coll=true;
 			boolean acc_figure=true;
-			RummikubCollection rc= new RummikubCollection();
-			for (RummikubFigure el : lf)
+			Collection rc= new Collection();
+			for (Figure el : lf)
 			{
 				try {
 					rc.addFigure(el);
-				} catch (RummikubGameException e) {
+				} catch (GameException e) {
 					acc_coll=false;
 				}
 				if(el.isValid()==false)
@@ -99,12 +99,12 @@ public class GameStateApi {
 			}
 			
 			boolean acc_series=true;
-			RummikubSeries rs= new RummikubSeries();
-			for (RummikubFigure el : lf)
+			Series rs= new Series();
+			for (Figure el : lf)
 			{
 				try {
 					rs.addFigure(el);
-				} catch (RummikubGameException e) {
+				} catch (GameException e) {
 					acc_series=false;
 				}
 			}
@@ -131,10 +131,10 @@ public class GameStateApi {
 		
 		this.accepted=acc;
 	}
-	public RummikubPlayerApi getPlayer() {
+	public PlayerApi getPlayer() {
 		return player;
 	}
-	public void setPlayer(RummikubPlayerApi player) {
+	public void setPlayer(PlayerApi player) {
 		this.player = player;
 	}
 	public String getGameId() {

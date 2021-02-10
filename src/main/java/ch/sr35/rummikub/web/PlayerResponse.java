@@ -1,17 +1,17 @@
 package ch.sr35.rummikub.web;
 import ch.sr35.rummikub.web.Response;
-import ch.sr35.rummikub.web.dao.RummikubPlayerApi;
+import ch.sr35.rummikub.web.dao.PlayerApi;
 
 public class PlayerResponse extends Response {
-	private RummikubPlayerApi player;
+	private PlayerApi player;
 	private String token;
 	private String gameName;
 
-	public RummikubPlayerApi getPlayer() {
+	public PlayerApi getPlayer() {
 		return player;
 	}
 
-	public void setPlayer(RummikubPlayerApi player) {
+	public void setPlayer(PlayerApi player) {
 		this.player = player;
 	}
 

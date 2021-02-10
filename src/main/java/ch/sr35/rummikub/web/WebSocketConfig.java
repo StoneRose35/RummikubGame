@@ -15,7 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	
 	@Autowired
-	private RummikubGameData data;
+	private GameData data;
 	
 	  @Override
 	  public void configureMessageBroker(MessageBrokerRegistry config) {

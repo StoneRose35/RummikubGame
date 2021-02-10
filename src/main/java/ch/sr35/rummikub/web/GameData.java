@@ -6,14 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RummikubGameData {
+public class GameData {
 	
-	private List<RummikubGame> games;
+	private List<Game> games;
 	private List<RummikubToken> tokens;
 	
-	RummikubGameData()
+	GameData()
 	{
-		this.games=new ArrayList<RummikubGame>();
+		this.games=new ArrayList<Game>();
 		this.tokens=new ArrayList<RummikubToken>();
 	}
 	
@@ -23,10 +23,10 @@ public class RummikubGameData {
 	public void setTokens(List<RummikubToken> tokens) {
 		this.tokens = tokens;
 	}
-	public List<RummikubGame> getGames() {
+	public List<Game> getGames() {
 		return games;
 	}
-	public void setGames(List<RummikubGame> games) {
+	public void setGames(List<Game> games) {
 		this.games = games;
 	}
 

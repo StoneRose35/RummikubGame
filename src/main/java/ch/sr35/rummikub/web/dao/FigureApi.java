@@ -1,11 +1,11 @@
 package ch.sr35.rummikub.web.dao;
 
-import ch.sr35.rummikub.common.RummikubColor;
-import ch.sr35.rummikub.common.RummikubFigure;
-import ch.sr35.rummikub.common.RummikubPlacement;
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.Color;
+import ch.sr35.rummikub.common.Figure;
+import ch.sr35.rummikub.common.Placement;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
-public class RummikubFigureApi {
+public class FigureApi {
 	private int colorcode;
 	private int instance;
 	private int number;
@@ -36,26 +36,26 @@ public class RummikubFigureApi {
 		this.colorcode = colorcode;
 	}
 	
-	public RummikubFigure toRummikubFigure(RummikubPlacement placement)
+	public Figure toRummikubFigure(Placement placement)
 	{
-		RummikubFigure res = new RummikubFigure();
+		Figure res = new Figure();
 		try {
 			res.setInstance(this.getInstance());
 			res.setNumber(this.getNumber());
-			res.setColor(RummikubColor.fromCode(this.getColorcode()));
+			res.setColor(Color.fromCode(this.getColorcode()));
 			res.setPlacement(placement);
 			res.setPosition(this.getPosition());
 			res.setShelfNr(this.getShelfNr());
-		} catch (RummikubException e) {
+		} catch (GeneralException e) {
 			e.printStackTrace();
 		}
 
 		return res;
 	}
 	
-	public static RummikubFigureApi fromRummikubFigure(RummikubFigure f)
+	public static FigureApi fromRummikubFigure(Figure f)
 	{
-		RummikubFigureApi fa = new RummikubFigureApi();
+		FigureApi fa = new FigureApi();
 		if (f.getColor() != null)
 		{
 			fa.setColorcode(f.getColor().getColorcode());
@@ -70,9 +70,9 @@ public class RummikubFigureApi {
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o instanceof RummikubFigureApi)
+		if (o instanceof FigureApi)
 		{
-			RummikubFigureApi rfo=(RummikubFigureApi)o;
+			FigureApi rfo=(FigureApi)o;
 			if (this.instance < 3 && rfo.instance < 3)
 			{
 				return rfo.colorcode==this.colorcode && rfo.instance==this.instance && rfo.number==this.number;

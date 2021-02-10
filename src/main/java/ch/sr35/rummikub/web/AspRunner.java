@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.RummikubFigure;
+import ch.sr35.rummikub.common.Figure;
 
 @Service
 public class AspRunner extends Thread {
-	private RummikubGame game;
+	private Game game;
 	
 
 	WebsocketController wsController;
@@ -26,15 +26,15 @@ public class AspRunner extends Thread {
 		gs.setOnshelf(game.getActivePlayer().getFigures());
 		gs.setOntable(game.getTableFigures().stream().flatMap(l -> l.stream()).collect(Collectors.toList()));
 		gs.setRoundNr(game.getActivePlayer().getRoundNr());
-		GameState gsNew = ((RummikubPlayerAsp)game.getActivePlayer()).solve(gs);
+		GameState gsNew = ((PlayerAsp)game.getActivePlayer()).solve(gs);
 		if (gsNew.getSumLaid()==0)
 		{
-			RummikubFigure df = game.drawFigure();
+			Figure df = game.drawFigure();
 			gsNew.getShelfFigures().add(df);
 		}
 		else
 		{
-			game.setTableFigures(((RummikubPlayerAsp)game.getActivePlayer()).getTableFigures());
+			game.setTableFigures(((PlayerAsp)game.getActivePlayer()).getTableFigures());
 			game.getActivePlayer().setRoundNr(game.getActivePlayer().getRoundNr()+1);
 			if (gsNew.getShelfFigures().size()==0)
 			{
@@ -53,7 +53,7 @@ public class AspRunner extends Thread {
 		wsController.updatePlayers(game);
 	}
 
-	public void setGame(RummikubGame game) {
+	public void setGame(Game game) {
 		this.game = game;
 	}
 }

@@ -1,8 +1,8 @@
 package ch.sr35.rummikub.web.dao;
 
-import ch.sr35.rummikub.web.RummikubPlayer;
+import ch.sr35.rummikub.web.Player;
 
-public class RummikubPlayerApi {
+public class PlayerApi {
 	
 	private String name;
 	private boolean active;
@@ -26,7 +26,7 @@ public class RummikubPlayerApi {
 	}
 
 	
-	public RummikubPlayerApi()
+	public PlayerApi()
 	{
 		this.finalScore=null;
 	}
@@ -48,7 +48,7 @@ public class RummikubPlayerApi {
 		this.finalScore = finalScore;
 	}
 
-	public RummikubPlayerApi(RummikubPlayer p)
+	public PlayerApi(Player p)
 	{
 		this.setActive(p.isActive());
 		this.setName(p.getName());

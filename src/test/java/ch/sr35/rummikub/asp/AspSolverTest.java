@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubFigure;
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Figure;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 
 class AspSolverTest {
@@ -65,7 +65,7 @@ class AspSolverTest {
 
 
 	@Test
-	void gamestateGenerationTest() throws RummikubException
+	void gamestateGenerationTest() throws GeneralException
 	{
 		AspSolver as = new AspSolver();
 		as.setJsonresult(this.exampleJson);
@@ -78,7 +78,7 @@ class AspSolverTest {
 	}
 	
 	@Test
-	void solve_round_test() throws RummikubException
+	void solve_round_test() throws GeneralException
 	{
 		AspSolver as = new AspSolver();
 		as.setJsonresult(this.exampleJson);
@@ -87,7 +87,7 @@ class AspSolverTest {
 		state_old.setRoundNr(1);
 		GameState state_new = as.solveRound(state_old);
 		Assert.assertNotNull(state_new);
-		List<RummikubFigure>  tf = state_new.getTableFigures();
+		List<Figure>  tf = state_new.getTableFigures();
 		Assert.assertNotNull(tf);
 		Assert.assertEquals(8, tf.size());
 	}
@@ -98,7 +98,7 @@ class AspSolverTest {
 	{
 		AspSolver as = new AspSolver();
 		as.setJsonresult(this.exampleJson);
-		List<IRummikubFigureBag> td = as.getTableDescription();
+		List<IFigureBag> td = as.getTableDescription();
 		Assert.assertNotNull(td);
 		Assert.assertEquals(2, td.size());
 		
@@ -109,8 +109,8 @@ class AspSolverTest {
 	{
 		AspSolver as = new AspSolver();
 		as.setJsonresult(this.exampleJson);
-		List<IRummikubFigureBag> td = as.getTableDescription();
-		List<RummikubFigure> arr = td.stream().flatMap(e -> e.stream()).collect(Collectors.toList());
+		List<IFigureBag> td = as.getTableDescription();
+		List<Figure> arr = td.stream().flatMap(e -> e.stream()).collect(Collectors.toList());
 		Assert.assertTrue(arr.size()==8);
 	}
 }

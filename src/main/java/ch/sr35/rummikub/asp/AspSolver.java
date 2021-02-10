@@ -4,13 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import ch.sr35.rummikub.common.GameState;
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubCollection;
-import ch.sr35.rummikub.common.RummikubColorFactory;
-import ch.sr35.rummikub.common.RummikubFigure;
-import ch.sr35.rummikub.common.RummikubPlacement;
-import ch.sr35.rummikub.common.RummikubSeries;
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Collection;
+import ch.sr35.rummikub.common.ColorFactory;
+import ch.sr35.rummikub.common.Figure;
+import ch.sr35.rummikub.common.Placement;
+import ch.sr35.rummikub.common.Series;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 import java.io.*;
 import java.util.List;
@@ -107,14 +107,14 @@ public class AspSolver {
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		} catch (RummikubException e) {
+		} catch (GeneralException e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
 	
-	public GameState jsonToGamestate() throws RummikubException
+	public GameState jsonToGamestate() throws GeneralException
 	{
 		JSONArray values = this.getLastWitnessValues();
 		GameState result = new GameState();
@@ -122,7 +122,7 @@ public class AspSolver {
 		{
 			Object val=values.get(c);
 			String strval = (String)val;
-			RummikubFigure fig = RummikubFigure.getRummikubFigure(strval);
+			Figure fig = Figure.getRummikubFigure(strval);
 			if (fig != null)
 			{
 		        result.addFigure(fig);
@@ -139,10 +139,10 @@ public class AspSolver {
 		return result;
 	}
 	
-	public List<IRummikubFigureBag> getTableDescription()
+	public List<IFigureBag> getTableDescription()
 	{
 
-		List<IRummikubFigureBag> result = new ArrayList<IRummikubFigureBag>();
+		List<IFigureBag> result = new ArrayList<IFigureBag>();
 		JSONArray values = this.getLastWitnessValues();
 		if (values==null)
 		{
@@ -156,8 +156,8 @@ public class AspSolver {
 			{
 				List<Integer> a = pred.atomsAsIntegers();
 				long hash = a.get(0) + a.get(1)*13 + a.get(3)*13*13 + a.get(5)*13*13*13;
-				IRummikubFigureBag rs;
-				rs = new RummikubSeries();
+				IFigureBag rs;
+				rs = new Series();
 				rs.setHash(hash);
 				if (!result.contains(rs))
 				{
@@ -167,22 +167,22 @@ public class AspSolver {
 				{
 					rs = result.get(result.indexOf(rs));
 				}
-				RummikubFigure rf = new RummikubFigure();
+				Figure rf = new Figure();
 				try {
-					rf.setColor(RummikubColorFactory.getByCode(a.get(3)));
+					rf.setColor(ColorFactory.getByCode(a.get(3)));
 					rf.setNumber(a.get(2));
 					rf.setInstance(a.get(4));
-					rf.setPlacement(RummikubPlacement.ON_TABLE);
+					rf.setPlacement(Placement.ON_TABLE);
 					rs.addFigure(rf);
-				} catch (RummikubException e) {
+				} catch (GeneralException e) {
 				}
 			}
 			else if (pred.getName().equals("collection"))
 			{
 				List<Integer> a = pred.atomsAsIntegers();
 				long hash = a.get(0) + a.get(3)*17;
-				IRummikubFigureBag rs;
-				rs = new RummikubCollection();
+				IFigureBag rs;
+				rs = new Collection();
 				rs.setHash(hash);
 				if (!result.contains(rs))
 				{
@@ -192,14 +192,14 @@ public class AspSolver {
 				{
 					rs = result.get(result.indexOf(rs));
 				}
-				RummikubFigure rf = new RummikubFigure();
+				Figure rf = new Figure();
 				try {
-					rf.setColor(RummikubColorFactory.getByCode(a.get(1)));
+					rf.setColor(ColorFactory.getByCode(a.get(1)));
 					rf.setNumber(a.get(0));
 					rf.setInstance(a.get(2));
-					rf.setPlacement(RummikubPlacement.ON_TABLE);
+					rf.setPlacement(Placement.ON_TABLE);
 					rs.addFigure(rf);
-				} catch (RummikubException e) {
+				} catch (GeneralException e) {
 				}
 			}
 		}

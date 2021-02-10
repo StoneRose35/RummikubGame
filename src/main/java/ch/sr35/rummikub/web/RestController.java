@@ -2,9 +2,7 @@ package ch.sr35.rummikub.web;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -18,26 +16,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import ch.sr35.rummikub.common.RummikubFigure;
-import ch.sr35.rummikub.common.RummikubPlacement;
+import ch.sr35.rummikub.common.Figure;
+import ch.sr35.rummikub.common.Placement;
+import ch.sr35.rummikub.common.exceptions.ApiException;
 import ch.sr35.rummikub.web.dao.GameStateApi;
-import ch.sr35.rummikub.web.dao.RummikubFigureApi;
-import ch.sr35.rummikub.web.dao.RummikubGameApi;
-import ch.sr35.rummikub.web.dao.RummikubPlayerApi;
+import ch.sr35.rummikub.web.dao.FigureApi;
+import ch.sr35.rummikub.web.dao.GameApi;
+import ch.sr35.rummikub.web.dao.PlayerApi;
 
 @CrossOrigin(origins = {"http://localhost:4200"},allowCredentials = "true")
-@RestController
-public class RummikubController {
+@org.springframework.web.bind.annotation.RestController
+public class RestController {
 	
 	@Autowired
 	WebsocketController wsController;
 	
 	@Autowired
-	RummikubGameData data;
+	GameData data;
 	
-	public RummikubController()
+	public RestController()
 	{
 	}
 	
@@ -70,7 +68,7 @@ public class RummikubController {
 		{
 			PlayerResponse r=new PlayerResponse();
 			r.setMessage("reconnected player " + t.getPlayer().getName() + " to game " + t.getGame().getName());
-			r.setPlayer((RummikubPlayerApi)t.getPlayer());
+			r.setPlayer((PlayerApi)t.getPlayer());
 			r.setToken(t.getToken());
 			r.setGameName(t.getGame().getName());
 			return r;
@@ -79,23 +77,23 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/draw")
-	public RummikubFigureApi getFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public FigureApi getFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 		if (t!=null)
 		{
-			RummikubGame g=t.getGame();
-			RummikubPlayer p = t.getPlayer();
-			RummikubFigure f =  g.drawFigure();
+			Game g=t.getGame();
+			Player p = t.getPlayer();
+			Figure f =  g.drawFigure();
 			try {
 				p.addFigure(f);
 			}
-			catch (RummikubApiException e) {
+			catch (ApiException e) {
 				return null;
 			}
 			g.rotatePlayer();
 			wsController.updatePlayers(g);
-			return RummikubFigureApi.fromRummikubFigure(f);
+			return FigureApi.fromRummikubFigure(f);
 		}
 		return null;
 	}
@@ -112,17 +110,17 @@ public class RummikubController {
 		}
 		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0)
 		{
-			RummikubGame g = new RummikubGame(this.wsController);
+			Game g = new Game(this.wsController);
 			g.setName(name);
 			this.data.getGames().add(g);
 			
 			for(int c=0;c<nrAiPlayers;c++)
 			{
-				RummikubPlayerAsp aiPlayer = new RummikubPlayerAsp();
+				PlayerAsp aiPlayer = new PlayerAsp();
 				aiPlayer.setName(AiPlayerNameGenerator.generateName());
 				try {
 					g.addPlayer(aiPlayer);
-				} catch (RummikubApiException e1) {
+				} catch (ApiException e1) {
 					r.setError(e1.getMessage());
 					return r;
 				}
@@ -140,19 +138,19 @@ public class RummikubController {
 	}
 
 	@GetMapping("/games")
-	public List<RummikubGameApi> getGames(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public List<GameApi> getGames(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		if (token.length() > 0)
 		{
 			RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 			if (t!=null)
 			{
-				List<RummikubGameApi> apiGames = (List<RummikubGameApi>)this.data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
+				List<GameApi> apiGames = (List<GameApi>)this.data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList());
 				apiGames.stream().filter(g -> g.getName()==t.getGame().getName()).forEach(el -> el.declareAsJoined());
 				return apiGames;
 			}
 		}
-		return this.data.getGames().stream().map(g -> RummikubGameApi.fromRummikubGame(g)).collect(Collectors.toList());
+		return this.data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList());
 	}
 
 	
@@ -161,7 +159,7 @@ public class RummikubController {
 	{
 		PlayerResponse r=new PlayerResponse();
 		
-		RummikubGame game = this.getGame(gameId);
+		Game game = this.getGame(gameId);
 		if (game!=null)
 		{
 			try {
@@ -173,11 +171,11 @@ public class RummikubController {
 				Cookie c = new Cookie("RKToken",t.getToken());
 				response.addCookie(c);
 				r.setMessage("Sucessfully registered " + name);
-				r.setPlayer((RummikubPlayerApi)t.getPlayer());
+				r.setPlayer((PlayerApi)t.getPlayer());
 				r.setToken(t.getToken());
 				r.setGameName(gameId);
 				wsController.updatePlayers(game);
-			} catch (RummikubApiException e) {
+			} catch (ApiException e) {
 				r.setError(e.getMessage());
 			}
 		}
@@ -191,19 +189,19 @@ public class RummikubController {
 	}
 	
 	@GetMapping("/players")
-	public List<RummikubPlayerApi> getPlayers(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public List<PlayerApi> getPlayers(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 			return this.data.getTokens().stream()
 					.filter(tt -> tt.getToken().equals(token))
 					.findFirst()
 					.orElse(null).getGame().getPlayers().stream().map(p -> {
-				return new RummikubPlayerApi(p);
+				return new PlayerApi(p);
 			}).collect(Collectors.toList());
 
 	}
 	
 	@GetMapping("/shelfFigures")
-	public List<RummikubFigureApi> getShelfFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public List<FigureApi> getShelfFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		return this.data.getTokens().stream()
 				.filter(tt -> tt.getToken().equals(token))
@@ -212,23 +210,23 @@ public class RummikubController {
 				.getPlayer()
 				.getFigures()
 				.stream()
-				.map(f -> RummikubFigureApi.fromRummikubFigure(f))
+				.map(f -> FigureApi.fromRummikubFigure(f))
 				.collect(Collectors.toList());
 	}
 	
 	@GetMapping("/tableFigures")
-	public List<List<RummikubFigureApi>> getTableFigures(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public List<List<FigureApi>> getTableFigures(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		List<List<RummikubFigureApi>> res=new ArrayList<List<RummikubFigureApi>>();
-		RummikubGame g = 		this.data.getTokens().stream()
+		List<List<FigureApi>> res=new ArrayList<List<FigureApi>>();
+		Game g = 		this.data.getTokens().stream()
 				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
 				.orElse(null).getGame();
 		if (g!=null)
 		{
 			g.getTableFigures().stream().forEach((f) -> {
-				List<RummikubFigureApi> l=new ArrayList<RummikubFigureApi>();
-				f.iterator().forEachRemaining(el -> l.add(RummikubFigureApi.fromRummikubFigure(el)));
+				List<FigureApi> l=new ArrayList<FigureApi>();
+				f.iterator().forEachRemaining(el -> l.add(FigureApi.fromRummikubFigure(el)));
 				res.add(l);
 			} );
 			
@@ -241,12 +239,12 @@ public class RummikubController {
 	public GameStateApi submitMove(@RequestBody GameStateApi gsSubmitted,@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		GameStateApi gameStateReturned;
-		RummikubGame currentGame = this.data.getTokens().stream()
+		Game currentGame = this.data.getTokens().stream()
 				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
 				.orElse(null)
 				.getGame();
-		RummikubPlayer player = this.data.getTokens().stream()
+		Player player = this.data.getTokens().stream()
 				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
 				.orElse(null).getPlayer();
@@ -256,7 +254,7 @@ public class RummikubController {
 		int sumLaidDown = currentGame.getPlayer(playerName)
 				.getFigures() 
 				.stream()
-				.map(el -> RummikubFigureApi.fromRummikubFigure(el))
+				.map(el -> FigureApi.fromRummikubFigure(el))
 				.filter( f -> !gsSubmitted.getShelfFigures().contains(f))
 				.mapToInt(f -> { 
 					if (f.getInstance()<3)
@@ -279,25 +277,25 @@ public class RummikubController {
 			gameStateReturned=new GameStateApi();
 
 			gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
-						f.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
+						f.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
 					).collect(Collectors.toList()));
-			RummikubFigure f =  currentGame.drawFigure();
+			Figure f =  currentGame.drawFigure();
 			try {
 				currentGame.getPlayer(playerName).addFigure(f);
 			}
-			catch (RummikubApiException e)
+			catch (ApiException e)
 			{
 				return null;
 			}
 			gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
-					.stream().map(el -> RummikubFigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
+					.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
 		}
 		else
 		{
 			player.setRoundNr(player.getRoundNr()+1);
 			gameStateReturned=gsSubmitted;
 			currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
-			currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList()));
+			currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(Placement.ON_SHELF)).collect(Collectors.toList()));
 			
 			if (gsSubmitted.getShelfFigures().size()==0)
 			{
@@ -316,14 +314,14 @@ public class RummikubController {
 	}
 	
 	@PostMapping("/updateShelf")
-	public Response updateShelfFigures(@RequestBody List<RummikubFigureApi> figures,@CookieValue(value = "RKToken", defaultValue = "") String token)
+	public Response updateShelfFigures(@RequestBody List<FigureApi> figures,@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		RummikubPlayer player = this.data.getTokens().stream()
+		Player player = this.data.getTokens().stream()
 				.filter(tt -> tt.getToken().equals(token))
 				.findFirst()
 				.orElse(null).getPlayer();
 		
-		List<RummikubFigure> replacedFigures = figures.stream().map(f ->f.toRummikubFigure(RummikubPlacement.ON_SHELF)).collect(Collectors.toList());
+		List<Figure> replacedFigures = figures.stream().map(f ->f.toRummikubFigure(Placement.ON_SHELF)).collect(Collectors.toList());
 		Response r = new Response();
 		if (replacedFigures.containsAll(player.getFigures()))
 		{
@@ -353,7 +351,7 @@ public class RummikubController {
 		return name;
 	}
 	
-	private RummikubGame getGame(String gameId)
+	private Game getGame(String gameId)
 	{
 		return this.data.getGames().stream().filter(g -> g.getName().equals(gameId)).findFirst().orElse(null);
 	}

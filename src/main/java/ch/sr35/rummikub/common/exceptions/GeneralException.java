@@ -5,7 +5,7 @@ package ch.sr35.rummikub.common.exceptions;
  * @author philipp
  *
  */
-public class RummikubException extends Exception {
+public class GeneralException extends Exception {
 
 	private String message = "";
 	/**
@@ -13,7 +13,7 @@ public class RummikubException extends Exception {
 	 */
 	private static final long serialVersionUID = 7362505088384104234L;
 	
-	public RummikubException(String msg)
+	public GeneralException(String msg)
 	{
 		this.message = msg;
 	}

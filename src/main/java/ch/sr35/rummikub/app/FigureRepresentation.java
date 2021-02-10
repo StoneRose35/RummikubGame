@@ -8,8 +8,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubFigure;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Figure;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ public class FigureRepresentation extends JPanel {
 	 */
 	private static final long serialVersionUID = -6847047541601038545L;
 	private final double H_RATIO = 1.35;
-	private List<IRummikubFigureBag> tableFigures;
-	private List<RummikubPlayer> players;
+	private List<IFigureBag> tableFigures;
+	private List<Player> players;
 	
 	public FigureRepresentation()
 	{
-		this.tableFigures = new ArrayList<IRummikubFigureBag>();
-		this.players = new ArrayList<RummikubPlayer>();
+		this.tableFigures = new ArrayList<IFigureBag>();
+		this.players = new ArrayList<Player>();
 	}
 	
 
@@ -45,7 +45,7 @@ public class FigureRepresentation extends JPanel {
 	
 	private void updateFigures(Graphics g)
 	{
-		IRummikubFigureBag figureBag;
+		IFigureBag figureBag;
 		// draw table figures
 		g.setColor(new Color(105, 15, 45));
 		Dimension d = this.getSize();
@@ -54,7 +54,7 @@ public class FigureRepresentation extends JPanel {
 		
 		// compute table dimensions and fill table
 		int n_places = 0;
-		Iterator<IRummikubFigureBag> itb = this.tableFigures.iterator();
+		Iterator<IFigureBag> itb = this.tableFigures.iterator();
 		while(itb.hasNext())
 		{
 			figureBag = itb.next();
@@ -68,7 +68,7 @@ public class FigureRepresentation extends JPanel {
 		while(itb.hasNext())
 		{
 			figureBag = itb.next();
-			Iterator<RummikubFigure> it = figureBag.iterator();
+			Iterator<Figure> it = figureBag.iterator();
 			while(it.hasNext())
 			{
 				this.drawRummikubFigure(it.next(), coords, g);
@@ -81,9 +81,9 @@ public class FigureRepresentation extends JPanel {
 		    coords.nextLine();
 		}
 		// draw shelf figures
-		for (RummikubPlayer p : this.players)
+		for (Player p : this.players)
 		{
-			Iterator<RummikubFigure> its = p.getOnShelf().iterator();
+			Iterator<Figure> its = p.getOnShelf().iterator();
 			while (its.hasNext())
 			{
 				this.drawRummikubFigure(its.next(), coords, g);
@@ -93,31 +93,31 @@ public class FigureRepresentation extends JPanel {
 		}
 	}
 	
-	public List<IRummikubFigureBag> getTableFigures() {
+	public List<IFigureBag> getTableFigures() {
 		return tableFigures;
 	}
 
 
-	public void setTableFigures(List<IRummikubFigureBag> tableFigures) {
+	public void setTableFigures(List<IFigureBag> tableFigures) {
 		this.tableFigures = tableFigures;
 	}
 	
-	public void setPlayers(List<RummikubPlayer> p)
+	public void setPlayers(List<Player> p)
 	{
 		this.players = p;
 	}
 	
-	public List<RummikubPlayer> getState()
+	public List<Player> getState()
 	{
 		return this.players;
 	}
 
-	private void drawRummikubFigure(RummikubFigure f,Coordinates c, Graphics g)
+	private void drawRummikubFigure(Figure f,Coordinates c, Graphics g)
 	{
 		drawRummikubFigure(f,c.getRow(),c.getColumn(),g);
 	}
 
-	private void drawRummikubFigure(RummikubFigure f,int row,int column, Graphics g)
+	private void drawRummikubFigure(Figure f,int row,int column, Graphics g)
 	{
 		Dimension d = this.getSize();
 		int figureWidth = (int)(d.getWidth()/13.5);

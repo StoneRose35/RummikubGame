@@ -3,7 +3,7 @@ import java.util.List;
 
 import ch.sr35.rummikub.asp.AspHelper;
 import ch.sr35.rummikub.asp.AspPredicate;
-import ch.sr35.rummikub.common.exceptions.RummikubException;
+import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 /**
  * a Representation of a rummikub figurem, it has a number and a color and exists somewhere (on the table, in the bag/on the stack or 
@@ -12,15 +12,15 @@ import ch.sr35.rummikub.common.exceptions.RummikubException;
  * @author philipp
  *
  */
-public class RummikubFigure implements Comparable<RummikubFigure> {
+public class Figure implements Comparable<Figure> {
 	private int number = 0;
-	private RummikubColor color=null;
+	private Color color=null;
 	private int instance=0;
-	private RummikubPlacement placement=null;
+	private Placement placement=null;
 	private Integer shelfNr;
 	private Integer position;
 	
-	public RummikubFigure()
+	public Figure()
 	{
 		
 	}
@@ -31,13 +31,13 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	 * @param aspRepresentation
 	 * @return
 	 */
-	public static RummikubFigure getRummikubFigure(String aspRepresentation)
+	public static Figure getRummikubFigure(String aspRepresentation)
 	{
-		RummikubFigure fig = null;
+		Figure fig = null;
 		try {
-			fig = new RummikubFigure(aspRepresentation);
+			fig = new Figure(aspRepresentation);
 		}
-		catch (RummikubException e)
+		catch (GeneralException e)
 		{ 
 		}
 		return fig;
@@ -45,55 +45,55 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	}
 	
 	
-	private RummikubFigure(String aspRepresentation) throws RummikubException
+	private Figure(String aspRepresentation) throws GeneralException
 	{
  
 		AspPredicate pred = AspHelper.parsePredicate(aspRepresentation);
 		if (pred==null)
 		{
-			throw new RummikubException(String.format("Could not Instantiate Figure from %s ", aspRepresentation));
+			throw new GeneralException(String.format("Could not Instantiate Figure from %s ", aspRepresentation));
 		}
 		
 		if (pred.getName().equals("onshelf") || pred.getName().equals("remaining"))
 		{
-			this.placement = RummikubPlacement.ON_SHELF;
+			this.placement = Placement.ON_SHELF;
 		}
 		else if (pred.getName().equals("ontable"))
 		{
-			this.placement = RummikubPlacement.ON_TABLE;
+			this.placement = Placement.ON_TABLE;
 		}
 		else
 		{
-			throw new RummikubException(String.format("Could not decode placement from %s ", aspRepresentation));
+			throw new GeneralException(String.format("Could not decode placement from %s ", aspRepresentation));
 		}
 		List<Integer> atoms = pred.atomsAsIntegers();
 		if (atoms != null && atoms.size()==3)
 		{
 		    this.setNumber(atoms.get(0));
 		    this.setInstance(atoms.get(2));
-		    this.setColor(RummikubColorFactory.getByCode(atoms.get(1)));
+		    this.setColor(ColorFactory.getByCode(atoms.get(1)));
 		}
-		else if (atoms != null && atoms.size()==1 && this.placement == RummikubPlacement.ON_SHELF) // special case of Joker on shelf, only the instance is defined
+		else if (atoms != null && atoms.size()==1 && this.placement == Placement.ON_SHELF) // special case of Joker on shelf, only the instance is defined
 		{
 			this.setInstance(atoms.get(0)+2);
 		}
-		else if (atoms != null && atoms.size()==1 && this.placement == RummikubPlacement.ON_TABLE) // Joker on table
+		else if (atoms != null && atoms.size()==1 && this.placement == Placement.ON_TABLE) // Joker on table
 		{
-			throw new RummikubException("Joker on table is created only using the exact representation");
+			throw new GeneralException("Joker on table is created only using the exact representation");
 		}
 		else
 		{
-			throw new RummikubException(String.format("Could not decode figure representation from %s ", aspRepresentation));
+			throw new GeneralException(String.format("Could not decode figure representation from %s ", aspRepresentation));
 		}
 		
 	}
 	
 
-	public RummikubPlacement getPlacement() {
+	public Placement getPlacement() {
 		return placement;
 	}
 
-	public void setPlacement(RummikubPlacement placement) {
+	public void setPlacement(Placement placement) {
 		this.placement = placement;
 	}
 
@@ -101,19 +101,19 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 		return number;
 	}
 
-	public void setNumber(int number) throws RummikubException {
+	public void setNumber(int number) throws GeneralException {
 		if (number < 0 || number > 13)
 		{
-			throw new RummikubException("Number should be within 0 to 13");
+			throw new GeneralException("Number should be within 0 to 13");
 		}
 		this.number = number;
 	}
 
-	public RummikubColor getColor() {
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(RummikubColor color) {
+	public void setColor(Color color) {
 		this.color = color;
 	}
 
@@ -133,10 +133,10 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 		}
 	}
 
-	public void setInstance(int instance) throws RummikubException {
+	public void setInstance(int instance) throws GeneralException {
 		if (instance <1 || instance > 4)
 		{
-			throw new RummikubException("Instance should be 1 or 2 for normal figures or 3 to 4 for jokers");
+			throw new GeneralException("Instance should be 1 or 2 for normal figures or 3 to 4 for jokers");
 		}
 		this.instance = instance;
 	}
@@ -156,9 +156,9 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	@Override
 	public boolean equals(Object other)
 	{
-		if (other instanceof RummikubFigure)
+		if (other instanceof Figure)
 		{
-			RummikubFigure rf = (RummikubFigure)other;
+			Figure rf = (Figure)other;
 			if(rf.getColor() == this.getColor() && rf.getInstance() == this.getInstance() && rf.getNumber() == this.getNumber())
 			{
 				return true;
@@ -188,8 +188,8 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	 * * Instance
 	 */
 	@Override
-	public int compareTo(RummikubFigure fig) {
-		RummikubColor[] colors=RummikubColor.values();
+	public int compareTo(Figure fig) {
+		Color[] colors=Color.values();
 		int idx1=-1,idx2=-2;
 		for (int cnt=0;cnt<colors.length;cnt++)
 		{
@@ -240,8 +240,8 @@ public class RummikubFigure implements Comparable<RummikubFigure> {
 	
 	public boolean isValid()
 	{
-		if ((this.placement != RummikubPlacement.ON_SHELF && (this.position != null || this.position!=null))
-			|| (this.placement == RummikubPlacement.ON_SHELF && (this.position == null || this.position==null)))
+		if ((this.placement != Placement.ON_SHELF && (this.position != null || this.position!=null))
+			|| (this.placement == Placement.ON_SHELF && (this.position == null || this.position==null)))
 		{
 			return false;
 		}

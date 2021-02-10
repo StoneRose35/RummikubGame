@@ -3,7 +3,7 @@ package ch.sr35.rummikub.common;
 import java.util.List;
 import java.util.stream.Stream;
 
-import ch.sr35.rummikub.common.exceptions.RummikubGameException;
+import ch.sr35.rummikub.common.exceptions.GameException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,23 +13,23 @@ import java.util.Iterator;
  * @author philipp
  *
  */
-public class RummikubCollection implements IRummikubFigureBag{
-	private List<RummikubFigure> figures;
+public class Collection implements IFigureBag{
+	private List<Figure> figures;
 	private long hash;
 	
-	public RummikubCollection() {
-		this.figures = new ArrayList<RummikubFigure>();
+	public Collection() {
+		this.figures = new ArrayList<Figure>();
 	}
 	
 	/**
 	 * Adds a figure, only adds it if the Number corresponds and the color is not already in the collection
 	 */
 	@Override
-	public void addFigure(RummikubFigure fig) throws RummikubGameException
+	public void addFigure(Figure fig) throws GameException
 	{
-		if(fig.getPlacement()!=RummikubPlacement.ON_TABLE)
+		if(fig.getPlacement()!=Placement.ON_TABLE)
 		{
-			throw new RummikubGameException("A Collection can only be made from figures on the table");
+			throw new GameException("A Collection can only be made from figures on the table");
 		}
 		if (this.figures.size()==0)
 		{
@@ -37,8 +37,8 @@ public class RummikubCollection implements IRummikubFigureBag{
 		}
 		else
 		{
-			Iterator<RummikubFigure> irf = this.figures.iterator();
-			RummikubFigure tf;
+			Iterator<Figure> irf = this.figures.iterator();
+			Figure tf;
 			boolean same_element_exists = false;
 			while (irf.hasNext())
 			{
@@ -50,12 +50,12 @@ public class RummikubCollection implements IRummikubFigureBag{
 			}
 			if (same_element_exists==true)
 			{
-				throw new RummikubGameException(String.format("The Color %s already exists in the collection",fig.getColor()));
+				throw new GameException(String.format("The Color %s already exists in the collection",fig.getColor()));
 			}
 			
 			if (fig.getNumber()!= 0 && fig.getNumber() != this.figures.get(0).getNumber())
 			{
-				throw new RummikubGameException(String.format("%s has the wrong number for the collection which is %d", fig, this.figures.get(0).getNumber()));
+				throw new GameException(String.format("%s has the wrong number for the collection which is %d", fig, this.figures.get(0).getNumber()));
 			}
 			else
 			{
@@ -73,7 +73,7 @@ public class RummikubCollection implements IRummikubFigureBag{
 		return this.figures.size()>2;
 	}
 	
-	public Iterator<RummikubFigure> iterator() {
+	public Iterator<Figure> iterator() {
         return this.figures.iterator();
 	}
 
@@ -96,9 +96,9 @@ public class RummikubCollection implements IRummikubFigureBag{
 	@Override
 	public boolean equals(Object other)
 	{
-		if (other instanceof RummikubCollection)
+		if (other instanceof Collection)
 		{
-			return ((IRummikubFigureBag)other).getHash() == this.getHash();
+			return ((IFigureBag)other).getHash() == this.getHash();
 		}
 		else
 		{
@@ -114,7 +114,7 @@ public class RummikubCollection implements IRummikubFigureBag{
         return this.figures.size();
 	}
 	
-	@Override public Stream<RummikubFigure> stream()
+	@Override public Stream<Figure> stream()
 	{
 		return  this.figures.stream();
 	}

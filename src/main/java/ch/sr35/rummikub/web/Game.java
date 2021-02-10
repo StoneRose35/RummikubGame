@@ -4,53 +4,54 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubFigure;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Figure;
 import ch.sr35.rummikub.common.Stack;
+import ch.sr35.rummikub.common.exceptions.ApiException;
 
-public class RummikubGame {
+public class Game {
 	
-	private List<RummikubPlayer> players;
-	private List<IRummikubFigureBag> tableFigures;
+	private List<Player> players;
+	private List<IFigureBag> tableFigures;
 	private boolean drawn=false;
 	private Date created;
 	private Date lastAccessed;
 	private WebsocketController wsController;
 	
-	public RummikubGame(WebsocketController wsc)
+	public Game(WebsocketController wsc)
 	{
-		this.players = new ArrayList<RummikubPlayer>();
-		this.tableFigures=new ArrayList<IRummikubFigureBag>();
+		this.players = new ArrayList<Player>();
+		this.tableFigures=new ArrayList<IFigureBag>();
 		this.stack=new Stack();
 		this.stack.fill();
 		this.created = new Date();
 		this.wsController = wsc;
 	}
 	
-	public List<RummikubPlayer> getPlayers() {
+	public List<Player> getPlayers() {
 		return players;
 	}
 	
-	public RummikubPlayer getPlayer(String playerName) 
+	public Player getPlayer(String playerName) 
 	{
 		return this.players.stream().filter( p -> p.getName().equals(playerName)).findFirst().orElse(null);
 	}
 	
-	public RummikubPlayer getActivePlayer() 
+	public Player getActivePlayer() 
 	{
 		return this.players.stream().filter(p -> p.isActive()==true).findFirst().orElseThrow();
 	}
 
-	public void setPlayers(List<RummikubPlayer> players) {
+	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
 
 
-	public List<IRummikubFigureBag> getTableFigures() {
+	public List<IFigureBag> getTableFigures() {
 		return tableFigures;
 	}
 
-	public void setTableFigures(List<IRummikubFigureBag> tableFigures) {
+	public void setTableFigures(List<IFigureBag> tableFigures) {
 		this.tableFigures = tableFigures;
 		this.lastAccessed = new Date();
 	}
@@ -67,28 +68,28 @@ public class RummikubGame {
 	}
 
 	
-	public RummikubFigure drawFigure()
+	public Figure drawFigure()
 	{
 		this.drawn=true;
 		this.lastAccessed = new Date();
 		return this.stack.drawFromStack();
 	}
 	
-	public RummikubPlayer addPlayer(String name) throws RummikubApiException 
+	public Player addPlayer(String name) throws ApiException 
 	{
 		if (this.players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null)!=null)
 		{
-			throw new RummikubApiException("Player " + name + " already exists");
+			throw new ApiException("Player " + name + " already exists");
 		}
 		if (this.players.size()>=4)
 		{
-			throw new RummikubApiException("Game " + this.getName() + " Full");
+			throw new ApiException("Game " + this.getName() + " Full");
 		}
 		if (this.getStarted()==true)
 		{
-			throw new RummikubApiException("Game " + this.getName() + " already started");
+			throw new ApiException("Game " + this.getName() + " already started");
 		}
-		RummikubPlayer p = new RummikubPlayer();
+		Player p = new Player();
 
 		for (int c=0;c<14;c++)
 		{
@@ -96,30 +97,30 @@ public class RummikubGame {
 
 		}		
 		p.setName(name);
-		p.setActive(this.players.stream().filter(pl -> !(pl instanceof RummikubPlayerAsp)).count()==0);
+		p.setActive(this.players.stream().filter(pl -> !(pl instanceof PlayerAsp)).count()==0);
 		this.players.add(p);
 		return p;
 	}
 	
-	public void addPlayer(RummikubPlayerAsp rp) throws RummikubApiException
+	public void addPlayer(PlayerAsp rp) throws ApiException
 	{
 		if (this.players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null)!=null)
 		{
-			throw new RummikubApiException("Player " + rp.getName() + " already exists");
+			throw new ApiException("Player " + rp.getName() + " already exists");
 		}
 		if (this.players.size()>=4)
 		{
-			throw new RummikubApiException("Game " + this.getName() + " Full");
+			throw new ApiException("Game " + this.getName() + " Full");
 		}
 		if (this.getStarted()==true)
 		{
-			throw new RummikubApiException("Game " + this.getName() + " already started");
+			throw new ApiException("Game " + this.getName() + " already started");
 		}
 		
 
 		for (int c=0;c<14;c++)
 		{
-			RummikubFigure rf = this.stack.drawFromStack();
+			Figure rf = this.stack.drawFromStack();
 			rp.addFigure(rf);
 		}	
 		rp.setActive(false);
@@ -129,9 +130,9 @@ public class RummikubGame {
 	@Override
 	public boolean equals(Object other)
 	{
-		if (other instanceof RummikubGame)
+		if (other instanceof Game)
 		{
-			return ((RummikubGame) other).getName() == this.getName();
+			return ((Game) other).getName() == this.getName();
 		}
 		return false;
 	}
@@ -140,7 +141,7 @@ public class RummikubGame {
 	public void rotatePlayer()
 	{
 		int idx = 0;
-		for (RummikubPlayer p : this.players)
+		for (Player p : this.players)
 		{
 			if (p.isActive()==true)
 			{
@@ -152,9 +153,9 @@ public class RummikubGame {
 
 		idx = (idx + 1) % this.players.size();
 
-		RummikubPlayer currentPlayer = this.players.get(idx);
+		Player currentPlayer = this.players.get(idx);
 		currentPlayer.setActive(true);
-		if (currentPlayer instanceof RummikubPlayerAsp)
+		if (currentPlayer instanceof PlayerAsp)
 		{
 			AspRunner aspRunner = new AspRunner(this.wsController);
 			aspRunner.setGame(this);

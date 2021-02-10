@@ -34,14 +34,14 @@ import java.util.Random;
 
 import org.yaml.snakeyaml.Yaml;
 
-import ch.sr35.rummikub.common.IRummikubFigureBag;
-import ch.sr35.rummikub.common.RummikubFigure;
+import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.common.Figure;
 import ch.sr35.rummikub.common.Stack;
-import ch.sr35.rummikub.web.RummikubApi;
+import ch.sr35.rummikub.web.WebRunner;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class RummikubProgram extends JFrame{
+public class Program extends JFrame{
 
 	/**
 	 * 
@@ -52,7 +52,7 @@ public class RummikubProgram extends JFrame{
 	private Stack stack;
     private FigureRepresentation f;
     private int round_nr;
-    private List<RummikubPlayer> players;
+    private List<Player> players;
     private int currentPlayer;
     private int gamesToPlay;
     private String logFileName;
@@ -81,7 +81,7 @@ public class RummikubProgram extends JFrame{
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						RummikubProgram frame = new RummikubProgram();
+						Program frame = new Program();
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -91,7 +91,7 @@ public class RummikubProgram extends JFrame{
 		}
 		else
 		{
-			SpringApplication.run(RummikubApi.class, args);
+			SpringApplication.run(WebRunner.class, args);
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class RummikubProgram extends JFrame{
 	/**
 	 * Create the frame.
 	 */
-	public RummikubProgram() {
+	public Program() {
 		this.stack = new Stack();
 		
 		setTitle("Rummikub Program");
@@ -140,7 +140,7 @@ public class RummikubProgram extends JFrame{
 		btnPlayRound.addActionListener(new BtnPlayRoundHandler(this));
 		
 		this.round_nr=0;
-		this.players = new ArrayList<RummikubPlayer>();
+		this.players = new ArrayList<Player>();
 		this.gamesToPlay = 500;
 		this.logFileName = "log.txt";
 	}
@@ -199,7 +199,7 @@ public class RummikubProgram extends JFrame{
 		String fmt = "Round Nr: %d\nStack Size: %d\nLast Action: %s\n";
 		JTextArea ta =(JTextArea)this.contentPane.getComponent(2);
 		fmt = String.format(fmt, this.round_nr, this.stack.getSize(), "");
-		for (RummikubPlayer p : this.players)
+		for (Player p : this.players)
 		{
 			fmt += String.format("Player #%s\nScore %d\n\n",p.getName(),p.getTotalScore());
 		}
@@ -220,7 +220,7 @@ public class RummikubProgram extends JFrame{
 		ArrayList<Object> players = (ArrayList<Object>)obj.get("players");
 		players.forEach(p -> {
 			Map<String,String> pMap = (Map<String,String>)p;
-			RummikubPlayer pObj = new RummikubPlayer(pMap.get("strategy"));
+			Player pObj = new Player(pMap.get("strategy"));
 			pObj.setName(pMap.get("name"));
 			for(int cnt=0;cnt<14;cnt++)
 			{
@@ -228,7 +228,7 @@ public class RummikubProgram extends JFrame{
 			}
 			this.players.add(pObj);
 		});
-		this.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
+		this.f.setTableFigures(new ArrayList<IFigureBag>());
 		this.f.setPlayers(this.players);
 		
 		this.round_nr=0;
@@ -237,7 +237,7 @@ public class RummikubProgram extends JFrame{
 	}
 
 
-	public RummikubPlayer getCurrentPlayer() {
+	public Player getCurrentPlayer() {
 		return this.players.get(this.currentPlayer);
 	}
 
@@ -262,7 +262,7 @@ public class RummikubProgram extends JFrame{
 		Random r = new Random();
 		for (int c=0;c<nPlayers;c++)
 		{
-			RummikubPlayer p = new RummikubPlayer();
+			Player p = new Player();
 			p.setName(this.PLAYER_NAMES[r.nextInt(this.PLAYER_NAMES.length)]);
 			for(int cnt=0;cnt<14;cnt++)
 			{
@@ -270,7 +270,7 @@ public class RummikubProgram extends JFrame{
 			}
 			this.players.add(p);
 		}
-		this.f.setTableFigures(new ArrayList<IRummikubFigureBag>());
+		this.f.setTableFigures(new ArrayList<IFigureBag>());
 		this.f.setPlayers(this.players);
 
 		this.round_nr=0;
@@ -283,10 +283,10 @@ public class RummikubProgram extends JFrame{
 		int result=this.GAME_ONGOING;
 		if (!this.getCurrentPlayer().getOnShelf().isEmpty())
 		{
-			RummikubResult res  = this.getCurrentPlayer().solveRound(this.f.getTableFigures());
+			Result res  = this.getCurrentPlayer().solveRound(this.f.getTableFigures());
 			if (res.getScoreLaid()==0)
 			{
-				RummikubFigure rf = this.stack.drawFromStack();
+				Figure rf = this.stack.drawFromStack();
 				if (rf != null)
 				{
 					this.getCurrentPlayer().getOnShelf().add(rf);
@@ -316,8 +316,8 @@ public class RummikubProgram extends JFrame{
 	class BtnInitGameHandler implements ActionListener
 	{
 
-		private RummikubProgram parent;
-		public BtnInitGameHandler(RummikubProgram parent)
+		private Program parent;
+		public BtnInitGameHandler(Program parent)
 		{
 			this.parent=parent;
 		}
@@ -340,8 +340,8 @@ public class RummikubProgram extends JFrame{
 	class BtnDrawFigureHandler implements ActionListener
 	{
 
-		private RummikubProgram parent;
-		public BtnDrawFigureHandler(RummikubProgram parent)
+		private Program parent;
+		public BtnDrawFigureHandler(Program parent)
 		{
 			this.parent=parent;
 		}
@@ -357,8 +357,8 @@ public class RummikubProgram extends JFrame{
 	class BtnPlayRoundHandler implements ActionListener
 	{
 
-		private RummikubProgram parent;
-		public BtnPlayRoundHandler(RummikubProgram parent)
+		private Program parent;
+		public BtnPlayRoundHandler(Program parent)
 		{
 			this.parent=parent;
 		}
@@ -381,9 +381,9 @@ public class RummikubProgram extends JFrame{
 	class Rounder extends Thread
 	{
 		private int result = 0;
-		private RummikubProgram parent;
+		private Program parent;
 		
-		public Rounder(RummikubProgram parent)
+		public Rounder(Program parent)
 		{
 			this.parent = parent;
 		}

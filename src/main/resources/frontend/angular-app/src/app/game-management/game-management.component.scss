@@ -61,7 +61,35 @@
 }
 
 
+.rk-player {
+  background-color: #eaeaea33;
+  position: relative;
+  border: solid;
+  border-radius: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-width: 1px;
+  margin-left: 5px;
+  margin-right: 5px;
+  font-weight: bold;
+  display: inline-flex;
+  z-index: 0;
+}
 
+.rk-player-left {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index: -5;
+  width: 0%;
+  height: 100%;
+  background-color: #00c03a;
+}
+.rk-player-active {
+  background-color: #00c03a;
+}
 
 
 .rk-stack.cdk-drop-list-dragging .rk-figure:not(.cdk-drag-placeholder) {

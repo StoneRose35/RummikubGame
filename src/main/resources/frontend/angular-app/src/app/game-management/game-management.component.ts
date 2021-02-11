@@ -50,7 +50,7 @@ export class GameManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.activePlayer = this.gs.p;
-    this.snackBar.open(`Entering Game ${this.gs.gameId}`,null,this.sbConfig);
+    this.snackBar.open(`Entering Game ${this.gs.gameName}`,null,this.sbConfig);
     this.stackFiguresUpper = [];
     this.stackFiguresLower = [];
     this.tableFigures=[];

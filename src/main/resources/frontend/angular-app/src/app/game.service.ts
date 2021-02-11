@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, timer, Subject } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Figure } from './figure';
 import { HttpClient } from '@angular/common/http';
 import { backendPort } from './../environments/environment';
@@ -18,6 +18,7 @@ export interface GameOverview {
   players: Array<String>;
   name: String;
   state: String;
+  gameId: String;
 }
 
 export interface GameState {
@@ -31,6 +32,7 @@ export interface Player {
   name: String;
   active: boolean;
   finalScore: number;
+  timeRemaining: number;
 }
 
 export interface Response {
@@ -44,6 +46,13 @@ export interface ResponsePlayer {
   player: Player;
   token: String;
   gameName: String;
+  gameId: String;
+}
+
+export interface ResponseNewGame {
+  message: String;
+  error: String;
+  gameId: String;
 }
 
 @Injectable({
@@ -53,13 +62,10 @@ export class GameService {
 
   p: Player;
   gameId: String;
-  activityChangedSubject: Subject<boolean>;
-  roundNr: number;
+  gameName: String;
   url: String;
-  token: String;
 
   constructor(private http: HttpClient, private stompClient: RxStompService) { 
-    this.activityChangedSubject=new Subject<boolean>();
     this.p = null;
     this.url = window.location.protocol + "//" + window.location.hostname + ":" + backendPort;
   }
@@ -74,9 +80,9 @@ export class GameService {
     return this.stompClient.watch("/topic/games").pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
-  public registerPlayer(playerName: String, gameName: String): Observable<ResponsePlayer>
+  public registerPlayer(playerName: String, gameId: String): Observable<ResponsePlayer>
   {
-    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {name: playerName.toString(),gameId: gameName.toString() },withCredentials: true});
+    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {name: playerName.toString(),gameId: gameId.toString() },withCredentials: true});
   }
 
   public shelfFigures(): Observable<Array<Figure>>
@@ -84,10 +90,10 @@ export class GameService {
     return this.http.get<Array<Figure>>(this.url + "/shelfFigures",{withCredentials: true});
   }
 
-  public initGame(gameName: String,nrAiPlayers: number): Observable<Response> 
+  public initGame(gameName: String,nrAiPlayers: number): Observable<ResponseNewGame> 
   {
     this.gameId = gameName;
-    return this.http.get<Response>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString()}});
+    return this.http.get<ResponseNewGame>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString()}});
   }
 
   public reconnect(): Observable<ResponsePlayer>
@@ -97,16 +103,12 @@ export class GameService {
 
   public watchPlayers(): Observable<Array<Player>> 
   {
-    return this.stompClient.watch("/topic/players" + this.gameId).pipe(map(msg => {return JSON.parse(msg.body);}));
+    return this.stompClient.watch("/topic/game" + this.gameId + "/players").pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
   public getPlayers(): Observable<Array<Player>>
   {
     return this.http.get<Array<Player>>(this.url + "/players",{withCredentials: true});
-  }
-
-  activityChanged(): Observable<boolean> {
-    return this.activityChangedSubject;
   }
 
   getTable(): Observable<Array<Array<Figure>>>

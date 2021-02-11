@@ -42,16 +42,15 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
     this.gs.reconnect().subscribe(r => {
       if (r !== null)
       {
-        let gameId = r.gameName.replace(/ /g,"");
         this.gs.p = r.player;
-        this.gs.token = r.token;
-        this.gs.gameId = gameId;
+        this.gs.gameId = r.gameId;
+        this.gs.gameName = r.gameName;
       }
       else
       {
         this.gs.p = null;
-        this.gs.token = null;
         this.gs.gameId = null;
+        this.gs.gameName = null;
       }
     });
   }
@@ -68,7 +67,11 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
       this.gs.initGame(this.gameName,this.aiPlayers).subscribe(r => {
         if (r.error !== null)
         {
+          this.gs.gameId=null;
           this.snackBar.open(`game initialization failed: ${r.error}`,null,this.sbConfig);
+        }
+        else {
+          this.gs.gameId=r.gameId;
         }
       });
     }
@@ -78,7 +81,6 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
   {
     const dialogRef = this.dialog.open(NewPlayerDialogComponent);
         dialogRef.afterClosed().subscribe(s => {
-          let gameId = gameName.replace(/ /g,"");
           this.gs.registerPlayer(s,gameName).subscribe(r => {
             if (r.error != null)
             {
@@ -87,8 +89,8 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
             else
             {
                 this.gs.p = r.player;
-                this.gs.token = r.token;
-                this.gs.gameId = gameId;
+                this.gs.gameId = r.gameId;
+                this.gs.gameName = r.gameName;
                 this.router.navigateByUrl("/game-management");
             }
           });

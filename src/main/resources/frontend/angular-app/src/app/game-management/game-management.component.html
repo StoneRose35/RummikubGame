@@ -1,7 +1,9 @@
-<div class="rk-container"><div class="rk-current-player">Game: {{gs.gameId}}, Player: {{gs.p.name}}</div></div>
+<div class="rk-container"><div class="rk-current-player">Game: {{gs.gameName}}, Player: {{gs.p.name}}</div></div>
 
 <h2>Players</h2>
-<div class="rk-container"><div *ngFor="let p of players" class="rk-player" [ngClass]="{'rk-player-active': p.active === true}">{{p.name}} </div></div>
+<div class="rk-container">
+  <div *ngFor="let p of players" class="rk-player" [ngClass]="{'rk-player-active': p.active === true}">{{p.name}}<div class="rk-player-left" [style.width.%]="p.timeRemaining"></div> </div>
+</div>
 <div class="rk-container">
     <button mat-raised-button class="rk-top-element" (click)="drawFigure()" [disabled]="cannotDraw || !playing">Draw Figure</button>
     <button mat-raised-button class="rk-top-element" (click)="submitMove()" [disabled]="cannotSubmit || !playing">Submit Move</button>

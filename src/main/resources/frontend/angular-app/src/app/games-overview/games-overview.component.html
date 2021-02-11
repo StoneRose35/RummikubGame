@@ -4,7 +4,7 @@
             <div class="rk-game-title">{{g.name}}</div>
             <div *ngFor="let pl of g.players" class="rk-game-players">{{pl}}</div>
         </div>
-        <button mat-stroked-button (click)="joinGame(g.name)" class="rk-game" [disabled]="g.state !== 'initial'">Join</button>
+        <button mat-stroked-button (click)="joinGame(g.gameId)" class="rk-game" [disabled]="g.state !== 'initial'">Join</button>
     </li>
 </ul>
 

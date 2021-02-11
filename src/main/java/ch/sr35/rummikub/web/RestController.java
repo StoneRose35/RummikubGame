@@ -50,7 +50,7 @@ public class RestController {
 	public Response disposeGame(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		Response r = new Response();
-		RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		Token t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 		if (t!=null)
 		{
 			this.data.getGames().remove(t.getGame());
@@ -63,7 +63,7 @@ public class RestController {
 	@GetMapping("/reconnect")
 	public PlayerResponse handleReconnect(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		Token t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 		if (t!=null)
 		{
 			PlayerResponse r=new PlayerResponse();
@@ -79,7 +79,7 @@ public class RestController {
 	@GetMapping("/draw")
 	public FigureApi getFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
-		RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+		Token t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 		if (t!=null)
 		{
 			Game g=t.getGame();
@@ -142,7 +142,7 @@ public class RestController {
 	{
 		if (token.length() > 0)
 		{
-			RummikubToken t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
+			Token t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 			if (t!=null)
 			{
 				List<GameApi> apiGames = (List<GameApi>)this.data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList());
@@ -163,7 +163,7 @@ public class RestController {
 		if (game!=null)
 		{
 			try {
-				RummikubToken t = new RummikubToken();
+				Token t = new Token();
 				t.setGame(game);
 				t.setPlayer(game.addPlayer(name));
 				t.setToken(this.getHexString((short) 10));

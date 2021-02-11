@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 public class GameData {
 	
 	private List<Game> games;
-	private List<RummikubToken> tokens;
+	private List<Token> tokens;
 	
 	GameData()
 	{
 		this.games=new ArrayList<Game>();
-		this.tokens=new ArrayList<RummikubToken>();
+		this.tokens=new ArrayList<Token>();
 	}
 	
-	public List<RummikubToken> getTokens() {
+	public List<Token> getTokens() {
 		return tokens;
 	}
-	public void setTokens(List<RummikubToken> tokens) {
+	public void setTokens(List<Token> tokens) {
 		this.tokens = tokens;
 	}
 	public List<Game> getGames() {

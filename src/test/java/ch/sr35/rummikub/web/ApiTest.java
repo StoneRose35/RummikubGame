@@ -11,7 +11,7 @@ import ch.sr35.rummikub.web.Response;
 import ch.sr35.rummikub.web.RestController;
 import ch.sr35.rummikub.web.Game;
 import ch.sr35.rummikub.web.PlayerAsp;
-import ch.sr35.rummikub.web.RummikubToken;
+import ch.sr35.rummikub.web.Token;
 import ch.sr35.rummikub.web.dao.FigureApi;
 import ch.sr35.rummikub.web.dao.PlayerApi;
 
@@ -120,7 +120,7 @@ public class ApiTest {
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.registerPlayer("Testplayer", "Testgame", responseMock);
 		PlayerAsp aiPlayer = new PlayerAsp();
-		RummikubToken rToken = new RummikubToken();
+		Token rToken = new Token();
 		Game g = controller.data.getGames().get(0);
 		rToken.setGame(g);
 		rToken.setPlayer(aiPlayer);

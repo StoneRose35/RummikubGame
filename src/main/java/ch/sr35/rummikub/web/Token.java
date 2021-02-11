@@ -1,6 +1,6 @@
 package ch.sr35.rummikub.web;
 
-public class RummikubToken {
+public class Token {
 	private ch.sr35.rummikub.web.Game game;
 	private ch.sr35.rummikub.web.Player player;
 	private String token;

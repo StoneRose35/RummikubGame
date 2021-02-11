@@ -2,7 +2,6 @@ package ch.sr35.rummikub.web;
 
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.sr35.rummikub.common.GameState;

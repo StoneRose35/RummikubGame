@@ -1,5 +1,4 @@
-package ch.sr35.rummikub.web;
-import ch.sr35.rummikub.web.Response;
+package ch.sr35.rummikub.web.responses;
 import ch.sr35.rummikub.web.dao.PlayerApi;
 
 public class PlayerResponse extends Response {

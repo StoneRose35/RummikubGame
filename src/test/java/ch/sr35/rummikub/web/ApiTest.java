@@ -6,14 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ch.sr35.rummikub.web.PlayerResponse;
-import ch.sr35.rummikub.web.Response;
 import ch.sr35.rummikub.web.RestController;
 import ch.sr35.rummikub.web.Game;
 import ch.sr35.rummikub.web.PlayerAsp;
 import ch.sr35.rummikub.web.Token;
 import ch.sr35.rummikub.web.dao.FigureApi;
 import ch.sr35.rummikub.web.dao.PlayerApi;
+import ch.sr35.rummikub.web.responses.NewGameResponse;
+import ch.sr35.rummikub.web.responses.PlayerResponse;
+import ch.sr35.rummikub.web.responses.Response;
 
 import java.util.List;
 

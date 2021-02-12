@@ -1,4 +1,4 @@
-package ch.sr35.rummikub.web;
+package ch.sr35.rummikub.web.responses;
 
 public class NewGameResponse extends Response {
 	private String gameId;

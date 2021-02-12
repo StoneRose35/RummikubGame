@@ -1,4 +1,4 @@
-package ch.sr35.rummikub.web;
+package ch.sr35.rummikub.web.responses;
 
 import org.springframework.stereotype.Component;
 

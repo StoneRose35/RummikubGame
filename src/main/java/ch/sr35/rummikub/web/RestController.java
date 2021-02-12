@@ -24,6 +24,9 @@ import ch.sr35.rummikub.web.dao.GameStateApi;
 import ch.sr35.rummikub.web.dao.FigureApi;
 import ch.sr35.rummikub.web.dao.GameApi;
 import ch.sr35.rummikub.web.dao.PlayerApi;
+import ch.sr35.rummikub.web.responses.NewGameResponse;
+import ch.sr35.rummikub.web.responses.PlayerResponse;
+import ch.sr35.rummikub.web.responses.Response;
 
 @CrossOrigin(origins = {"http://localhost:4200"},allowCredentials = "true")
 @org.springframework.web.bind.annotation.RestController

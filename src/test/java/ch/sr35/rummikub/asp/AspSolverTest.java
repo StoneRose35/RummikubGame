@@ -113,5 +113,12 @@ class AspSolverTest {
 		List<Figure> arr = td.stream().flatMap(e -> e.stream()).collect(Collectors.toList());
 		Assert.assertTrue(arr.size()==8);
 	}
+	
+	@Test
+	void getVersionTest()
+	{
+		AspSolver as = new AspSolver();
+		Assert.assertNotNull(as.getVersion());
+	}
 }
 

@@ -13,6 +13,7 @@ import ch.sr35.rummikub.common.Series;
 import ch.sr35.rummikub.common.exceptions.GeneralException;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
@@ -24,8 +25,14 @@ import java.util.ArrayList;
  */
 public class AspSolver {
 	
+	private static final int READ_BUFFER_DELAY = 100;
 	private String jsonresult;
 	private String strategyFile;
+	private String clingo;
+
+	public String getClingo() {
+		return clingo;
+	}
 
 	public String getJsonresult() {
 		return jsonresult;
@@ -38,6 +45,38 @@ public class AspSolver {
 	public AspSolver()
 	{
 		this.strategyFile = "minim_score.lp";
+		if (System.getProperty("os.name")=="Windows")
+		{
+			this.clingo="clingo.exe";
+		}
+		else
+		{
+			this.clingo = "clingo";
+		}
+	}
+	
+	public String getVersion()
+	{
+		Runtime rt=Runtime.getRuntime();
+		try {
+			Process proc = rt.exec(this.clingo + " --version");
+			InputStream is = proc.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			String version="";
+			Thread.sleep(READ_BUFFER_DELAY, 0);
+			while ((line = br.readLine())!=null)
+			{
+				version += line + System.lineSeparator();
+			}
+			return version;
+			
+		} catch (IOException e) {
+			return null;
+		} catch (InterruptedException e) {
+			return null;
+		}
 	}
 	
 	public AspSolver(String strategy)
@@ -67,19 +106,26 @@ public class AspSolver {
 			Process proc;
 			if (state_old.getRoundNr()<1)
 			{
-			    proc = rt.exec(String.format("clingo --outf=2 " + gname + " ASP/rummikub.lp ASP/%s ASP/first_round_rule.lp ",this.strategyFile));
+			    proc = rt.exec(String.format(this.clingo + " --outf=2 " +
+			    			gname + " " + 
+			    			Paths.get("ASP","rummikub.lp") + " " +
+			    			Paths.get("ASP", "%s") + " " + 
+			    			Paths.get("ASP", "first_round_rule.lp"),this.strategyFile));
 			}
 			else
 			{
-				proc = rt.exec(String.format("clingo --outf=2 " + gname + " ASP/rummikub.lp  ASP/%s ",this.strategyFile));
+				proc = rt.exec(String.format(this.clingo + " --outf=2 " +
+								gname + " " + 
+								Paths.get("ASP","rummikub.lp") + " " +  
+								Paths.get("ASP","%s"),this.strategyFile));
 			}
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
+			Thread.sleep(READ_BUFFER_DELAY, 0);
 			while ((line = br.readLine())!=null)
 			{
-				System.out.println(line);
 				jsoncontent += line;
 			}
 			this.jsonresult = jsoncontent;
@@ -108,6 +154,8 @@ public class AspSolver {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (GeneralException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 

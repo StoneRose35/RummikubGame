@@ -1,25 +1,29 @@
 package ch.sr35.rummikub.web;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
+import ch.sr35.rummikub.asp.AspSolver;
 
 @SpringBootApplication
 public class WebRunner {
 	
 
 	public static void main(String[] args) {
-		SpringApplication.run(WebRunner.class, args);
-	}
-	
-	
-	@Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-		return args -> {
-			System.out.println("Happily serving a virtual brain for playing rummikub");
-		};
+		System.out.println("Starting Rummikub Web Application");
+		System.out.println("check if clingo is available");
+		AspSolver as = new AspSolver();
+		String version = as.getVersion();
+		if (version != null)
+		{
+			System.out.println("found clingo version");
+			System.out.print(version);
+			SpringApplication.run(WebRunner.class, args);
+		}
+		else
+		{
+			System.out.println("not clingo found, go to https://github.com/potassco/clingo/releases/ to get the current version");
+		}
+		
 	}
 
 }

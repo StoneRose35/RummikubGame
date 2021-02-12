@@ -168,7 +168,6 @@
 	          <exclude>**/application*.yaml</exclude>
 	          <exclude>**/application*.properties</exclude>
 	          <exclude>frontend/**</exclude>
-	          <exclude>images/**</exclude>
 	        </excludes>
 	      </resource>
     </resources>

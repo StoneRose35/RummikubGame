@@ -27,6 +27,7 @@ import ch.sr35.rummikub.web.dao.PlayerApi;
 import ch.sr35.rummikub.web.responses.NewGameResponse;
 import ch.sr35.rummikub.web.responses.PlayerResponse;
 import ch.sr35.rummikub.web.responses.Response;
+import ch.sr35.rummikub.web.ui.AiPlayerNameGenerator;
 
 @CrossOrigin(origins = {"http://localhost:4200"},allowCredentials = "true")
 @org.springframework.web.bind.annotation.RestController

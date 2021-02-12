@@ -1,4 +1,4 @@
-package ch.sr35.rummikub.web;
+package ch.sr35.rummikub.web.ui;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;

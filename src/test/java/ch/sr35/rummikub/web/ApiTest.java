@@ -39,7 +39,7 @@ public class ApiTest {
 		Assert.assertNotNull(r.getMessage());
 		Assert.assertNull(r.getError());
 		ServletResponseMock responseMock = new ServletResponseMock();
-		Response resp = controller.registerPlayer("Tester", r.getGameId(), responseMock);
+		controller.registerPlayer("Tester", r.getGameId(), responseMock);
 		Assert.assertTrue(responseMock.getCookie().getName().equals("RKToken"));
 		Assert.assertTrue(responseMock.getCookie().getValue().length()==20);
 	}
@@ -81,10 +81,9 @@ public class ApiTest {
 	@Test
 	public void drawTest()
 	{
-		Response resp;
 		ServletResponseMock responseMock = new ServletResponseMock();
 		NewGameResponse ngr = controller.generateGame("Testgame",0,0);
-		resp = controller.registerPlayer("Tester", ngr.getGameId(), responseMock);
+		controller.registerPlayer("Tester", ngr.getGameId(), responseMock);
 		String cookieValue = responseMock.getCookie().getValue();
 		Assert.assertTrue(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
 		controller.registerPlayer("Tester2", ngr.getGameId(), responseMock);

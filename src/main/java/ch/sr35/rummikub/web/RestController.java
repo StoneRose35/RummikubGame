@@ -1,7 +1,6 @@
 package ch.sr35.rummikub.web;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;

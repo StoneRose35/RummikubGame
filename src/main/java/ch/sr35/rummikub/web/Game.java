@@ -13,7 +13,6 @@ public class Game {
 	
 	private List<Player> players;
 	private List<IFigureBag> tableFigures;
-	private boolean drawn=false;
 	private Date created;
 	private Date lastAccessed;
 	private String gameId;
@@ -78,7 +77,6 @@ public class Game {
 	
 	public Figure drawFigure()
 	{
-		this.drawn=true;
 		this.lastAccessed = new Date();
 		return this.stack.drawFromStack();
 	}

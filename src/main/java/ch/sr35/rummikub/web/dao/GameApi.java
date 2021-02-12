@@ -10,6 +10,8 @@ public class GameApi {
 	private String name;
 	private List<String> players;
 	private String state;
+	private String gameId;
+	private boolean started;
 	
 	public String getName() {
 		return name;
@@ -32,6 +34,8 @@ public class GameApi {
 		GameApi g = new GameApi();
 		g.setName(game.getName());
 		g.setPlayers(game.getPlayers().stream().map(p -> p.getName()).collect(Collectors.toList()));
+		g.setGameId(game.getGameId());
+		g.setStarted(game.getStarted());
 		if (game.getFinished()==true)
 		{
 			g.state="finished";
@@ -55,6 +59,22 @@ public class GameApi {
 	public void declareAsJoined()
 	{
 		this.state = "joined";
+	}
+
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
+	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
 	}
 
 

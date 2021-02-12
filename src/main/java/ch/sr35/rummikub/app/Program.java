@@ -1,11 +1,6 @@
 package ch.sr35.rummikub.app;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -27,7 +22,6 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -46,7 +40,6 @@ public class Program extends JFrame{
 	/**
 	 * 
 	 */
-	private final static boolean RUN_API = true;
 	private static final long serialVersionUID = 1418187771696355888L;
 	private JPanel contentPane;
 	private Stack stack;

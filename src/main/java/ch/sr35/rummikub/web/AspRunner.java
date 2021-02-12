@@ -26,28 +26,39 @@ public class AspRunner extends Thread {
 		gs.setOntable(game.getTableFigures().stream().flatMap(l -> l.stream()).collect(Collectors.toList()));
 		gs.setRoundNr(game.getActivePlayer().getRoundNr());
 		GameState gsNew = ((PlayerAsp)game.getActivePlayer()).solve(gs);
-		if (gsNew.getSumLaid()==0)
+		
+		
+		Stopwatch sw = this.game.getStopwatch();
+		if (sw != null && sw.isAlive())
 		{
-			Figure df = game.drawFigure();
-			gsNew.getShelfFigures().add(df);
-		}
-		else
+			sw.Abort();
+		} 
+		
+		if ((sw != null && sw.isAborted()) || sw == null)
 		{
-			game.setTableFigures(((PlayerAsp)game.getActivePlayer()).getTableFigures());
-			game.getActivePlayer().setRoundNr(game.getActivePlayer().getRoundNr()+1);
-			if (gsNew.getShelfFigures().size()==0)
+			if (gsNew.getSumLaid()==0)
 			{
-				// player has legibly placed all the figures on the Table, s*he wins!
-				// set final scores for all the players
-				game.getActivePlayer().setFigures(gsNew.getShelfFigures());
-				game.getPlayers().forEach(p -> {
-					p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
-				});
-				
+				Figure df = game.drawFigure();
+				gsNew.getShelfFigures().add(df);
 			}
-		}
-		game.getActivePlayer().setFigures(gsNew.getShelfFigures());
-		try {Thread.sleep(1234);} catch (InterruptedException e) {}
+			else
+			{
+				game.setTableFigures(((PlayerAsp)game.getActivePlayer()).getTableFigures());
+				game.getActivePlayer().setRoundNr(game.getActivePlayer().getRoundNr()+1);
+				if (gsNew.getShelfFigures().size()==0)
+				{
+					// player has legibly placed all the figures on the Table, s*he wins!
+					// set final scores for all the players
+					game.getActivePlayer().setFigures(gsNew.getShelfFigures());
+					game.getPlayers().forEach(p -> {
+						p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
+					});
+					
+				}
+			}
+			game.getActivePlayer().setFigures(gsNew.getShelfFigures());
+			try {Thread.sleep(1234);} catch (InterruptedException e) {}
+		} 
 		game.rotatePlayer();
 		wsController.updatePlayers(game);
 	}

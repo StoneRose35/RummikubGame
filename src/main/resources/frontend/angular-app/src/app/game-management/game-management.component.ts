@@ -48,7 +48,34 @@ export class GameManagementComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    if(this.gs.p==null)
+    {
+      this.gs.reconnect().subscribe(r => {
+        if (r !== null)
+        {
+          this.gs.p = r.player;
+          this.gs.gameId = r.gameId;
+          this.gs.gameName = r.gameName;
+          this.gs.token = r.token;
+          this.setupGame();
+        }
+        else
+        {
+          this.gs.p = null;
+          this.gs.gameId = null;
+          this.gs.gameName = null;
+          this.router.navigateByUrl("/overview");
+        }
+      });
+    }
+    else
+    {
+      this.setupGame();
+    }
+  }
 
+  setupGame()
+  {
     this.activePlayer = this.gs.p;
     this.snackBar.open(`Entering Game ${this.gs.gameName}`,null,this.sbConfig);
     this.stackFiguresUpper = [];
@@ -71,6 +98,26 @@ export class GameManagementComponent implements OnInit, OnDestroy {
     {
       this.playerPollSubscription = this.gs.watchPlayers().subscribe(ps => this.handlePlayerUpdate(ps),error => {console.log("something bad happened: " + error)});
     }
+
+    this.gs.watchPrivate().subscribe(obj => {
+      if (obj instanceof Array)
+      {
+        if(obj[0].colorcode!=undefined && 
+          obj[0].instance!=undefined && 
+          obj[0].number!=undefined && 
+          obj[0].shelfNr!=undefined && 
+          obj[0].position!=undefined)
+        {
+          figArray =[];
+          obj.forEach(fig => {
+            f_obj = new Figure(fig.colorcode,fig.instance,fig.number,fig.shelfNr,fig.position);
+            figArray.push(f_obj);
+          });
+          this.placeOnShelves(figArray);
+          this.onTurn();
+        }
+      }
+    });
     this.gs.getPlayers().subscribe(ps => this.handlePlayerUpdate(ps));
   }
 

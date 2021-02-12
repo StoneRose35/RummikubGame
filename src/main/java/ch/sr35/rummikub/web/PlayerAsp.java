@@ -10,6 +10,11 @@ public class PlayerAsp extends Player {
 	
 	private AspSolver solver = new AspSolver();
 	
+	public PlayerAsp()
+	{
+		this.setReady(true);
+	}
+	
 	public GameState solve(GameState stateOld)
 	{
 		return solver.solveRound(stateOld);

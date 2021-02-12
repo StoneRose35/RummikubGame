@@ -23,6 +23,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { RkStompConfig } from './rk_rx_stomp.config';
 import { InjectableRxStompConfig, RxStompService, rxStompServiceFactory } from '@stomp/ng2-stompjs';
 import { EmptyFigureSerieComponent } from './empty-figure-serie/empty-figure-serie.component';
+import { PlayerReadyDialogComponent } from './player-ready-dialog/player-ready-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { EmptyFigureSerieComponent } from './empty-figure-serie/empty-figure-ser
     NewPlayerDialogComponent,
     GamesOverviewComponent,
     WinnerScreenComponent,
-    EmptyFigureSerieComponent
+    EmptyFigureSerieComponent,
+    PlayerReadyDialogComponent
   ],
   imports: [
     BrowserModule,

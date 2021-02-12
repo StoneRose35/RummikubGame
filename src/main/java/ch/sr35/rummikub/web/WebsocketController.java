@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import ch.sr35.rummikub.web.dao.FigureApi;
 import ch.sr35.rummikub.web.dao.GameApi;
 import ch.sr35.rummikub.web.dao.PlayerApi;
 
@@ -39,13 +40,19 @@ public class WebsocketController {
 	  public void updatePlayers(Game g)
 	  {
 		  
-		  simpMessagingTemplate.convertAndSend("/topic/players" + g.getName().replace(" ", ""),
+		  simpMessagingTemplate.convertAndSend("/topic/game" + g.getGameId() + "/players",
 				  g.getPlayers().stream().map(ps -> new PlayerApi(ps)).collect(Collectors.toList()));
 	  }
 	  
 	  public void updateGames()
 	  {
 		  simpMessagingTemplate.convertAndSend("/topic/games", data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList()));
+	  }
+	  
+	  public void updateShelfFigures(Player activePlayer, Game currentGame)
+	  {
+		  Token token = this.data.getTokens().stream().filter(t -> t.getPlayer().getName().equals(activePlayer.getName()) && t.getGame().getGameId().equals(currentGame.getGameId())).findFirst().orElse(null);
+		  simpMessagingTemplate.convertAndSend("/topic/player" + token.getToken() + "/common", token.getPlayer().getFigures().stream().map(f -> FigureApi.fromRummikubFigure(f)).collect(Collectors.toList()));
 	  }
 
 }

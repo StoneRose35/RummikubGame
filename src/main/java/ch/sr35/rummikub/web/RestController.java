@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ch.sr35.rummikub.common.Figure;
 import ch.sr35.rummikub.common.Placement;
 import ch.sr35.rummikub.common.exceptions.ApiException;
+import ch.sr35.rummikub.common.utils.HexStringHelper;
 import ch.sr35.rummikub.web.dao.GameStateApi;
 import ch.sr35.rummikub.web.dao.FigureApi;
 import ch.sr35.rummikub.web.dao.GameApi;
@@ -71,6 +72,7 @@ public class RestController {
 			r.setPlayer((PlayerApi)t.getPlayer());
 			r.setToken(t.getToken());
 			r.setGameName(t.getGame().getName());
+			r.setGameId(t.getGame().getGameId());
 			return r;
 		}
 		return null;
@@ -79,30 +81,48 @@ public class RestController {
 	@GetMapping("/draw")
 	public FigureApi getFigure(@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
+
 		Token t = this.data.getTokens().stream().filter(tt -> tt.getToken().equals(token)).findFirst().orElse(null);
 		if (t!=null)
 		{
 			Game g=t.getGame();
 			Player p = t.getPlayer();
-			Figure f =  g.drawFigure();
-			try {
-				p.addFigure(f);
+			
+			Stopwatch sw = g.getStopwatch();
+			boolean doDraw = false;
+			if ((sw != null && sw.isAlive()))
+			{
+				sw.Abort();
+				doDraw=true;
 			}
-			catch (ApiException e) {
-				return null;
+			else if (sw==null)
+			{
+				doDraw=true;
 			}
-			g.rotatePlayer();
-			wsController.updatePlayers(g);
-			return FigureApi.fromRummikubFigure(f);
+			
+			if(doDraw)
+			{
+				Figure f =  g.drawFigure();
+				try {
+					p.addFigure(f);
+				}
+				catch (ApiException e) {
+					return null;
+				}
+				g.rotatePlayer();
+				wsController.updatePlayers(g);
+				return FigureApi.fromRummikubFigure(f);
+			}
+			
 		}
 		return null;
 	}
 	
 
 	@GetMapping("/newgame")
-	public Response generateGame(@RequestParam String name,@RequestParam int nrAiPlayers)
+	public NewGameResponse generateGame(@RequestParam String name,@RequestParam int nrAiPlayers,@RequestParam int maxDuration)
 	{
-		Response r = new Response();
+		NewGameResponse r = new NewGameResponse();
 		if (nrAiPlayers < 0 || nrAiPlayers > 3)
 		{
 			r.setError("Number of Ai Players must be in the range from 0 to 3");
@@ -111,7 +131,13 @@ public class RestController {
 		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0)
 		{
 			Game g = new Game(this.wsController);
+			g.setGameId(HexStringHelper.getHexString((short) 12));
+			r.setGameId(g.getGameId());
 			g.setName(name);
+			if (maxDuration > 0)
+			{
+				g.initStopwatch(maxDuration);
+			}
 			this.data.getGames().add(g);
 			
 			for(int c=0;c<nrAiPlayers;c++)
@@ -125,6 +151,7 @@ public class RestController {
 					return r;
 				}
 			}
+			
 			
 			r.setMessage("Successfully created game " + name);
 			wsController.updateGames();
@@ -166,14 +193,15 @@ public class RestController {
 				Token t = new Token();
 				t.setGame(game);
 				t.setPlayer(game.addPlayer(name));
-				t.setToken(this.getHexString((short) 10));
+				t.setToken(HexStringHelper.getHexString((short) 10));
 				this.data.getTokens().add(t);
 				Cookie c = new Cookie("RKToken",t.getToken());
 				response.addCookie(c);
 				r.setMessage("Sucessfully registered " + name);
 				r.setPlayer((PlayerApi)t.getPlayer());
 				r.setToken(t.getToken());
-				r.setGameName(gameId);
+				r.setGameName(game.getName());
+				r.setGameId(gameId);
 				wsController.updatePlayers(game);
 			} catch (ApiException e) {
 				r.setError(e.getMessage());
@@ -271,46 +299,98 @@ public class RestController {
 			// the player must lay down at least one point
 			laidDownEnough = sumLaidDown > 0;
 		}
-		
-		if (gsSubmitted.isAccepted()==false || laidDownEnough==false)
-		{
-			gameStateReturned=new GameStateApi();
 
-			gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
-						f.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
-					).collect(Collectors.toList()));
-			Figure f =  currentGame.drawFigure();
-			try {
-				currentGame.getPlayer(playerName).addFigure(f);
-			}
-			catch (ApiException e)
-			{
-				return null;
-			}
-			gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
-					.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
-		}
-		else
+		Stopwatch sw = currentGame.getStopwatch();
+		boolean doRotate=false;
+		if (sw != null && sw.isAlive())
 		{
-			player.setRoundNr(player.getRoundNr()+1);
-			gameStateReturned=gsSubmitted;
-			currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
-			currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(Placement.ON_SHELF)).collect(Collectors.toList()));
-			
-			if (gsSubmitted.getShelfFigures().size()==0)
+			sw.Abort();
+			doRotate=true;
+		}
+		else if (sw == null)
+		{
+			doRotate=true;
+		}
+		
+		if (doRotate)
+		{
+			if (gsSubmitted.isAccepted()==false || laidDownEnough==false)
 			{
-				// player has legibly placed all the figures on the Table, s*he wins!
-				// set final scores for all the players
-				currentGame.getPlayers().forEach(p -> {
-					p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
-				});
+				gameStateReturned=new GameStateApi();
+	
+				gameStateReturned.setTableFigures(currentGame.getTableFigures().stream().map(f -> 
+							f.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList())
+						).collect(Collectors.toList()));
+				Figure f =  currentGame.drawFigure();
+				try {
+					currentGame.getPlayer(playerName).addFigure(f);
+				}
+				catch (ApiException e)
+				{
+					return null;
+				}
+				gameStateReturned.setShelfFigures(currentGame.getPlayer(playerName).getFigures()
+						.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
+			}
+			else
+			{
+				player.setRoundNr(player.getRoundNr()+1);
+				gameStateReturned=gsSubmitted;
+				currentGame.setTableFigures(gsSubmitted.getTableFiguresStructured());
+				currentGame.getPlayer(playerName).setFigures(gsSubmitted.getShelfFigures().stream().map(el -> el.toRummikubFigure(Placement.ON_SHELF)).collect(Collectors.toList()));
+				
+				if (gsSubmitted.getShelfFigures().size()==0)
+				{
+					// player has legibly placed all the figures on the Table, s*he wins!
+					// set final scores for all the players
+					currentGame.getPlayers().forEach(p -> {
+						p.setFinalScore(p.getFigures().stream().mapToInt(f -> f.getScore()).sum());
+					});
+					
+				}
 				
 			}
-			
+			currentGame.rotatePlayer();
+			wsController.updatePlayers(currentGame);
+			return gameStateReturned;
 		}
-		currentGame.rotatePlayer();
-		wsController.updatePlayers(currentGame);
-		return gameStateReturned;
+		return null;
+	}
+	
+	@GetMapping("/ready")
+	public Response setReady(@CookieValue(value = "RKToken", defaultValue = "") String token)
+	{
+		Response r = new Response();
+		Game currentGame = this.data.getTokens().stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null)
+				.getGame();
+		Player player = this.data.getTokens().stream()
+				.filter(tt -> tt.getToken().equals(token))
+				.findFirst()
+				.orElse(null).getPlayer();
+		if (currentGame.getStarted())
+		{
+			r.setError("Game " + currentGame.getName() + " has already started");
+		}
+		else {
+			player.setReady(true);
+			r.setMessage("Player " + player.getName() + " is ready");
+		}
+		currentGame.getWsController().updatePlayers(currentGame);
+		if(currentGame.getStarted())
+		{
+			if(currentGame.getStopwatch()!=null)
+			{
+				currentGame.getStopwatch().start();
+			}
+			else
+			{
+				currentGame.getActivePlayer().setTimeRemaining(100.0);
+			}
+		}
+		return r;
 	}
 	
 	@PostMapping("/updateShelf")
@@ -335,25 +415,11 @@ public class RestController {
 		return r;
 	}
 	
-	
-	private String getHexString(short stringSize) {
-		Random r = new Random();
-		byte[] b=new byte[stringSize];
-		r.nextBytes(b);
-		char[] hexDigits = new char[stringSize*2];
-		for (int c=0;c<stringSize;c++)
-		{
-			
-			hexDigits[2*c] = Character.forDigit((b[c] >> 4) & 0xF, 16);
-			hexDigits[2*c+1] = Character.forDigit((b[c] & 0xF), 16);
-		}
-		final String name=new String(hexDigits);
-		return name;
-	}
+
 	
 	private Game getGame(String gameId)
 	{
-		return this.data.getGames().stream().filter(g -> g.getName().equals(gameId)).findFirst().orElse(null);
+		return this.data.getGames().stream().filter(g -> g.getGameId().equals(gameId)).findFirst().orElse(null);
 	}
 	
 }

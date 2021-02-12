@@ -22,6 +22,16 @@
             <mat-option value="3">3</mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Round Duration</mat-label>
+        <mat-select [(value)]="maxDuration">
+            <mat-option value="0">Infinite</mat-option>
+            <mat-option value="120">1 minute</mat-option>
+            <mat-option value="240">2 minutes</mat-option>
+            <mat-option value="360">3 minutes</mat-option>
+            <mat-option value="480">4 minutes</mat-option>
+        </mat-select>
+    </mat-form-field>
         <button mat-raised-button color="primary" (click)="registerGame()" class="rk-newgame">Create Game</button>
 </div>
 

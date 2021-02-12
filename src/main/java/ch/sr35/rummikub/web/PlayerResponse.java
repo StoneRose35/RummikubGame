@@ -6,6 +6,7 @@ public class PlayerResponse extends Response {
 	private PlayerApi player;
 	private String token;
 	private String gameName;
+	private String gameId;
 
 	public PlayerApi getPlayer() {
 		return player;
@@ -29,5 +30,13 @@ public class PlayerResponse extends Response {
 
 	public void setGameName(String gameName) {
 		this.gameName = gameName;
+	}
+
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
 	}
 }

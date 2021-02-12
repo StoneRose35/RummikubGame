@@ -19,6 +19,7 @@ export interface GameOverview {
   name: String;
   state: String;
   gameId: String;
+  started: boolean;
 }
 
 export interface GameState {
@@ -33,6 +34,7 @@ export interface Player {
   active: boolean;
   finalScore: number;
   timeRemaining: number;
+  ready: boolean;
 }
 
 export interface Response {
@@ -64,6 +66,7 @@ export class GameService {
   gameId: String;
   gameName: String;
   url: String;
+  token: String;
 
   constructor(private http: HttpClient, private stompClient: RxStompService) { 
     this.p = null;
@@ -90,10 +93,10 @@ export class GameService {
     return this.http.get<Array<Figure>>(this.url + "/shelfFigures",{withCredentials: true});
   }
 
-  public initGame(gameName: String,nrAiPlayers: number): Observable<ResponseNewGame> 
+  public initGame(gameName: String,nrAiPlayers: number,maxDuration: number): Observable<ResponseNewGame> 
   {
     this.gameId = gameName;
-    return this.http.get<ResponseNewGame>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString()}});
+    return this.http.get<ResponseNewGame>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString(), maxDuration: maxDuration.toString()}});
   }
 
   public reconnect(): Observable<ResponsePlayer>
@@ -133,6 +136,16 @@ export class GameService {
   public dispose(): Observable<Response>
   {
     return this.http.get<Response>(this.url + "/dispose",{withCredentials: true});
+  }
+
+  public setReady(): Observable<Response>
+  {
+    return this.http.get<Response>(this.url + "/ready", {withCredentials: true});
+  }
+
+  public watchPrivate(): Observable<Object>
+  {
+    return this.stompClient.watch("/topic/player" + this.token + "/common").pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
 }

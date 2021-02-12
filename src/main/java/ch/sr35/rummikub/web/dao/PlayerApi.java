@@ -8,6 +8,8 @@ public class PlayerApi {
 	private boolean active;
 	private int roundNr;
 	private Integer finalScore;
+	private double timeRemaining;
+	private boolean ready=false;
 	
 	public String getName() {
 		return name;
@@ -29,6 +31,7 @@ public class PlayerApi {
 	public PlayerApi()
 	{
 		this.finalScore=null;
+		this.timeRemaining=0.0;
 	}
 	
 
@@ -54,6 +57,24 @@ public class PlayerApi {
 		this.setName(p.getName());
 		this.setRoundNr(p.getRoundNr());
 		this.setFinalScore(p.getFinalScore());
+		this.setTimeRemaining(p.getTimeRemaining());
+		this.setReady(p.isReady());
+	}
+
+	public double getTimeRemaining() {
+		return timeRemaining;
+	}
+
+	public void setTimeRemaining(double timeRemaining) {
+		this.timeRemaining = timeRemaining;
+	}
+
+	public boolean isReady() {
+		return ready;
+	}
+
+	public void setReady(boolean ready) {
+		this.ready = ready;
 	}
 	
 

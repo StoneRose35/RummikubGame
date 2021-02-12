@@ -1,0 +1,2 @@
+<div *ngFor="let p of players">{{p.name}} <p *ngIf="p.ready===true">, READY</p></div>
+<button mat-button (click)="setReady()">Set Ready!</button>

@@ -16,7 +16,11 @@ public class Game {
 	private boolean drawn=false;
 	private Date created;
 	private Date lastAccessed;
+	private String gameId;
 	private WebsocketController wsController;
+
+
+	private Stopwatch stopwatch;
 	
 	public Game(WebsocketController wsc)
 	{
@@ -30,6 +34,10 @@ public class Game {
 	
 	public List<Player> getPlayers() {
 		return players;
+	}
+	
+	public WebsocketController getWsController() {
+		return wsController;
 	}
 	
 	public Player getPlayer(String playerName) 
@@ -146,6 +154,7 @@ public class Game {
 			if (p.isActive()==true)
 			{
 				p.setActive(false);
+				p.setTimeRemaining(0.0);
 				break;
 			}
 			idx++;
@@ -162,11 +171,25 @@ public class Game {
 			aspRunner.start();
 		}
 		this.lastAccessed = new Date();
+		if (this.stopwatch != null)
+		{
+			this.stopwatch=this.stopwatch.clone();
+			this.stopwatch.start();
+		}
+		else
+		{
+			currentPlayer.setTimeRemaining(100.0);
+		}
 	}
 	
 	public boolean getStarted()
 	{
-		return !this.tableFigures.isEmpty() || this.drawn; 
+		if( this.players.isEmpty() || !this.players.stream().anyMatch(p -> !(p instanceof PlayerAsp)))
+		{
+			return false;
+		}
+		return !this.players.stream().anyMatch(p -> !(p instanceof PlayerAsp) && !p.isReady());
+
 	}
 	
 	public boolean getFinished()
@@ -180,5 +203,25 @@ public class Game {
 
 	public Date getLastAccessed() {
 		return lastAccessed;
+	}
+
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
+	}
+	
+	public void initStopwatch(int maxDuration)
+	{
+		this.stopwatch = new Stopwatch();
+		this.stopwatch.setGame(this);
+		this.stopwatch.setMaxRoundTime(maxDuration);
+	}
+	
+	public Stopwatch getStopwatch()
+	{
+		return this.stopwatch;
 	}
 }

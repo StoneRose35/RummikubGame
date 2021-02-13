@@ -8,7 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class AvatarGenerationTest {
@@ -27,9 +26,6 @@ public class AvatarGenerationTest {
 	{
 		AvatarImageGenerator aig=new AvatarImageGenerator();
 		aig.loadTemplate();
-		List<Node> nodes = aig.getNodes();
-		Assert.assertNotNull(nodes);
-		Assert.assertTrue(nodes.size() > 8);
 	}
 	
 	@Test 
@@ -37,9 +33,18 @@ public class AvatarGenerationTest {
 	{
 		AvatarImageGenerator aig=new AvatarImageGenerator();
 		aig.loadTemplate();
-		String mouthSvg = aig.getStringById("mouth");
-		Assert.assertTrue(mouthSvg.length() > 10);
-
+		List<String> hairColors = aig.getHairColors();
+		Assert.assertTrue(hairColors.size() > 3);
 	}
+	
+	@Test
+	public void GenerateAvatarTest() throws ParserConfigurationException, SAXException, IOException, URISyntaxException
+	{
+		AvatarImageGenerator aig=new AvatarImageGenerator();
+		aig.loadTemplate();
+		String avatar = aig.generateAvatar();
+		Assert.assertTrue(avatar.startsWith("<svg"));
+	}
+	
 
 }

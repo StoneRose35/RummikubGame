@@ -40,7 +40,7 @@ public class AvatarImageGenerator {
 	private static String HAIR_COLOR = "hairColor";
 	private static String ID = "id";
 	private static String COLOR_STYLE = "fill";
-	public static String STYLE = "style";
+	protected static String STYLE = "style";
 	private static String INKSCAPE = "inkscape";
 	private static String SVG = "svg";
 	private static String VIEWBOX_VAL = "0 0 8 9";

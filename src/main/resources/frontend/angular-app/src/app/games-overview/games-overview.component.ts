@@ -95,7 +95,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
                 this.gs.gameId = r.gameId;
                 this.gs.gameName = r.gameName;
                 this.gs.token = r.token;
-                const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs});
+                const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs, disableClose: true });
                 dialogRef2.afterClosed().subscribe(s => {
                   this.router.navigateByUrl("/game-management");
                 });

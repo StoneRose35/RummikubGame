@@ -10,6 +10,8 @@ public class PlayerApi {
 	private Integer finalScore;
 	private double timeRemaining;
 	private boolean ready=false;
+	private String avatar;
+	private int cards;
 	
 	public String getName() {
 		return name;
@@ -59,6 +61,8 @@ public class PlayerApi {
 		this.setFinalScore(p.getFinalScore());
 		this.setTimeRemaining(p.getTimeRemaining());
 		this.setReady(p.isReady());
+		this.setAvatar(p.getAvatar());
+		this.cards = p.getFigures().size();
 	}
 
 	public double getTimeRemaining() {
@@ -75,6 +79,18 @@ public class PlayerApi {
 
 	public void setReady(boolean ready) {
 		this.ready = ready;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public int getCards() {
+		return cards;
 	}
 	
 

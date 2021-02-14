@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 import ch.sr35.rummikub.common.IFigureBag;
 import ch.sr35.rummikub.common.Figure;
 import ch.sr35.rummikub.common.Stack;
@@ -17,6 +18,7 @@ public class Game {
 	private Date lastAccessed;
 	private String gameId;
 	private WebsocketController wsController;
+
 
 
 	private Stopwatch stopwatch;

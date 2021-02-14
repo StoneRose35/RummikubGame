@@ -28,6 +28,7 @@ import ch.sr35.rummikub.web.responses.NewGameResponse;
 import ch.sr35.rummikub.web.responses.PlayerResponse;
 import ch.sr35.rummikub.web.responses.Response;
 import ch.sr35.rummikub.web.ui.AiPlayerNameGenerator;
+import ch.sr35.rummikub.web.ui.AvatarImageGenerator;
 
 @CrossOrigin(origins = {"http://localhost:4200"},allowCredentials = "true")
 @org.springframework.web.bind.annotation.RestController
@@ -38,6 +39,9 @@ public class RestController {
 	
 	@Autowired
 	GameData data;
+	
+	@Autowired
+	AvatarImageGenerator avatarIG;
 	
 	public RestController()
 	{
@@ -147,6 +151,7 @@ public class RestController {
 			{
 				PlayerAsp aiPlayer = new PlayerAsp();
 				aiPlayer.setName(AiPlayerNameGenerator.generateName());
+				aiPlayer.setAvatar(avatarIG.generateAvatar());
 				try {
 					g.addPlayer(aiPlayer);
 				} catch (ApiException e1) {
@@ -195,7 +200,9 @@ public class RestController {
 			try {
 				Token t = new Token();
 				t.setGame(game);
-				t.setPlayer(game.addPlayer(name));
+				Player p = game.addPlayer(name);
+				p.setAvatar(avatarIG.generateAvatar());
+				t.setPlayer(p);
 				t.setToken(HexStringHelper.getHexString((short) 10));
 				this.data.getTokens().add(t);
 				Cookie c = new Cookie("RKToken",t.getToken());
@@ -244,6 +251,7 @@ public class RestController {
 				.map(f -> FigureApi.fromRummikubFigure(f))
 				.collect(Collectors.toList());
 	}
+	
 	
 	@GetMapping("/tableFigures")
 	public List<List<FigureApi>> getTableFigures(@CookieValue(value = "RKToken", defaultValue = "") String token)

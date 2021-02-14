@@ -30,11 +30,13 @@ export interface GameState {
 }
 
 export interface Player {
+  avatar: string;
   name: String;
   active: boolean;
   finalScore: number;
   timeRemaining: number;
   ready: boolean;
+  cards: number;
 }
 
 export interface Response {

@@ -20,6 +20,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -28,7 +29,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
-
+@Component
 public class AvatarImageGenerator {
 	
 	private static String[] ELEMENTS_OF_INTEREST = {"g","path","circle","ellipse", "rect"};
@@ -42,11 +43,11 @@ public class AvatarImageGenerator {
 	public static String STYLE = "style";
 	private static String INKSCAPE = "inkscape";
 	private static String SVG = "svg";
-	private static String VIEWBOX_VAL = "0 0 10 10";
+	private static String VIEWBOX_VAL = "0 0 8 9";
 	private static String VIEWBOX = "viewBox";
-	private static String HEIGHT_VAL = "10";
+	private static String HEIGHT_VAL = "80";
 	private static String HEIGHT = "height";
-	private static String WIDTH_VAL = "10";
+	private static String WIDTH_VAL = "80";
 	private static String WIDTH = "width";	
 	private static String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 	private static String TEMPLATE_PATH = "images/avatars_template.svg";
@@ -67,6 +68,10 @@ public class AvatarImageGenerator {
 		this.hairStyles = new ArrayList<Node>();
 		this.beardStyles = new ArrayList<Node>();
 		this.r = new Random();
+		try {
+			this.loadTemplate();
+		} catch (ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
+		}
 		
 	}
 	

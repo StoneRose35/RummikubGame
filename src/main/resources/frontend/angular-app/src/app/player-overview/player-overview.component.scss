@@ -1,0 +1,61 @@
+.po-main {
+    border-radius: 5px;
+    border-color: #000;
+    border-width: 3px;
+    border-style: solid;
+    position: relative;
+    margin: 5px;
+    display: inline-flex;
+    flex-direction: column;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.po-avatar {
+    height: 100%;
+    display: inline-flex;
+}
+
+.po-playername
+{
+    padding-top: 4px;
+    padding-left: 4px;
+    font-size: 15px;
+    width: 80px;
+}
+
+.po-tr-wrapper {
+    width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    margin-bottom: 5px;
+
+}
+
+.po-cards {
+    display: inline;
+    margin-left: 10px;
+    margin-top: 9px;
+}
+
+.po-timeremaining {
+    background-color: greenyellow;
+    border-radius: 2px;
+    display: inline-block;
+    height: 10px;
+}
+
+.po-tr-placeholder {
+    width: 10px;
+}
+
+.po-ml {
+    margin-left: 5px;
+    display: flex;
+}
+
+.po-upper {
+    display: flex;
+}

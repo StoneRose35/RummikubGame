@@ -1,0 +1,36 @@
+<div class="po-main">
+    <div class="po-upper">
+        <div class="po-avatar" [innerHTML]="SVGFile" ></div>
+        <div>
+            <div class="po-playername">{{player.name}}</div>
+            <hr />
+            <div class="po-ml">
+                <svg xlmns="http://www.w3.org/2000/svg" viewBox="0 0 15.470392 22.539398" height="30">
+                    <rect
+                    id="rect835"
+                    width="13.676642"
+                    height="20.745647"
+                    x="0.66782212"
+                    y="0.63158202"
+                    ry="3.2750468"
+                    style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                <ellipse
+                    style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                    id="path837"
+                    cx="7.6147475"
+                    cy="7.2434168"
+                    rx="3.8288648"
+                    ry="3.6176419" />
+                </svg>
+                <div class="po-cards">
+                    {{player.cards}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="po-tr-wrapper">
+        <div class="po-timeremaining" [style.width.%]="player.timeRemaining">
+        </div>
+        <div class="po-tr-placeholder"></div>
+    </div>
+</div>

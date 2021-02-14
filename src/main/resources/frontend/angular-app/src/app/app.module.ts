@@ -24,6 +24,7 @@ import { RkStompConfig } from './rk_rx_stomp.config';
 import { InjectableRxStompConfig, RxStompService, rxStompServiceFactory } from '@stomp/ng2-stompjs';
 import { EmptyFigureSerieComponent } from './empty-figure-serie/empty-figure-serie.component';
 import { PlayerReadyDialogComponent } from './player-ready-dialog/player-ready-dialog.component';
+import { PlayerOverviewComponent } from './player-overview/player-overview.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { PlayerReadyDialogComponent } from './player-ready-dialog/player-ready-d
     GamesOverviewComponent,
     WinnerScreenComponent,
     EmptyFigureSerieComponent,
-    PlayerReadyDialogComponent
+    PlayerReadyDialogComponent,
+    PlayerOverviewComponent
   ],
   imports: [
     BrowserModule,

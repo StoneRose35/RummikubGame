@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Figure } from './figure';
@@ -31,6 +32,7 @@ export interface GameState {
 
 export interface Player {
   avatar: string;
+  avatarSvg: SafeHtml;
   name: String;
   active: boolean;
   finalScore: number;

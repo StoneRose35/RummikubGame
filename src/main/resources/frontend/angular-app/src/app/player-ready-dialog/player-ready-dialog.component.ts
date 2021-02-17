@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { GameService, GameOverview, Player } from './../game.service';
+import { GameService, Player } from './../game.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-player-ready-dialog',
@@ -12,8 +13,9 @@ export class PlayerReadyDialogComponent implements OnInit {
   private gameService: GameService;
   players: Array<Player>;
 
+
   constructor(public dialogRef: MatDialogRef<PlayerReadyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: GameService)
+    @Inject(MAT_DIALOG_DATA) public data: GameService,protected sanitizer: DomSanitizer)
     {
       this.gameService = data;
     }
@@ -22,6 +24,9 @@ export class PlayerReadyDialogComponent implements OnInit {
   ngOnInit(): void {
     this.gameService.watchPlayers().subscribe(p => {
       this.players = p;
+      this.players.forEach( p2 => {
+        p2.avatarSvg = this.sanitizer.bypassSecurityTrustHtml(p2.avatar);
+      });
       if(this.players.filter(p => p.ready===false).length===0)
       {
         this.dialogRef.close();
@@ -30,6 +35,10 @@ export class PlayerReadyDialogComponent implements OnInit {
 
     this.gameService.getPlayers().subscribe(p => {
       this.players = p;
+      this.players.forEach( p2 => {
+        p2.avatarSvg = this.sanitizer.bypassSecurityTrustHtml(p2.avatar);
+      });
+
       if(this.players.filter(p => p.ready===false).length===0)
       {
         this.dialogRef.close();

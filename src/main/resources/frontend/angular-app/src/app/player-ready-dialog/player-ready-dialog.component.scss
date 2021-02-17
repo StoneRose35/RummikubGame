@@ -1,0 +1,29 @@
+.pr-avatar {
+display: inline-flex;
+}
+.pr-playername {
+    font-size: 22px;
+    width:115px;
+    margin-left: 23px;
+    vertical-align: bottom;
+    margin-top: 12px;
+    padding-bottom: 6px;
+    margin-right: 14px;
+    border-bottom: solid;
+    border-bottom-color: grey;
+    border-bottom-width: 1px;
+}
+.pr-ready {
+    display: inline-flex;
+    vertical-align: bottom;
+}
+.pr {
+    height: 82px;
+    display: flex;
+    align-items: center;
+    background-color: rgb(238, 255, 217);
+    border-radius: 5px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+}

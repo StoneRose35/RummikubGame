@@ -3,7 +3,6 @@
 <h2>Players</h2>
 <div class="rk-container">
   <app-player-overview *ngFor="let p of players" [player]="p"></app-player-overview>
-  <!--<div *ngFor="let p of players" class="rk-player" >{{p.name}}<div class="rk-player-left" [style.width.%]="p.timeRemaining"></div> </div>-->
 </div>
 <div class="rk-container">
     <button mat-raised-button class="rk-top-element" (click)="drawFigure()" [disabled]="cannotDraw || !playing">Draw Figure</button>

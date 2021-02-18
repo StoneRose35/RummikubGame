@@ -1,7 +1,7 @@
 # RummikubGame
 
 ## What is it?
-A Web-Application for playing Rummikub against human or computer opponents. Does not require registration or login of any sorts, but need cookies (as we all do... at least from time to time).
+A Web-Application for playing Rummikub against human or computer opponents. Does not require registration or login of any sorts, but needs cookies (as we all do... at least from time to time).
 
 ## Main Building Blocks
 * Frontend: Webapp built using Angular using Rest and STOMP over WebSocket calls for Backend communication.

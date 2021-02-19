@@ -6,6 +6,7 @@ import org.junit.Assert;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import ch.sr35.rummikub.common.GameState;
@@ -119,6 +120,14 @@ class AspSolverTest {
 	{
 		AspSolver as = new AspSolver();
 		Assert.assertNotNull(as.getVersion());
+	}
+	
+	@BeforeAll
+	@Test
+	static void install()
+	{
+		AspSolver as = new AspSolver();
+		Assert.assertEquals(0,  as.deploy());
 	}
 }
 

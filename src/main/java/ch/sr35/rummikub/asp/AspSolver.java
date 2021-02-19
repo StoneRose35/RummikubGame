@@ -11,12 +11,20 @@ import ch.sr35.rummikub.common.Figure;
 import ch.sr35.rummikub.common.Placement;
 import ch.sr35.rummikub.common.Series;
 import ch.sr35.rummikub.common.exceptions.GeneralException;
+import ch.sr35.rummikub.web.WebRunner;
 
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.List;
 import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Represent the ASP solver
@@ -26,6 +34,7 @@ import java.util.ArrayList;
 public class AspSolver {
 	
 	private static final int READ_BUFFER_DELAY = 100;
+	private static String ASP_FOLDER = "ASP";
 	private String jsonresult;
 	private String strategyFile;
 	private String clingo;
@@ -253,6 +262,82 @@ public class AspSolver {
 		}
 		
 		return result;
+	}
+	
+	
+	public int deploy() 
+	{
+		ClassLoader classLoader = getClass().getClassLoader();
+
+	    Path AspFilesPath = Paths.get(ASP_FOLDER);
+	    
+	    if(Files.exists(AspFilesPath))
+	    {
+	    	try {
+	    	    Files.walk(AspFilesPath)
+	    	      .sorted(Comparator.reverseOrder())
+	    	      .map(Path::toFile)
+	    	      .forEach(File::delete);
+			} catch (IOException e) {
+			}
+	    }
+	    
+
+		try {
+	    	Files.createDirectory(AspFilesPath);
+		    CodeSource src = WebRunner.class.getProtectionDomain().getCodeSource();
+		    if (src != null) {
+		        URL jar = src.getLocation();
+		        String jarpath = jar.getPath();
+		        if (jarpath.contains(".jar"))
+		        {
+			        ZipInputStream zip;
+					zip = new ZipInputStream(jar.openStream());
+				      while(true) {
+					        ZipEntry e = zip.getNextEntry();
+					        if (e == null)
+					          return 0;
+					        String name = e.getName();
+
+					        if (name.startsWith("BOOT-INF/classes/ASP/") && name.endsWith(".lp")) {
+					            InputStream resource = classLoader.getResourceAsStream(name);
+					            String fname = name.replace("BOOT-INF/classes/ASP/", "");
+					            Files.copy(resource, Paths.get(ASP_FOLDER, fname));
+				        }	      
+					}
+		        }
+		        else
+		        {
+		        	Path p = Paths.get(jarpath);
+		        	try {
+			        	Files.walk(p).forEach(f -> {
+			        		String fpath = f.toString();
+			        		if (fpath.endsWith(".lp"))
+			        		{
+				        		Path destFileName = Paths.get(ASP_FOLDER, f.getFileName().toString());
+				        		try {
+				        			Files.copy(f, destFileName);
+				        		}
+				        		catch (IOException e)
+				        		{
+				        			throw new RuntimeException(e);
+				        		}
+			        		}
+			        	});
+		        	}
+		        	catch (RuntimeException e2)
+		        	{
+		        		return 1;
+		        	}
+		        	
+		        }
+			}
+	    } catch (IOException e1) {
+				return 1;
+			}
+		    
+	   
+	    return 0;
 	}
 	
 	private String getSolverResult()

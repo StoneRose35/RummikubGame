@@ -2,6 +2,7 @@ package ch.sr35.rummikub.web.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -80,11 +81,11 @@ public class AvatarImageGenerator {
 	{
 		List<Node> nodes = new ArrayList<>();
 		ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource(TEMPLATE_PATH);
-		File svgFile = new File(resource.toURI());
-		DocumentBuilderFactory dbFactory= DocumentBuilderFactory.newInstance();
+		
+        InputStream resource = classLoader.getResourceAsStream(TEMPLATE_PATH);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc= dBuilder.parse(svgFile);
+		Document doc = dBuilder.parse(resource);
 		doc.normalize();
 		this.doc = doc;
 		

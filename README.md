@@ -12,4 +12,5 @@ A Web-Application for playing Rummikub against human or computer opponents. Does
 * Install Java Version >= 10.0
 * Download "clingo" from https://github.com/potassco/clingo/releases/ and add the main binaries to the respective PATH environment variables. 
 * Build the project using "maven install".
-* run the project: "java -jar -Dserver.port=8080 RummikubGame-<VERSION>.jar" on Linux or "java.exe -jar -Dserver.port=8080 RummikubGame-VERSION.jar" on Windows
+* place the File RummikubGame-<VERSION>.jar in a place with write access, the ASP source files are deployed in the same location as the jar file
+* run the project: "java -jar RummikubGame-<VERSION>.jar" on Linux or "java.exe -jar RummikubGame-VERSION.jar" on Windows

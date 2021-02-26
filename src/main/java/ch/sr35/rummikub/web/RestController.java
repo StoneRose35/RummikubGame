@@ -361,7 +361,10 @@ public class RestController {
 				}
 				
 			}
-			currentGame.rotatePlayer();
+			if (gsSubmitted.getShelfFigures().size()!=0)
+			{
+				currentGame.rotatePlayer();
+			}
 			wsController.updatePlayers(currentGame);
 			return gameStateReturned;
 		}

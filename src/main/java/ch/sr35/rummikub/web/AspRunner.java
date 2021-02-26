@@ -40,6 +40,7 @@ public class AspRunner extends Thread {
 			{
 				Figure df = game.drawFigure();
 				gsNew.getShelfFigures().add(df);
+
 			}
 			else
 			{
@@ -58,9 +59,12 @@ public class AspRunner extends Thread {
 			}
 			game.getActivePlayer().setFigures(gsNew.getShelfFigures());
 			try {Thread.sleep(1234);} catch (InterruptedException e) {}
+			if (gsNew.getShelfFigures().size()!=0)
+			{
+				game.rotatePlayer();
+			}
+			wsController.updatePlayers(game);
 		} 
-		game.rotatePlayer();
-		wsController.updatePlayers(game);
 	}
 
 	public void setGame(Game game) {

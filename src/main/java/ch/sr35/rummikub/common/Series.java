@@ -118,4 +118,43 @@ public class Series implements IFigureBag{
 	{
 		return  this.figures.stream();
 	}
+
+	@Override
+	public float match(IFigureBag other) {
+		
+		float matchcnt=0;
+		Iterator<Figure> otherFigures = other.iterator();
+		while (otherFigures.hasNext()) {
+			Figure f = otherFigures.next();
+			Iterator<Figure> thisFigures = this.iterator();
+			while (thisFigures.hasNext())
+			{
+				Figure f2 = thisFigures.next();
+				if (f2.compareTo(f)==0)
+				{
+					if(this.figures.indexOf(f2) == other.getFigures().indexOf(f))
+					{
+						matchcnt += 2;
+					}
+					else
+					{
+						matchcnt += 1;
+					}
+				}
+			}
+			
+		}
+		float divisor = (this.getFigureCount() < other.getFigureCount()) ? this.getFigureCount() : other.getFigureCount();
+		if (divisor > 0.0 )
+		{
+			matchcnt /= (divisor*2.0);
+		}
+		return matchcnt;
+	}
+	
+@Override
+public List<Figure> getFigures() {
+	
+	return this.figures;
+}
 }

@@ -159,7 +159,27 @@ public class Figure implements Comparable<Figure> {
 		if (other instanceof Figure)
 		{
 			Figure rf = (Figure)other;
-			if(rf.getColor() == this.getColor() && rf.getInstance() == this.getInstance() && rf.getNumber() == this.getNumber())
+			if(this.equalRepresentation(other) && rf.getInstance() == this.getInstance())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean equalRepresentation(Object other)
+	{
+		if (other instanceof Figure)
+		{
+			Figure rf = (Figure)other;
+			if(rf.getColor() == this.getColor() && rf.getNumber() == this.getNumber())
 			{
 				return true;
 			}

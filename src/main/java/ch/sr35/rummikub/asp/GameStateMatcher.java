@@ -1,6 +1,7 @@
 package ch.sr35.rummikub.asp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,47 @@ public class GameStateMatcher {
 				matchMatrix.get(matchMatrix.size()-1).add(el.match(el2));
 			});
 		});
+		
+		// either shrink or expand the matrix depending if the number of new compositions is smaller or bigger
+		if (tableNew.size()<tableOld.size())
+		{
+			// remove columns with the lowest match
+			int colsToRemove = tableOld.size()-tableNew.size();
+			List<MaxVal> sumColumns = new ArrayList<MaxVal>();
+			for (int ocnt=0;ocnt<tableOld.size();ocnt++)
+			{
+				float sumColumn=0.0f;
+				for (int ncnt=0;ncnt<tableNew.size();ncnt++)
+				{
+					sumColumn += matchMatrix.get(ncnt).get(ocnt);
+				}
+				sumColumns.add(new MaxVal(ocnt,sumColumn));
+			}
+			sumColumns.sort((a,b) -> a.val > b.val ? -1 : 1);
+			
+			while (sumColumns.size() > colsToRemove)
+			{
+				sumColumns.remove(sumColumns.size()-1);
+			}
+			sumColumns.sort((a,b) -> a.index > b.index ? -1 : 1); // sort indices downwards e.g. 10, 7, 4,3
+			for (int q =0; q < colsToRemove;q++)
+			{
+				final int t = q;
+				matchMatrix.forEach(e -> {
+					e.remove(t);
+				});
+			}
+		}
+		else if (tableOld.size() < tableNew.size())
+		{
+			int colsToAdd = tableNew.size() - tableOld.size();
+			List<Float> zerosToAdd = new ArrayList<Float>();
+			for (int q=0;q<colsToAdd;q++)
+			{
+				zerosToAdd.add(0.0f);
+			}
+			matchMatrix.forEach(e -> e.addAll(zerosToAdd));
+		}
 
 		// get the maximum match value including index for each new element
 		Stream<MaxVal> maximums = matchMatrix.stream().map(el -> {

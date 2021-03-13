@@ -115,30 +115,91 @@ public class GameStateMatcher {
 			distinctIndexes.add(maxAlongRow);
 		});
 		
-		List<Integer> distinctIndexesUnique = distinctIndexes.stream().filter(el -> el.size()==1).map(p -> p.get(0)).collect(Collectors.toList());
-		for(int c=0;c<matchMatrix.size();c++)
+		boolean distinctionSuccessful=true;
+		
+		while (distinctionSuccessful)
 		{
-			if (distinctIndexes.get(c).size()>1)
+			distinctionSuccessful=false;
+			List<Integer> distinctIndexesUnique = distinctIndexes.stream().filter(el -> el.size()==1).map(p -> p.get(0)).collect(Collectors.toList());
+			for(int c=0;c<matchMatrix.size();c++)
 			{
-				List<Integer> indexCandidates = new ArrayList<Integer>();
-				for (int q=0;q<distinctIndexes.get(c).size();q++)
+				if (distinctIndexes.get(c).size()>1)
 				{
-					final int cc = c;
-					final int qq = q;
-					if (!distinctIndexesUnique.stream().anyMatch(el -> distinctIndexes.get(cc).get(qq)==el))
+					List<Integer> indexCandidates = new ArrayList<Integer>();
+					for (int q=0;q<distinctIndexes.get(c).size();q++)
 					{
-						indexCandidates.add(distinctIndexes.get(cc).get(qq));
+						final int cc = c;
+						final int qq = q;
+						if (!distinctIndexesUnique.stream().anyMatch(el -> distinctIndexes.get(cc).get(qq)==el))
+						{
+							indexCandidates.add(distinctIndexes.get(cc).get(qq));
+						}
 					}
-				}
-				distinctIndexes.set(c, indexCandidates);
-				if (indexCandidates.size()==1)
-				{
-					matchMatrix.get(c).set(indexCandidates.get(0), 1.0f);
+					distinctIndexes.set(c, indexCandidates);
+					if (indexCandidates.size()==1)
+					{
+						//matchMatrix.get(c).forEach(el -> el = el/2.0f);
+						distinctionSuccessful=true;
+						matchMatrix.get(c).set(indexCandidates.get(0), 1.0f);
+					}
 				}
 			}
 		}
-
-	
+		
+		if (distinctIndexes.stream().anyMatch(e -> e.size() > 1))
+		{
+			int stillUnclear= 21;
+			return tableNew;
+		}
+		else
+		{
+			List<Integer> flattenedIndexes = distinctIndexes.stream().flatMap(e->e.stream()).collect(Collectors.toList());
+			List<Integer> missingIndexes = new ArrayList<Integer>();
+			List<Integer> multipleIndexes = new ArrayList<Integer>();
+			for(int c=0;c<matchMatrix.size();c++)
+			{
+				final int cc = c;
+				if(flattenedIndexes.stream().filter(e -> e==cc).count()==0)
+				{
+					missingIndexes.add(cc);
+				}
+				else if (flattenedIndexes.stream().filter(e -> e==cc).count()>1)
+				{
+					multipleIndexes.add(cc);
+				}
+			}
+			while (multipleIndexes.size()>0)
+			{
+				for(int c=0;c<flattenedIndexes.size();c++)
+				{
+					if (multipleIndexes.contains(c))
+					{
+						flattenedIndexes.set(c, missingIndexes.get(0));
+						missingIndexes.remove(0);
+						final int cc = c;
+						if (!(flattenedIndexes.stream().filter(e -> e==cc).count()>1))
+						{
+							multipleIndexes.remove(c);
+						}
+						break;
+					}
+				}
+			}
+			
+			List<IFigureBag> orderedTableList = new ArrayList<IFigureBag>(Collections.nCopies(tableNew.size(), null));
+			Iterator<Integer> mvIt = flattenedIndexes.iterator();
+			int cnt =0;
+			while (mvIt.hasNext())
+			{
+				Integer nxt = mvIt.next();
+				orderedTableList.set(nxt, tableNew.get(cnt));
+				cnt++;
+			}
+			return orderedTableList;
+			
+		}
+		
+/*
 		// get the maximum match value including index for each new element
 		List<MaxVal> maximums = matchMatrix.stream().map(el -> {
 			int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b : a).getAsInt(); 
@@ -149,7 +210,8 @@ public class GameStateMatcher {
 		// relaxate the match Matrix: if two or more indices are the same replace all but the best with the second best option
 		boolean conflictless=false;
 		
-		while(!conflictless)
+		int itCnt=0;
+		while(!conflictless && itCnt < 10)
 		{
 			final List<MaxVal> maxVals = maximums;
 			
@@ -194,6 +256,17 @@ public class GameStateMatcher {
 					}
 				}				
 			}
+			
+			maximums = matchMatrix.stream().map(el -> {
+				int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b : a).getAsInt(); 
+				return new MaxVal(idx,el.get(idx));
+			}).collect(Collectors.toList());
+			itCnt++;
+		}
+		
+		if (itCnt==10)
+		{
+			return tableNew;
 		}
 		
 		// rearrange the new FigureBag List
@@ -207,7 +280,7 @@ public class GameStateMatcher {
 			cnt++;
 		}
 		return orderedTableList;
-		
+		*/
 	}
 		
 

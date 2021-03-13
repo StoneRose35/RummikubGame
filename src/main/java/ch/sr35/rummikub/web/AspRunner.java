@@ -2,15 +2,19 @@ package ch.sr35.rummikub.web;
 
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import ch.sr35.rummikub.common.GameState;
+import ch.sr35.rummikub.asp.GameStateMatcher;
 import ch.sr35.rummikub.common.Figure;
 
 @Service
 public class AspRunner extends Thread {
 	private Game game;
 	
+	Logger logger = LoggerFactory.getLogger(AspRunner.class);
 
 	WebsocketController wsController;
 	
@@ -44,7 +48,16 @@ public class AspRunner extends Thread {
 			}
 			else
 			{
-				game.setTableFigures(((PlayerAsp)game.getActivePlayer()).getTableFigures());
+				try {
+					game.setTableFigures(
+							GameStateMatcher.match(game.getTableFigures(), ((PlayerAsp)game.getActivePlayer()).getTableFigures())
+					);
+				}
+				catch (Exception e)
+				{
+					logger.debug("GameStateMatcher failed");
+					game.setTableFigures(((PlayerAsp)game.getActivePlayer()).getTableFigures());
+				}
 				game.getActivePlayer().setRoundNr(game.getActivePlayer().getRoundNr()+1);
 				if (gsNew.getShelfFigures().size()==0)
 				{

@@ -83,5 +83,26 @@ public class FigureBagTest {
 		
 		Assert.assertEquals(rs.match(rc2),rc2.match(rs),0.01);
 	}
+	
+	
+	@Test
+	public void testAlmostTheSame() throws GameException
+	{
+		Series rs = new Series();
+		rs.addFigure(Figure.getRummikubFigure("ontable(5,1,1)."));
+		rs.addFigure(Figure.getRummikubFigure("ontable(6,1,2)."));
+		rs.addFigure(Figure.getRummikubFigure("ontable(7,1,1)."));
+		rs.addFigure(Figure.getRummikubFigure("ontable(8,1,1)."));
+
+		Series rs3 = new Series();
+		rs3.addFigure(Figure.getRummikubFigure("ontable(5,1,1)."));
+		rs3.addFigure(Figure.getRummikubFigure("ontable(6,1,2)."));
+		rs3.addFigure(Figure.getRummikubFigure("ontable(7,1,1)."));
+		rs3.addFigure(Figure.getRummikubFigure("ontable(8,1,1)."));
+		rs3.addFigure(Figure.getRummikubFigure("ontable(9,1,1)."));
+
+		Assert.assertTrue(rs.match(rs3) < 1.0);
+		
+	}
 
 }

@@ -1,20 +1,18 @@
 package ch.sr35.rummikub.asp;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import ch.sr35.rummikub.common.IFigureBag;
 
 public class GameStateMatcher {
 	
-	public List<IFigureBag> match(List<IFigureBag> tableOld, List<IFigureBag> tableNew)
+	public static List<IFigureBag> match(List<IFigureBag> tableOld, List<IFigureBag> tableNew)
 	{
 		if (tableOld==null)
 		{
@@ -35,6 +33,7 @@ public class GameStateMatcher {
 			});
 		});
 		
+		
 		// either shrink or expand the matrix depending if the number of new compositions is smaller or bigger
 		if (tableNew.size()<tableOld.size())
 		{
@@ -50,7 +49,7 @@ public class GameStateMatcher {
 				}
 				sumColumns.add(new MaxVal(ocnt,sumColumn));
 			}
-			sumColumns.sort((a,b) -> a.val > b.val ? -1 : 1);
+			sumColumns.sort((a,b) -> a.val < b.val ? -1 : 1);
 			
 			while (sumColumns.size() > colsToRemove)
 			{
@@ -61,7 +60,7 @@ public class GameStateMatcher {
 			{
 				final int t = q;
 				matchMatrix.forEach(e -> {
-					e.remove(t);
+					e.remove(sumColumns.get(t).index);
 				});
 			}
 		}
@@ -74,13 +73,77 @@ public class GameStateMatcher {
 				zerosToAdd.add(0.0f);
 			}
 			matchMatrix.forEach(e -> e.addAll(zerosToAdd));
+			int zeroCnt=0;
+			List<MaxVal> rowMatchSums = new ArrayList<MaxVal>();
+			for (int c4=0;c4<matchMatrix.size();c4++)
+			{
+				matchMatrix.get(c4).stream().mapToDouble(e1 -> e1.doubleValue()).sum();
+				rowMatchSums.add(new MaxVal(c4,(float)matchMatrix.get(c4).stream().mapToDouble(e1 -> e1.doubleValue()).sum() ));
+			}
+			rowMatchSums.sort((a,b) -> a.val < b.val ? -1 : 1);
+
+			for (int c2=0;c2<colsToAdd;c2++)
+			{
+				matchMatrix.get(rowMatchSums.get(c2).index).set(tableOld.size()+zeroCnt, 1.0f);
+				zeroCnt+=1;
+			}
+
+		}
+		
+		
+		// find rows where no distinct maximums are found
+		// add 1s at the columns where no distict maximums have been found
+		List<List<Integer>> distinctIndexes=new ArrayList<List<Integer>>();
+		matchMatrix.forEach(e -> {
+			float minVal=2.0f;
+			float maxVal=-1.0f;
+
+			for(int c=0;c<e.size();c++)
+			{
+				if (e.get(c) < minVal) { minVal=e.get(c); }
+				if (e.get(c) > maxVal) { maxVal=e.get(c); }
+			}
+			List<Integer> maxAlongRow = new ArrayList<Integer>();
+			for (int c=0;c<e.size();c++)
+			{
+				
+				if(Math.abs(e.get(c)-maxVal)<0.001)
+				{
+					maxAlongRow.add(c);
+				}
+			}
+			distinctIndexes.add(maxAlongRow);
+		});
+		
+		List<Integer> distinctIndexesUnique = distinctIndexes.stream().filter(el -> el.size()==1).map(p -> p.get(0)).collect(Collectors.toList());
+		for(int c=0;c<matchMatrix.size();c++)
+		{
+			if (distinctIndexes.get(c).size()>1)
+			{
+				List<Integer> indexCandidates = new ArrayList<Integer>();
+				for (int q=0;q<distinctIndexes.get(c).size();q++)
+				{
+					final int cc = c;
+					final int qq = q;
+					if (!distinctIndexesUnique.stream().anyMatch(el -> distinctIndexes.get(cc).get(qq)==el))
+					{
+						indexCandidates.add(distinctIndexes.get(cc).get(qq));
+					}
+				}
+				distinctIndexes.set(c, indexCandidates);
+				if (indexCandidates.size()==1)
+				{
+					matchMatrix.get(c).set(indexCandidates.get(0), 1.0f);
+				}
+			}
 		}
 
+	
 		// get the maximum match value including index for each new element
-		Stream<MaxVal> maximums = matchMatrix.stream().map(el -> {
-			int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b: a).getAsInt(); 
+		List<MaxVal> maximums = matchMatrix.stream().map(el -> {
+			int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b : a).getAsInt(); 
 			return new MaxVal(idx,el.get(idx));
-		});
+		}).collect(Collectors.toList());
 
 		
 		// relaxate the match Matrix: if two or more indices are the same replace all but the best with the second best option
@@ -88,11 +151,11 @@ public class GameStateMatcher {
 		
 		while(!conflictless)
 		{
-			final List<MaxVal> maxVals = maximums.collect(Collectors.toList());
+			final List<MaxVal> maxVals = maximums;
 			
-			conflictless = maximums.filter(p -> Collections.frequency(maxVals, p.index) > 1).count() ==0;
+			conflictless = maximums.stream().filter(p -> Collections.frequency(maxVals.stream().map(e -> e.index).collect(Collectors.toList()), p.index) > 1).count() ==0;
 			
-			Optional<MaxVal> firstDuplicateIndex = maxVals.stream().filter(p -> Collections.frequency(maxVals, p.index) > 1).findFirst();
+			Optional<MaxVal> firstDuplicateIndex = maxVals.stream().filter(p -> Collections.frequency(maxVals.stream().map(e -> e.index).collect(Collectors.toList()), p.index) > 1).findFirst();
 			
 			if (firstDuplicateIndex.isPresent())
 			{
@@ -129,17 +192,12 @@ public class GameStateMatcher {
 						}
 						matchMatrix.get(sameIndexIdx[c]).add((float) 1.0);
 					}
-				}
-				maximums = matchMatrix.stream().map(el -> {
-					int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b: a).getAsInt(); 
-					return new MaxVal(idx,el.get(idx));
-				});					
+				}				
 			}
 		}
 		
 		// rearrange the new FigureBag List
-		//int maxIdx = maximums.mapToInt(e -> e.index).max().getAsInt();
-		List<IFigureBag> orderedTableList = new ArrayList<IFigureBag>();
+		List<IFigureBag> orderedTableList = new ArrayList<IFigureBag>(Collections.nCopies(tableNew.size(), null));
 		Iterator<MaxVal> mvIt = maximums.iterator();
 		int cnt =0;
 		while (mvIt.hasNext())
@@ -154,7 +212,7 @@ public class GameStateMatcher {
 		
 
 	
-	class MaxVal {
+	static class MaxVal {
 		int index;
 		float val;
 		

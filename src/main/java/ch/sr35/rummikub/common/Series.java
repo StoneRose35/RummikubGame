@@ -144,7 +144,7 @@ public class Series implements IFigureBag{
 			}
 			
 		}
-		float divisor = (this.getFigureCount() < other.getFigureCount()) ? this.getFigureCount() : other.getFigureCount();
+		float divisor = (this.getFigureCount() < other.getFigureCount()) ? other.getFigureCount() : this.getFigureCount();
 		if (divisor > 0.0 )
 		{
 			matchcnt /= (divisor*2.0);

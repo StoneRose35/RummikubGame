@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,6 +44,8 @@ public class RestController {
 	
 	@Autowired
 	AvatarImageGenerator avatarIG;
+	
+	static Logger logger = LoggerFactory.getLogger(RestController.class);
 	
 	public RestController()
 	{
@@ -162,6 +166,7 @@ public class RestController {
 			
 			
 			r.setMessage("Successfully created game " + name);
+			r.setGame(GameApi.fromRummikubGame(g));
 			wsController.updateGames();
 			return r;
 		}
@@ -264,9 +269,14 @@ public class RestController {
 		if (g!=null)
 		{
 			g.getTableFigures().stream().forEach((f) -> {
-				List<FigureApi> l=new ArrayList<FigureApi>();
-				f.iterator().forEachRemaining(el -> l.add(FigureApi.fromRummikubFigure(el)));
-				res.add(l);
+				try
+				{
+					res.add(f.stream().map(el -> FigureApi.fromRummikubFigure(el)).collect(Collectors.toList()));
+				}
+				catch (Exception e)
+				{
+					logger.error(e.toString());
+				}
 			} );
 			
 		}

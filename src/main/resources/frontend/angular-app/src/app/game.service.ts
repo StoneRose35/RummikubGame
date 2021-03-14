@@ -59,6 +59,7 @@ export interface ResponseNewGame {
   message: String;
   error: String;
   gameId: String;
+  game: GameOverview;
 }
 
 @Injectable({

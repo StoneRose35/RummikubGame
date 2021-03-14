@@ -75,6 +75,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
         }
         else {
           this.gs.gameId=r.gameId;
+          //this.games.push(r.game);
         }
       });
     }

@@ -8,9 +8,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.sr35.rummikub.common.IFigureBag;
+import ch.sr35.rummikub.web.AspRunner;
 
 public class GameStateMatcher {
+	
+	static Logger logger = LoggerFactory.getLogger(GameStateMatcher.class);
 	
 	public static List<IFigureBag> match(List<IFigureBag> tableOld, List<IFigureBag> tableNew)
 	{
@@ -92,7 +98,7 @@ public class GameStateMatcher {
 		
 		
 		// find rows where no distinct maximums are found
-		// add 1s at the columns where no distict maximums have been found
+		// add 1s at the columns where no distinct maximums have been found
 		List<List<Integer>> distinctIndexes=new ArrayList<List<Integer>>();
 		matchMatrix.forEach(e -> {
 			float minVal=2.0f;
@@ -138,17 +144,26 @@ public class GameStateMatcher {
 					distinctIndexes.set(c, indexCandidates);
 					if (indexCandidates.size()==1)
 					{
-						//matchMatrix.get(c).forEach(el -> el = el/2.0f);
 						distinctionSuccessful=true;
 						matchMatrix.get(c).set(indexCandidates.get(0), 1.0f);
+						break;
 					}
 				}
+			}
+			if (!distinctionSuccessful && distinctIndexes.stream().anyMatch(el -> el.size()> 1))
+			{
+				distinctIndexes.stream().filter(e -> e.size() > 1).findFirst().ifPresent(c -> {
+					while (c.size() > 1)
+					{
+						c.remove(c.size()-1);
+					}
+				});
 			}
 		}
 		
 		if (distinctIndexes.stream().anyMatch(e -> e.size() > 1))
 		{
-			int stillUnclear= 21;
+			logger.debug("failed to generate distinct indexes, return unsorted new state");
 			return tableNew;
 		}
 		else
@@ -195,92 +210,8 @@ public class GameStateMatcher {
 				orderedTableList.set(nxt, tableNew.get(cnt));
 				cnt++;
 			}
-			return orderedTableList;
-			
+			return orderedTableList;	
 		}
-		
-/*
-		// get the maximum match value including index for each new element
-		List<MaxVal> maximums = matchMatrix.stream().map(el -> {
-			int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b : a).getAsInt(); 
-			return new MaxVal(idx,el.get(idx));
-		}).collect(Collectors.toList());
-
-		
-		// relaxate the match Matrix: if two or more indices are the same replace all but the best with the second best option
-		boolean conflictless=false;
-		
-		int itCnt=0;
-		while(!conflictless && itCnt < 10)
-		{
-			final List<MaxVal> maxVals = maximums;
-			
-			conflictless = maximums.stream().filter(p -> Collections.frequency(maxVals.stream().map(e -> e.index).collect(Collectors.toList()), p.index) > 1).count() ==0;
-			
-			Optional<MaxVal> firstDuplicateIndex = maxVals.stream().filter(p -> Collections.frequency(maxVals.stream().map(e -> e.index).collect(Collectors.toList()), p.index) > 1).findFirst();
-			
-			if (firstDuplicateIndex.isPresent())
-			{
-				int[] sameIndexIdx =  IntStream.range(0, maxVals.size()).filter(i -> maxVals.get(i).index== firstDuplicateIndex.get().index)
-						.toArray();
-				
-				List<MaxVal> sameIdxMaximums = new ArrayList<MaxVal>();
-				for(int c=0;c<sameIndexIdx.length;c++)
-				{
-					sameIdxMaximums.add(maxVals.get(sameIndexIdx[c]));
-					
-					MaxVal mvCurrent = maxVals.get(sameIndexIdx[c]);
-					matchMatrix.get(sameIndexIdx[c]).stream().dropWhile(p -> Math.abs(p.floatValue()-mvCurrent.val) < 0.001);
-				}
-				double bestVal = sameIdxMaximums.stream().mapToDouble(e -> (double)e.val).max().getAsDouble();
-				if (bestVal > 0.0)
-				{
-					for(int c=0;c<sameIndexIdx.length;c++)
-					{
-						if (sameIdxMaximums.get(c).val < bestVal)
-						{
-							matchMatrix.get(sameIndexIdx[c]).set(sameIdxMaximums.get(c).index,(float)0.0);
-						}
-					}
-				}
-				else
-				{
-					// place all at the end
-					for(int c=0;c<sameIndexIdx.length;c++)
-					{
-						for (int q=0;q<c;q++)
-						{
-							matchMatrix.get(sameIndexIdx[c]).add((float) 0.0);
-						}
-						matchMatrix.get(sameIndexIdx[c]).add((float) 1.0);
-					}
-				}				
-			}
-			
-			maximums = matchMatrix.stream().map(el -> {
-				int idx = IntStream.range(0,el.size()).reduce((a,b) -> el.get(a) < el.get(b) ? b : a).getAsInt(); 
-				return new MaxVal(idx,el.get(idx));
-			}).collect(Collectors.toList());
-			itCnt++;
-		}
-		
-		if (itCnt==10)
-		{
-			return tableNew;
-		}
-		
-		// rearrange the new FigureBag List
-		List<IFigureBag> orderedTableList = new ArrayList<IFigureBag>(Collections.nCopies(tableNew.size(), null));
-		Iterator<MaxVal> mvIt = maximums.iterator();
-		int cnt =0;
-		while (mvIt.hasNext())
-		{
-			MaxVal nxt = mvIt.next();
-			orderedTableList.set(nxt.index, tableNew.get(cnt));
-			cnt++;
-		}
-		return orderedTableList;
-		*/
 	}
 		
 

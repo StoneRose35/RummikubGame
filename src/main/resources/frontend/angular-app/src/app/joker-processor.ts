@@ -28,7 +28,11 @@ export class JokerProcessor {
             else
             {
                 // reset joker value, list is invalid anyways
-                jokers.forEach(f => f.number=0);
+                jokers.forEach(f => {
+                    f.number=0;
+                    f.colorcode=null;
+                    f.update();
+                });
             }
         }
     }
@@ -39,6 +43,7 @@ export class JokerProcessor {
         jokers.forEach(f => {
             f.number=0;
             f.colorcode=null;
+            f.update();
         });
 
     }
@@ -64,6 +69,7 @@ export class JokerProcessor {
                     {
                         jokers[jcntr].number = sorted[c].number + 1;
                         jokers[jcntr].colorcode = lineWithoutJokers[0].colorcode;
+                        jokers[jcntr].update();
                         jcntr++;
                     }
                 }
@@ -73,6 +79,7 @@ export class JokerProcessor {
                     {
                         jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
                         jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
+                        jokers[jc].update();
                     }
                 }
             }
@@ -80,6 +87,7 @@ export class JokerProcessor {
             {
                 jokers[0].number = diff;
                 jokers[0].colorcode=lineWithoutJokers[0].colorcode;
+                jokers[0].update();
             }
         }
         else {
@@ -93,11 +101,13 @@ export class JokerProcessor {
                 {
                     jokers[jc].number = sorted[sorted.length-1].number + jc + 1;
                     jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
+                    jokers[jc].update();
                 }
                 else
                 { // add left
                     jokers[jc].number = sorted[0].number - jc_left - 1;
                     jokers[jc].colorcode = lineWithoutJokers[0].colorcode;
+                    jokers[jc].update();
                     jc_left -= 1;
                 }
             }
@@ -115,6 +125,7 @@ export class JokerProcessor {
         jokers.forEach(el => {
             el.colorcode = missingColors[mcCntr];
             el.number = lineWithoutJokers[0].number;
+            el.update();
             mcCntr++;
         });
     }

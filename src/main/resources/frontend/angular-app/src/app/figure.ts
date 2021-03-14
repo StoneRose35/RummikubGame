@@ -52,5 +52,11 @@ export class Figure
         return representation;
     }
 
+    update(): void
+    {
+      this.representation = this.repr();
+      this.clr = new RKColor(this.colorcode).rgb;
+    }
+
 }
 

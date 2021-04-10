@@ -13,6 +13,7 @@ import ch.sr35.rummikub.common.exceptions.ApiException;
 public class Game {
 	
 	private List<Player> players;
+	private Player owner;
 	private List<IFigureBag> tableFigures;
 	private Date created;
 	private Date lastAccessed;
@@ -89,7 +90,7 @@ public class Game {
 		{
 			throw new ApiException("Player " + name + " already exists");
 		}
-		if (this.players.size()>=4)
+		if (this.players.size()>=3)
 		{
 			throw new ApiException("Game " + this.getName() + " Full");
 		}
@@ -112,11 +113,11 @@ public class Game {
 	
 	public void addPlayer(PlayerAsp rp) throws ApiException
 	{
-		if (this.players.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null)!=null)
+		if (this.players.stream().filter(p -> p.getName().equals(rp.getName())).findFirst().orElse(null)!=null)
 		{
 			throw new ApiException("Player " + rp.getName() + " already exists");
 		}
-		if (this.players.size()>=4)
+		if (this.players.size()>=3)
 		{
 			throw new ApiException("Game " + this.getName() + " Full");
 		}
@@ -223,5 +224,13 @@ public class Game {
 	public Stopwatch getStopwatch()
 	{
 		return this.stopwatch;
+	}
+
+	public Player getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Player owner) {
+		this.owner = owner;
 	}
 }

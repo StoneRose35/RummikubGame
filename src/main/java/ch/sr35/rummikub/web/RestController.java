@@ -131,7 +131,8 @@ public class RestController {
 	
 
 	@GetMapping("/newgame")
-	public NewGameResponse generateGame(@RequestParam String name,@RequestParam int nrAiPlayers,@RequestParam int maxDuration)
+	public NewGameResponse generateGame(@RequestParam String name,@RequestParam int nrAiPlayers,@RequestParam int maxDuration,
+			@CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		NewGameResponse r = new NewGameResponse();
 		if (nrAiPlayers < 0 || nrAiPlayers > 3)
@@ -139,12 +140,13 @@ public class RestController {
 			r.setError("Number of Ai Players must be in the range from 0 to 3");
 			return r;
 		}
-		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0)
+		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0 && this.data.getTokens().stream().anyMatch(e -> e.getToken()==token))
 		{
 			Game g = new Game(this.wsController);
 			g.setGameId(HexStringHelper.getHexString((short) 12));
 			r.setGameId(g.getGameId());
 			g.setName(name);
+			this.data.getTokens().stream().filter(e -> e.getToken()==token).findFirst().ifPresent(tk -> g.setOwner(tk.getPlayer()));
 			if (maxDuration > 0)
 			{
 				g.initStopwatch(maxDuration);
@@ -170,11 +172,17 @@ public class RestController {
 			wsController.updateGames();
 			return r;
 		}
-		else
+		else if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count() > 0)
 		{
 			r.setError("Game " + name + " already exists");
 			return r;
 		}
+		else if (!this.data.getTokens().stream().anyMatch(e -> e.getToken()==token))
+		{
+			r.setError("You must register as a player first");
+			return r;
+		}
+		return r;
 	}
 
 	@GetMapping("/games")
@@ -193,6 +201,29 @@ public class RestController {
 		return this.data.getGames().stream().map(g -> GameApi.fromRummikubGame(g)).collect(Collectors.toList());
 	}
 
+	@GetMapping("/addPlayer")
+	public PlayerResponse addPlayer(@RequestParam String name,HttpServletResponse response)
+	{
+		PlayerResponse r=new PlayerResponse();
+		if (this.data.getTokens().stream().anyMatch(el -> el.getPlayer().getName()==name))
+		{
+			r.setError("Player Name " + name + " already taken, please choose another one");
+			return r;
+		}
+		Token t = new Token();
+		Player p = new Player();
+		p.setName(name);
+		p.setAvatar(avatarIG.generateAvatar());
+		t.setPlayer(p);
+		t.setToken(HexStringHelper.getHexString((short) 10));
+		this.data.getTokens().add(t);
+		Cookie c = new Cookie("RKToken",t.getToken());
+		response.addCookie(c);
+		r.setMessage("Sucessfully added " + name);
+		r.setPlayer((PlayerApi)t.getPlayer());
+		r.setToken(t.getToken());
+		return r;
+	}
 	
 	@GetMapping("/registerPlayer")
 	public PlayerResponse registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
@@ -212,7 +243,7 @@ public class RestController {
 				this.data.getTokens().add(t);
 				Cookie c = new Cookie("RKToken",t.getToken());
 				response.addCookie(c);
-				r.setMessage("Sucessfully registered " + name);
+				r.setMessage("Sucessfully registered " + name + " with game " + game.getName());
 				r.setPlayer((PlayerApi)t.getPlayer());
 				r.setToken(t.getToken());
 				r.setGameName(game.getName());

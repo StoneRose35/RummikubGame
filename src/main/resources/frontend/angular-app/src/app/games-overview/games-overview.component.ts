@@ -21,7 +21,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
 
   constructor(private snackBar: MatSnackBar,
               private sbConfig: MatSnackBarConfig,
-              private gs: GameService,
+              public gs: GameService,
               private dialog: MatDialog,
               private router: Router){ this.maxDuration="0"; }
 

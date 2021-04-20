@@ -11,11 +11,11 @@
 <div class="rk-newgame">
     <mat-form-field appearance="fill">
         <mat-label>Game Name</mat-label>
-        <input matInput [(ngModel)]="gameName"> 
+        <input matInput [(ngModel)]="gameName" [disabled]="gs.p===null"> 
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Computer Players</mat-label>
-        <mat-select [(value)]="aiPlayers">
+        <mat-select [(value)]="aiPlayers" [disabled]="gs.p===null">
             <mat-option value="0">0</mat-option>
             <mat-option value="1">1</mat-option>
             <mat-option value="2">2</mat-option>
@@ -24,7 +24,7 @@
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Round Duration</mat-label>
-        <mat-select [(value)]="maxDuration">
+        <mat-select [(value)]="maxDuration" [disabled]="gs.p===null">
             <mat-option value="0">Infinite</mat-option>
             <mat-option value="120">1 minute</mat-option>
             <mat-option value="240">2 minutes</mat-option>
@@ -32,6 +32,6 @@
             <mat-option value="480">4 minutes</mat-option>
         </mat-select>
     </mat-form-field>
-        <button mat-raised-button color="primary" (click)="registerGame()" class="rk-newgame">Create Game</button>
+        <button mat-raised-button color="primary" (click)="registerGame()" class="rk-newgame" [disabled]="gs.p===null">Create Game</button>
 </div>
 

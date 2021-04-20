@@ -153,4 +153,9 @@ export class GameService {
     return this.stompClient.watch("/topic/player" + this.token + "/common").pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
+  public addPlayer(pname: string): Observable<ResponsePlayer>
+  {
+    return this.http.get<ResponsePlayer>(this.url + "/addPlayer", {params: {name: pname}});
+  }
+
 }

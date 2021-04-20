@@ -90,7 +90,7 @@ public class Game {
 		{
 			throw new ApiException("Player " + name + " already exists");
 		}
-		if (this.players.size()>=3)
+		if (this.players.size()>=4)
 		{
 			throw new ApiException("Game " + this.getName() + " Full");
 		}
@@ -117,7 +117,7 @@ public class Game {
 		{
 			throw new ApiException("Player " + rp.getName() + " already exists");
 		}
-		if (this.players.size()>=3)
+		if (this.players.size()>=4)
 		{
 			throw new ApiException("Game " + this.getName() + " Full");
 		}
@@ -132,6 +132,7 @@ public class Game {
 			Figure rf = this.stack.drawFromStack();
 			rp.addFigure(rf);
 		}	
+		//rp.setActive(this.players.stream().filter(pl -> !(pl instanceof PlayerAsp)).count()==0);
 		rp.setActive(false);
 		this.players.add(rp);
 	}
@@ -232,5 +233,14 @@ public class Game {
 
 	public void setOwner(Player owner) {
 		this.owner = owner;
+		this.players.add(owner);
+		owner.setActive(true);
+		for (int c=0;c<14;c++)
+		{
+			Figure rf = this.stack.drawFromStack();
+			try {
+				owner.addFigure(rf);
+			} catch (ApiException e) {}
+		}	
 	}
 }

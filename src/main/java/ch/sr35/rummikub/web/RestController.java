@@ -146,7 +146,11 @@ public class RestController {
 			g.setGameId(HexStringHelper.getHexString((short) 12));
 			r.setGameId(g.getGameId());
 			g.setName(name);
-			this.data.getTokens().stream().filter(e -> e.getToken()==token).findFirst().ifPresent(tk -> g.setOwner(tk.getPlayer()));
+			this.data.getTokens().stream().filter(e -> e.getToken()==token).findFirst().ifPresent(tk -> 
+				{
+					g.setOwner(tk.getPlayer());
+					tk.setGame(g);
+				});
 			if (maxDuration > 0)
 			{
 				g.initStopwatch(maxDuration);

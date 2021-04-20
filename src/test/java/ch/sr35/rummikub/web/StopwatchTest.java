@@ -26,21 +26,21 @@ public class StopwatchTest {
 	public void GameStartTest()
 	{
 		ServletResponseMock responseMock = new ServletResponseMock();
-		NewGameResponse ngr = controller.generateGame("Testgame", 0, 4);
-		controller.registerPlayer("Tester0", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester", responseMock);
+		NewGameResponse ngr = controller.generateGame("Testgame",0,4,responseMock.getCookie().getValue());
 		String token0 = responseMock.getCookie().getValue();
 		controller.registerPlayer("Tester1", ngr.getGameId(), responseMock);
 		String token1 = responseMock.getCookie().getValue();
 		controller.registerPlayer("Tester2", ngr.getGameId(), responseMock);
 		String token2 = responseMock.getCookie().getValue();
-		controller.registerPlayer("Tester3", ngr.getGameId(), responseMock);
+		Response r = controller.registerPlayer("Tester3", ngr.getGameId(), responseMock);
 		String token3 = responseMock.getCookie().getValue();
 		Assert.assertFalse( controller.getGames(token0).get(0).isStarted());
 		Assert.assertFalse( controller.getGames(token1).get(0).isStarted());
 		Assert.assertFalse( controller.getGames(token2).get(0).isStarted());
 		Assert.assertFalse( controller.getGames(token3).get(0).isStarted());
 		
-		Response r = controller.setReady(token2);
+		r = controller.setReady(token2);
 		Assert.assertNull(r.getError());
 		Assert.assertFalse( controller.getGames(token0).get(0).isStarted());
 		Assert.assertFalse( controller.getGames(token1).get(0).isStarted());
@@ -66,12 +66,16 @@ public class StopwatchTest {
 	@Test
 	public void ReadinessTest()
 	{
+
 		ServletResponseMock responseMock = new ServletResponseMock();
-		NewGameResponse ngr = controller.generateGame("Testgame", 2, 4);
+		controller.addPlayer("Tester", responseMock);
+		String token = responseMock.getCookie().getValue();
+		NewGameResponse ngr = controller.generateGame("Testgame",2,4,token);
 		Assert.assertFalse(controller.getGames("").get(0).isStarted());
 		controller.registerPlayer("Tester0", ngr.getGameId(), responseMock);
 		String token0 = responseMock.getCookie().getValue();
 		controller.setReady(token0);
+		controller.setReady(token);
 		Assert.assertTrue(controller.getGames("").get(0).isStarted());
 	}
 	

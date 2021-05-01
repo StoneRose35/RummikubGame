@@ -25,9 +25,11 @@ export class AppComponent {
     const dialogRef = this.dialog.open(NewPlayerDialogComponent);
     dialogRef.beforeClosed().subscribe(s => {
       this.gs.addPlayer(s).subscribe(r => {
-        console.log(r);
         this.gs.p = r.player;
-        this.SVGFile = this.sanitizer.bypassSecurityTrustHtml(this.gs.p.avatar);
+        let avatarString = this.gs.p.avatar;
+        avatarString = avatarString.replace(/height="([0-9]*)"/,'height="40"');
+        avatarString = avatarString.replace(/width="([0-9]*)"/,'height="40"');
+        this.SVGFile = this.sanitizer.bypassSecurityTrustHtml(avatarString);
       })
     }); 
   }

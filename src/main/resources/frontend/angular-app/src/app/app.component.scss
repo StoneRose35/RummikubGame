@@ -28,5 +28,20 @@
 
 .playerLogin
 {
-    display: inline-flex;
+    display: inline-table;
+}
+
+.playerName
+{
+    padding-left: 10px;
+    font-size: 16px;
+    padding-right: 10px;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.avatarElement
+{
+    vertical-align: middle;
+    display: table-cell;
 }

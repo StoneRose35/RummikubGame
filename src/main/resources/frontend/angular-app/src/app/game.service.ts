@@ -101,7 +101,7 @@ export class GameService {
   public initGame(gameName: String,nrAiPlayers: number,maxDuration: number): Observable<ResponseNewGame> 
   {
     this.gameId = gameName;
-    return this.http.get<ResponseNewGame>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString(), maxDuration: maxDuration.toString()}});
+    return this.http.get<ResponseNewGame>(this.url + "/newgame",{params: {name: gameName.toString(),nrAiPlayers: nrAiPlayers.toString(), maxDuration: maxDuration.toString()},withCredentials: true});
   }
 
   public reconnect(): Observable<ResponsePlayer>

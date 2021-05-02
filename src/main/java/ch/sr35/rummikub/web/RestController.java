@@ -240,6 +240,39 @@ public class RestController {
 		return r;
 	}
 	
+	@GetMapping("/leave")
+	public Response leaveHandler(@CookieValue(value = "RKToken", defaultValue = "") String token,HttpServletResponse response)
+	{
+		Response r = new Response();
+		Cookie c = new Cookie("RKToken","");
+		c.setMaxAge(0);
+		response.addCookie(c);
+		
+		Token tk = this.data.getTokens().stream().filter(t -> t.getToken().equals(token)).findFirst().orElse(null);
+		if (tk != null)
+		{
+			if (tk.getGame() != null)
+			{
+				if (tk.getGame().getOwner().getName().equals(tk.getPlayer().getName()))
+				{
+					// player which leave is the owner of a game --> remove that game as well
+					this.data.getGames().remove(tk.getGame());
+					this.wsController.updateGames();
+				}
+				else
+				{
+					// player only took part in a game, remove him from the game
+					tk.getGame().getPlayers().remove(tk.getPlayer());
+					this.wsController.updatePlayers(tk.getGame());
+				}
+
+			}
+			this.data.getTokens().remove(tk);
+		}
+		r.setMessage("Player Left");
+		return r;
+	}
+	
 	@GetMapping("/registerPlayer")
 	public PlayerResponse registerPlayer(@RequestParam String gameId, @CookieValue(value = "RKToken", defaultValue = "") String token)
 	{

@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GameService, GameOverview } from './../game.service';
-import { NewPlayerDialogComponent } from './../new-player-dialog/new-player-dialog.component';
 import { MatSnackBar,MatSnackBarConfig } from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -51,7 +50,7 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
         this.gs.gameId = r.gameId;
         this.gs.gameName = r.gameName;
         this.gs.token = r.token;
-        if (this.gs.p.ready===false)
+        if (this.gs.p.ready===false && this.gs.gameId!==null)
         {
           const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs, disableClose: true });
           dialogRef2.afterClosed().subscribe(s => {

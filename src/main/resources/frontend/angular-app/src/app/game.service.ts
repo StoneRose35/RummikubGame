@@ -157,4 +157,9 @@ export class GameService {
     return this.http.get<ResponsePlayer>(this.url + "/addPlayer", {params: {name: pname}});
   }
 
+  public leave(): Observable<Response>
+  {
+    return this.http.get<Response>(this.url + "/leave", {withCredentials: true});
+  }
+
 }

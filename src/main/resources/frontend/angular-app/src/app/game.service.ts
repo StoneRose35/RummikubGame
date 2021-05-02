@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Figure } from './figure';
 import { HttpClient } from '@angular/common/http';
-import { backendPort } from './../environments/environment';
 import { RxStompService } from '@stomp/ng2-stompjs';
 
 
@@ -75,7 +74,7 @@ export class GameService {
 
   constructor(private http: HttpClient, private stompClient: RxStompService) { 
     this.p = null;
-    this.url = "/api" ; //window.location.protocol + "//" + window.location.hostname + ":" + backendPort + "/api";
+    this.url = "/api";
   }
 
   public getGames(): Observable<Array<GameOverview>>

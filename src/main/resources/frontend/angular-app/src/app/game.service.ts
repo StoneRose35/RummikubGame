@@ -75,7 +75,7 @@ export class GameService {
 
   constructor(private http: HttpClient, private stompClient: RxStompService) { 
     this.p = null;
-    this.url = window.location.protocol + "//" + window.location.hostname + ":" + backendPort;
+    this.url = "/api" ; //window.location.protocol + "//" + window.location.hostname + ":" + backendPort + "/api";
   }
 
   public getGames(): Observable<Array<GameOverview>>

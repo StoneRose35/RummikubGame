@@ -29,11 +29,14 @@ public class StopwatchTest {
 		controller.addPlayer("Tester", responseMock);
 		NewGameResponse ngr = controller.generateGame("Testgame",0,4,responseMock.getCookie().getValue());
 		String token0 = responseMock.getCookie().getValue();
-		controller.registerPlayer("Tester1", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester1", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		String token1 = responseMock.getCookie().getValue();
-		controller.registerPlayer("Tester2", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester2", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		String token2 = responseMock.getCookie().getValue();
-		Response r = controller.registerPlayer("Tester3", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester3", responseMock);
+		Response r = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		String token3 = responseMock.getCookie().getValue();
 		Assert.assertFalse( controller.getGames(token0).get(0).isStarted());
 		Assert.assertFalse( controller.getGames(token1).get(0).isStarted());
@@ -72,7 +75,8 @@ public class StopwatchTest {
 		String token = responseMock.getCookie().getValue();
 		NewGameResponse ngr = controller.generateGame("Testgame",2,4,token);
 		Assert.assertFalse(controller.getGames("").get(0).isStarted());
-		controller.registerPlayer("Tester0", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester0", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		String token0 = responseMock.getCookie().getValue();
 		controller.setReady(token0);
 		controller.setReady(token);

@@ -54,8 +54,8 @@ public class ApiTest {
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.addPlayer("Tester", responseMock);
 		Response resp;
-		controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
-		resp = controller.registerPlayer("Tester", "Game 2", responseMock);
+		controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());	
+		resp = controller.registerPlayer("Game 2", responseMock.getCookie().getValue());
 		Assert.assertNotNull(resp.getError());
 		Assert.assertNull(resp.getMessage());
 	}
@@ -67,16 +67,20 @@ public class ApiTest {
 		controller.addPlayer("Tester", responseMock);
 		Response resp;
 		NewGameResponse ngr = controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
-		resp = controller.registerPlayer("Tester 1", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester1", responseMock);
+		resp = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		Assert.assertNull(resp.getError());
 		Assert.assertNotNull(resp.getMessage());
-		resp = controller.registerPlayer("Tester 2", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester2", responseMock);
+		resp = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		Assert.assertNull(resp.getError());
 		Assert.assertNotNull(resp.getMessage());
-		resp = controller.registerPlayer("Tester 3", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester3", responseMock);
+		resp = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		Assert.assertNull(resp.getError());
 		Assert.assertNotNull(resp.getMessage());
-		resp = controller.registerPlayer("TesterTooMuch", ngr.getGameId(), responseMock);
+		controller.addPlayer("TesterTooMuch", responseMock);
+		resp = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		Assert.assertNotNull(resp.getError());
 		Assert.assertNull(resp.getMessage());
 	}
@@ -89,7 +93,8 @@ public class ApiTest {
 		NewGameResponse ngr = controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
 		String cookieValue = responseMock.getCookie().getValue();
 		Assert.assertTrue(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
-		controller.registerPlayer("Tester2", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester2", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		FigureApi f = controller.getFigure(cookieValue);
 		Assert.assertNotNull(f);
 		Assert.assertFalse(controller.data.getTokens().stream().filter(tt -> tt.getToken()==cookieValue).findFirst().orElseThrow().getPlayer().isActive());
@@ -155,10 +160,11 @@ public class ApiTest {
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.addPlayer("Tester", responseMock);
 		NewGameResponse ngr = controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
-		controller.registerPlayer("Testplayer", ngr.getGameId(), responseMock);
+		controller.addPlayer("Testplayer", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		controller.disposeGame(responseMock.getCookie().getValue());
 
-		PlayerResponse pr = controller.registerPlayer("Testplayer", ngr.getGameId(), responseMock);
+		PlayerResponse pr = controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		Assert.assertNotNull(pr.getError());
 
 	}
@@ -177,9 +183,12 @@ public class ApiTest {
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.addPlayer("Tester", responseMock);
 		NewGameResponse ngr = controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
-		controller.registerPlayer("Tester2", ngr.getGameId(), responseMock);
-		controller.registerPlayer("Tester3", ngr.getGameId(), responseMock);
-		controller.registerPlayer("Tester4", ngr.getGameId(), responseMock);
+		controller.addPlayer("Tester2", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
+		controller.addPlayer("Tester3", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
+		controller.addPlayer("Tester4", responseMock);
+		controller.registerPlayer(ngr.getGameId(), responseMock.getCookie().getValue());
 		return responseMock.getCookie().getValue();
 		
 	}

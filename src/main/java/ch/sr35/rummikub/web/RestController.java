@@ -79,11 +79,20 @@ public class RestController {
 		if (t!=null)
 		{
 			PlayerResponse r=new PlayerResponse();
-			r.setMessage("reconnected player " + t.getPlayer().getName() + " to game " + t.getGame().getName());
-			r.setPlayer((PlayerApi)t.getPlayer());
-			r.setToken(t.getToken());
-			r.setGameName(t.getGame().getName());
-			r.setGameId(t.getGame().getGameId());
+			if (t.getGame() != null)
+			{
+				r.setMessage("reconnected player " + t.getPlayer().getName() + " to game " + t.getGame().getName());
+				r.setPlayer((PlayerApi)t.getPlayer());
+				r.setToken(t.getToken());
+				r.setGameName(t.getGame().getName());
+				r.setGameId(t.getGame().getGameId());
+			}
+			else
+			{
+				r.setMessage("reconnected player " + t.getPlayer().getName());
+				r.setPlayer((PlayerApi)t.getPlayer());
+				r.setToken(t.getToken());
+			}
 			return r;
 		}
 		return null;
@@ -140,13 +149,13 @@ public class RestController {
 			r.setError("Number of Ai Players must be in the range from 0 to 3");
 			return r;
 		}
-		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0 && this.data.getTokens().stream().anyMatch(e -> e.getToken()==token))
+		if (this.data.getGames().stream().filter(e -> e.getName().equals(name)).count()==0 && this.data.getTokens().stream().anyMatch(e -> e.getToken().equals(token)))
 		{
 			Game g = new Game(this.wsController);
 			g.setGameId(HexStringHelper.getHexString((short) 12));
 			r.setGameId(g.getGameId());
 			g.setName(name);
-			this.data.getTokens().stream().filter(e -> e.getToken()==token).findFirst().ifPresent(tk -> 
+			this.data.getTokens().stream().filter(e -> e.getToken().equals(token)).findFirst().ifPresent(tk -> 
 				{
 					g.setOwner(tk.getPlayer());
 					tk.setGame(g);
@@ -230,7 +239,7 @@ public class RestController {
 	}
 	
 	@GetMapping("/registerPlayer")
-	public PlayerResponse registerPlayer(@RequestParam String name,@RequestParam String gameId,HttpServletResponse response)
+	public PlayerResponse registerPlayer(@RequestParam String gameId,HttpServletResponse response, @CookieValue(value = "RKToken", defaultValue = "") String token)
 	{
 		PlayerResponse r=new PlayerResponse();
 		
@@ -238,21 +247,19 @@ public class RestController {
 		if (game!=null)
 		{
 			try {
-				Token t = new Token();
-				t.setGame(game);
-				Player p = game.addPlayer(name);
-				p.setAvatar(avatarIG.generateAvatar());
-				t.setPlayer(p);
-				t.setToken(HexStringHelper.getHexString((short) 10));
-				this.data.getTokens().add(t);
-				Cookie c = new Cookie("RKToken",t.getToken());
-				response.addCookie(c);
-				r.setMessage("Sucessfully registered " + name + " with game " + game.getName());
-				r.setPlayer((PlayerApi)t.getPlayer());
-				r.setToken(t.getToken());
-				r.setGameName(game.getName());
-				r.setGameId(gameId);
-				wsController.updatePlayers(game);
+				Token t = this.data.getTokens().stream().filter(s -> s.getToken().equals(token)).findFirst().orElse(null);
+				if (t != null )
+				{
+					t.setGame(game);
+					game.addPlayer(t.getPlayer());
+					
+					r.setMessage("Sucessfully registered " + t.getPlayer().getName() + " with game " + game.getName());
+					r.setPlayer((PlayerApi)t.getPlayer());
+					r.setToken(t.getToken());
+					r.setGameName(game.getName());
+					r.setGameId(gameId);
+					wsController.updatePlayers(game);
+				}
 			} catch (ApiException e) {
 				r.setError(e.getMessage());
 			}

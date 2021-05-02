@@ -13,7 +13,7 @@
 </div>
 <nav>
 <a routerLink="/overview" routerLinkActive="active">Overview</a>
-<a *ngIf="gs.p!== null" [routerLink]="gs.p!== null ? '/game-management' : null" routerLinkActive="active" >Current Game</a>
+<a *ngIf="gs.gameId!== null" [routerLink]="gs.p!== null ? '/game-management' : null" routerLinkActive="active" >Current Game</a>
 </nav>
 
 <router-outlet></router-outlet>

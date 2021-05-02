@@ -111,6 +111,30 @@ public class Game {
 		return p;
 	}
 	
+	public void addPlayer(Player p) throws ApiException
+	{
+		if (this.players.stream().filter(p2 -> p2.getName().equals(p.getName())).findFirst().orElse(null)!=null)
+		{
+			throw new ApiException("Player " + name + " already exists");
+		}
+		if (this.players.size()>=4)
+		{
+			throw new ApiException("Game " + this.getName() + " Full");
+		}
+		if (this.getStarted()==true)
+		{
+			throw new ApiException("Game " + this.getName() + " already started");
+		}
+		
+		for (int c=0;c<14;c++)
+		{
+			p.addFigure(this.stack.drawFromStack());
+
+		}
+		p.setActive(this.players.stream().filter(pl -> !(pl instanceof PlayerAsp)).count()==0);
+		this.players.add(p);
+	}
+	
 	public void addPlayer(PlayerAsp rp) throws ApiException
 	{
 		if (this.players.stream().filter(p -> p.getName().equals(rp.getName())).findFirst().orElse(null)!=null)

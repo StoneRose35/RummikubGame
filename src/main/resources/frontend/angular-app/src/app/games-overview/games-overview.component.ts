@@ -41,6 +41,9 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
         this.pollGamesSubscription = this.gs.watchGames().subscribe(games => this.games=games);
       }
     });
+    
+    if(this.gs.p==null)
+    {
     this.gs.reconnect().subscribe(r => {
       if (r !== null)
       {
@@ -56,6 +59,8 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
         this.gs.gameName = null;
       }
     });
+  }
+    
   }
 
   
@@ -75,7 +80,11 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
         }
         else {
           this.gs.gameId=r.gameId;
-          //this.games.push(r.game);
+          this.gs.gameName=this.gameName;
+          const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs, disableClose: true });
+          dialogRef2.afterClosed().subscribe(s => {
+            this.router.navigateByUrl("/game-management");
+          });
         }
       });
     }
@@ -83,26 +92,22 @@ export class GamesOverviewComponent implements OnInit, OnDestroy {
 
   joinGame(gameId: String)
   {
-    const dialogRef = this.dialog.open(NewPlayerDialogComponent);
-        dialogRef.afterClosed().subscribe(s => {
-          this.gs.registerPlayer(s,gameId).subscribe(r => {
-            if (r.error != null)
-            {
-                this.snackBar.open(`Player registration failed: ${r.error}`,null,this.sbConfig);
-            }
-            else
-            {
-                this.gs.p = r.player;
-                this.gs.gameId = r.gameId;
-                this.gs.gameName = r.gameName;
-                this.gs.token = r.token;
-                const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs, disableClose: true });
-                dialogRef2.afterClosed().subscribe(s => {
-                  this.router.navigateByUrl("/game-management");
-                });
-            }
+    this.gs.registerPlayer(gameId).subscribe(r => {
+      if (r.error != null)
+      {
+          this.snackBar.open(`Player registration failed: ${r.error}`,null,this.sbConfig);
+      }
+      else
+      {
+          this.gs.p = r.player;
+          this.gs.gameId = r.gameId;
+          this.gs.gameName = r.gameName;
+          this.gs.token = r.token;
+          const dialogRef2 = this.dialog.open(PlayerReadyDialogComponent,{width: '330px', height: '400px',data: this.gs, disableClose: true });
+          dialogRef2.afterClosed().subscribe(s => {
+            this.router.navigateByUrl("/game-management");
           });
-        });
+      }
+    });
   }
-
 }

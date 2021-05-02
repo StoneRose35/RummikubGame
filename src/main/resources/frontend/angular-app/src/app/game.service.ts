@@ -88,9 +88,9 @@ export class GameService {
     return this.stompClient.watch("/topic/games").pipe(map(msg => {return JSON.parse(msg.body);}));
   }
 
-  public registerPlayer(playerName: String, gameId: String): Observable<ResponsePlayer>
+  public registerPlayer(gameId: String): Observable<ResponsePlayer>
   {
-    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {name: playerName.toString(),gameId: gameId.toString() },withCredentials: true});
+    return this.http.get<ResponsePlayer>(this.url + "/registerPlayer",{params: {gameId: gameId.toString() },withCredentials: true});
   }
 
   public shelfFigures(): Observable<Array<Figure>>

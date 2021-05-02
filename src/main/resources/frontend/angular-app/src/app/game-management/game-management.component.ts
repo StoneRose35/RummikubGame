@@ -133,7 +133,6 @@ export class GameManagementComponent implements OnInit, OnDestroy {
       this.tablePollSubscription.unsubscribe();
       this.tablePollSubscription=null;
     }
-    this.gs.p=null;
   }
 
   showWinnerScreen()

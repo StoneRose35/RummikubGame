@@ -125,7 +125,7 @@ public class ApiTest {
 		final String tokenValue = "abcd";
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.addPlayer("Tester", responseMock);
-		NewGameResponse ngr = controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
+		controller.generateGame("Testgame",0,0,responseMock.getCookie().getValue());
 		PlayerAsp aiPlayer = new PlayerAsp();
 		Token rToken = new Token();
 		Game g = controller.data.getGames().get(0);
@@ -174,7 +174,7 @@ public class ApiTest {
 	{
 		ServletResponseMock responseMock = new ServletResponseMock();
 		controller.addPlayer("Tester", responseMock);
-		NewGameResponse ngr = controller.generateGame("Testgame",3,0,responseMock.getCookie().getValue());
+		controller.generateGame("Testgame",3,0,responseMock.getCookie().getValue());
 		Assert.assertEquals(3,controller.data.getGames().get(0).getPlayers().stream().filter(p -> {return p instanceof PlayerAsp;}).count());
 	}
 	

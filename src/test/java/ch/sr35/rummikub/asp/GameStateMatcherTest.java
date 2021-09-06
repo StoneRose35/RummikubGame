@@ -1,11 +1,7 @@
 package ch.sr35.rummikub.asp;
 
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
